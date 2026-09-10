@@ -1,0 +1,1913 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#090a12">
+  <title>GAME SERVICE V4 • Premium UI</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#080910;
+      --panel:#121420;
+      --panel2:#191c2b;
+      --panel3:#202437;
+      --line:#2b3044;
+      --text:#f8f8fb;
+      --muted:#989dad;
+      --red:#ef2f36;
+      --green:#18bd86;
+      --yellow:#ffd42a;
+      --orange:#ff8d42;
+      --blue:#3895ff;
+      --shadow:0 22px 60px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box}
+    html{color-scheme:dark;scroll-behavior:smooth}
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family:"Noto Sans Thai",system-ui,sans-serif;
+      background:
+        radial-gradient(circle at 50% -10%,rgba(75,52,160,.16),transparent 34rem),
+        var(--bg);
+      color:var(--text);
+    }
+    button,input,select,textarea{font:inherit}
+    button{touch-action:manipulation}
+    a{color:inherit}
+
+    .shell{width:min(1240px,calc(100% - 28px));margin:auto}
+
+    .topbar{
+      position:sticky;top:0;z-index:30;
+      border-bottom:1px solid rgba(255,255,255,.07);
+      background:rgba(8,9,16,.86);
+      backdrop-filter:blur(18px);
+    }
+    .topbar-inner{
+      min-height:82px;
+      display:flex;align-items:center;justify-content:space-between;gap:18px;
+    }
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand-icon{
+      width:44px;height:44px;border-radius:14px;
+      display:grid;place-items:center;font-weight:900;
+      background:linear-gradient(135deg,#ff372d,#ff781f);
+      box-shadow:0 12px 28px rgba(239,47,54,.22);
+    }
+    .brand strong{display:block;font-size:17px;letter-spacing:.02em}
+    .brand small{display:block;color:var(--muted);font-size:10px;margin-top:1px}
+
+    .main{padding:28px 0 70px}
+    .toolbar{
+      display:grid;
+      grid-template-columns:minmax(220px,1fr) 190px;
+      gap:12px;
+      margin-bottom:14px;
+    }
+    .control{
+      min-height:52px;
+      display:flex;align-items:center;gap:10px;
+      border:1px solid var(--line);
+      background:#181a24;
+      border-radius:18px;
+      padding:0 15px;
+    }
+    .control input,.control select{
+      width:100%;height:50px;border:0;outline:0;background:transparent;color:var(--text);
+    }
+    .control select{cursor:pointer}
+    .control .ico{font-size:18px;color:#a0a4b2}
+
+    .category-strip{
+      display:flex;gap:10px;overflow-x:auto;
+      padding:8px 0 18px;
+      scrollbar-width:none;
+    }
+    .category-strip::-webkit-scrollbar{display:none}
+    .cat-btn{
+      flex:0 0 auto;min-height:42px;border:1px solid var(--line);
+      background:#1a1c27;color:#d8dbe4;border-radius:999px;
+      padding:0 17px;font-weight:700;font-size:12px;cursor:pointer;
+    }
+    .cat-btn.active{background:var(--red);border-color:var(--red);color:#fff}
+
+    .section-head{
+      display:flex;justify-content:space-between;align-items:end;gap:14px;
+      margin:8px 0 14px;
+    }
+    .section-head h1{font-size:22px;margin:0}
+    .section-head p{font-size:11px;color:var(--muted);margin:3px 0 0}
+    #countText{font-size:11px;color:var(--muted)}
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:15px;
+    }
+    .card{
+      overflow:hidden;border:1px solid #272b3e;border-radius:20px;
+      background:linear-gradient(180deg,#11131e,#171a29);
+      transition:.18s ease;
+      min-width:0;
+    }
+    .card:hover{transform:translateY(-4px);border-color:#434a69;box-shadow:var(--shadow)}
+    .card.paused{border-color:rgba(255,212,42,.24)}
+    .card.closed{opacity:.72;filter:saturate(.68)}
+    .card-button{display:block;width:100%;border:0;padding:0;background:none;color:inherit;text-align:left;cursor:pointer}
+
+    .cover{
+      position:relative;aspect-ratio:1.3/1;
+      background:#0e1018;overflow:hidden;
+    }
+    .cover img{width:100%;height:100%;display:block;object-fit:cover}
+    .cover::after{
+      content:"";position:absolute;inset:auto 0 0;height:34%;
+      background:linear-gradient(transparent,rgba(0,0,0,.35));pointer-events:none
+    }
+    .corner{
+      position:absolute;top:10px;z-index:2;
+      padding:5px 9px;border-radius:999px;font-size:9px;font-weight:800;
+      border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(8px);
+    }
+    .corner.left{left:10px;background:rgba(5,6,11,.76)}
+    .corner.right{right:10px;background:rgba(24,189,134,.88)}
+    .corner.right.paused{background:rgba(214,160,20,.92)}
+    .corner.right.closed{background:rgba(125,128,142,.92)}
+
+    .card-body{padding:14px}
+    .game-title{
+      font-size:14px;font-weight:800;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    }
+    .game-desc{
+      color:var(--muted);font-size:10px;line-height:1.55;
+      height:31px;overflow:hidden;margin-top:4px;
+    }
+    .sold-count{
+      margin-top:8px;color:#c5c8d3;
+      font-size:9px;font-weight:700;
+    }
+    .badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+    .badge{
+      display:inline-flex;align-items:center;gap:4px;
+      min-height:25px;padding:0 8px;border-radius:999px;
+      border:1px solid #33384d;background:#212536;
+      font-size:9px;font-weight:700;color:#d7dae2;
+    }
+    .badge.green{color:#7de9c4;border-color:rgba(24,189,134,.3);background:rgba(24,189,134,.12)}
+    .badge.orange{color:#ffc28b;border-color:rgba(255,141,66,.3);background:rgba(255,141,66,.12)}
+    .badge.gray{color:#a4a8b6}
+    .badge.blue{color:#9ecbff;border-color:rgba(56,149,255,.3);background:rgba(56,149,255,.12)}
+
+    .card-footer{
+      margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06);
+      display:flex;align-items:end;justify-content:space-between;gap:10px;
+    }
+    .price-label{font-size:8px;color:var(--muted)}
+    .price{font-size:18px;font-weight:900;color:var(--yellow)}
+    .card-cta{
+      border-radius:11px;background:var(--red);color:white;
+      padding:8px 10px;font-size:9px;font-weight:800;
+    }
+    .card-cta.paused{background:#8d741d;color:#fff1a9}
+    .card-cta.closed{background:#4d5262;color:#d6d8df}
+
+    .state{
+      border:1px dashed #303549;border-radius:18px;
+      background:#11131d;color:var(--muted);
+      text-align:center;padding:34px 18px;font-size:12px;
+    }
+    .state.error{border-color:rgba(239,47,54,.35);color:#ff9ea2}
+
+    .modal[hidden]{display:none}
+    .modal{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:16px}
+    .backdrop{position:absolute;inset:0;background:rgba(0,0,0,.76);backdrop-filter:blur(8px)}
+    .dialog{
+      position:relative;z-index:2;width:min(720px,100%);
+      max-height:88vh;overflow:auto;
+      border:1px solid #34394f;border-radius:24px;
+      background:linear-gradient(180deg,#181b2b,#11131e);
+      box-shadow:0 28px 90px rgba(0,0,0,.55);
+      padding:20px;
+    }
+    .close{
+      position:absolute;right:13px;top:12px;
+      width:38px;height:38px;border-radius:12px;
+      border:1px solid #32374b;background:#151722;color:#fff;
+      cursor:pointer;font-size:22px;z-index:3;
+    }
+    .detail-top{display:flex;gap:17px;padding-right:38px}
+    .detail-icon{
+      width:116px;height:116px;flex:0 0 auto;
+      object-fit:cover;border-radius:22px;background:#0c0e16;border:1px solid #30354a;
+    }
+    .eyebrow{font-size:9px;letter-spacing:.12em;color:#9197aa;font-weight:800}
+    .detail-top h2{margin:3px 0 4px;font-size:24px}
+    .muted{color:var(--muted)}
+    .detail-top p{margin:0;font-size:11px;line-height:1.6}
+
+    .block{margin-top:22px}
+    .block-title{font-weight:800;font-size:12px;margin-bottom:9px}
+    .login-list,.service-list{display:grid;gap:8px}
+    .login-item,.service-item{
+      border:1px solid #2d3247;background:#171a27;border-radius:14px;padding:12px;
+    }
+    .login-item{display:flex;gap:10px;align-items:flex-start}
+    .login-icon{font-size:18px;line-height:1}
+    .item-title{font-size:11px;font-weight:800}
+    .item-desc{font-size:9px;color:var(--muted);margin-top:2px;line-height:1.45}
+    .service-item{
+      display:flex;justify-content:space-between;align-items:center;gap:12px;cursor:pointer;
+    }
+    .service-item.selected{border-color:#737da9;background:#202438}
+    .service-price{color:var(--yellow);font-size:12px;font-weight:900;white-space:nowrap}
+    .radio-dot{
+      width:17px;height:17px;border:2px solid #6e748b;border-radius:50%;flex:0 0 auto;
+      display:grid;place-items:center;
+    }
+    .service-item.selected .radio-dot::after{
+      content:"";width:8px;height:8px;border-radius:50%;background:var(--red);
+    }
+    .service-main{display:flex;align-items:center;gap:10px;min-width:0}
+    .bottom-action{
+      position:sticky;bottom:-20px;margin:20px -20px -20px;
+      padding:14px 20px 20px;
+      background:linear-gradient(transparent 0,#11131e 18%,#11131e 100%);
+      display:flex;justify-content:space-between;align-items:end;gap:14px;
+    }
+    .sum small{display:block;color:var(--muted);font-size:9px}
+    .sum strong{font-size:22px;color:var(--yellow)}
+    .primary{
+      min-height:46px;border:0;border-radius:14px;background:var(--red);color:#fff;
+      padding:0 18px;font-weight:900;font-size:12px;cursor:pointer;
+    }
+    .primary:disabled{opacity:.5;cursor:not-allowed}
+    .secondary{
+      min-height:44px;border:1px solid #34394f;border-radius:14px;
+      background:#1a1d2b;color:#fff;padding:0 14px;font-weight:800;font-size:11px;cursor:pointer;
+    }
+
+    .order-head{
+      padding-right:44px;
+      display:flex;justify-content:space-between;align-items:start;gap:12px;
+    }
+    .order-head h2{margin:2px 0;font-size:21px}
+    .status-pill{
+      flex:0 0 auto;padding:6px 9px;border-radius:999px;
+      background:rgba(255,212,42,.12);border:1px solid rgba(255,212,42,.25);
+      color:#ffe274;font-size:9px;font-weight:800;
+    }
+    .status-pill.paid{background:rgba(24,189,134,.12);border-color:rgba(24,189,134,.28);color:#70e5be}
+    .order-summary{
+      display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px;
+    }
+    .summary-box{
+      border:1px solid #2e3348;border-radius:14px;background:#171a27;padding:12px;
+    }
+    .summary-box span{display:block;color:var(--muted);font-size:8px}
+    .summary-box strong{display:block;margin-top:3px;font-size:12px;word-break:break-word}
+
+    .payment-box{
+      margin-top:14px;border:1px solid #34394f;border-radius:18px;
+      background:#1b1e2e;padding:16px;text-align:center;
+    }
+    .payment-amount{font-size:30px;font-weight:900;color:var(--yellow);margin:4px 0}
+    .payment-box p{font-size:10px;line-height:1.6;color:var(--muted);margin:6px auto 12px;max-width:440px}
+    .payment-note{
+      border-radius:12px;padding:10px;background:#121520;color:#cfd3dd;font-size:9px;line-height:1.55;
+    }
+    .action-row{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+
+    .request-panel{margin-top:16px;border-top:1px solid #2a2f43;padding-top:16px}
+    .request-panel[hidden]{display:none}
+    .field{display:grid;gap:6px;margin-top:12px}
+    .field label{font-size:10px;color:#d5d8e1;font-weight:700}
+    .field input,.field select,.field textarea{
+      width:100%;min-height:46px;
+      border:1px solid #32374d;border-radius:13px;
+      background:#10121b;color:#fff;outline:0;padding:10px 12px;
+    }
+    .field textarea{min-height:92px;resize:vertical}
+    .hint{font-size:8px;color:#82889b;line-height:1.45}
+    .message{
+      margin-top:12px;padding:10px 12px;border-radius:12px;
+      font-size:10px;border:1px solid #31364a;background:#161925;
+    }
+    .message.success{color:#72e6bf;border-color:rgba(24,189,134,.3)}
+    .message.error{color:#ff9ea2;border-color:rgba(239,47,54,.3)}
+
+    @media(max-width:980px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    @media(max-width:720px){
+      .shell{width:min(100% - 20px,1240px)}
+      .topbar-inner{min-height:70px}
+      .brand small{display:none}
+      .main{padding-top:18px}
+      .toolbar{grid-template-columns:1fr 150px}
+      .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+      .detail-icon{width:92px;height:92px;border-radius:18px}
+      .detail-top h2{font-size:20px}
+      .dialog{padding:17px;border-radius:22px}
+      .bottom-action{margin:18px -17px -17px;padding:14px 17px 17px}
+    }
+    @media(max-width:470px){
+      .toolbar{grid-template-columns:1fr 132px;gap:8px}
+      .control{min-height:48px;padding:0 12px}
+      .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .cover{aspect-ratio:1/1}
+      .card-body{padding:11px}
+      .game-title{font-size:11px}
+      .game-desc{font-size:8px;height:27px}
+      .badge{font-size:8px;min-height:23px;padding:0 6px}
+      .card-footer{margin-top:11px;padding-top:10px}
+      .price{font-size:15px}
+      .card-cta{font-size:0;padding:7px 9px}
+      .card-cta::after{content:"ดู →";font-size:9px}
+      .detail-top{display:grid}
+      .detail-icon{width:86px;height:86px}
+      .order-summary{grid-template-columns:1fr}
+      .bottom-action{align-items:stretch}
+      .bottom-action .primary{flex:1}
+    }
+
+    /* =========================================================
+       V4 PREMIUM EFFECTS — no external JS library
+       ========================================================= */
+
+    :root{
+      --mx:50vw;
+      --my:25vh;
+      --scroll-progress:0%;
+      --ease-out:cubic-bezier(.16,1,.3,1);
+    }
+
+    body{
+      overflow-x:hidden;
+      isolation:isolate;
+    }
+
+    /* Animated ambient backdrop */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      z-index:-4;
+      pointer-events:none;
+      background:
+        linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
+      background-size:38px 38px;
+      mask-image:linear-gradient(to bottom,rgba(0,0,0,.85),transparent 82%);
+      opacity:.5;
+    }
+
+    .ambient{
+      position:fixed;
+      inset:0;
+      z-index:-3;
+      overflow:hidden;
+      pointer-events:none;
+    }
+    .ambient-orb{
+      position:absolute;
+      width:42vw;
+      max-width:620px;
+      aspect-ratio:1;
+      border-radius:50%;
+      filter:blur(80px);
+      opacity:.13;
+      will-change:transform;
+      animation:orbDrift 16s ease-in-out infinite alternate;
+    }
+    .ambient-orb.a{
+      left:-14vw;
+      top:-12vw;
+      background:#ff2438;
+    }
+    .ambient-orb.b{
+      right:-18vw;
+      top:15vh;
+      background:#7048ff;
+      animation-duration:21s;
+      animation-direction:alternate-reverse;
+    }
+    .ambient-orb.c{
+      left:35vw;
+      bottom:-28vw;
+      background:#0ad6ac;
+      animation-duration:24s;
+    }
+
+    @keyframes orbDrift{
+      from{transform:translate3d(-2%,0,0) scale(.94)}
+      to{transform:translate3d(7%,6%,0) scale(1.08)}
+    }
+
+    /* Desktop mouse spotlight */
+    .cursor-glow{
+      position:fixed;
+      left:0;top:0;
+      width:560px;height:560px;
+      border-radius:50%;
+      z-index:-2;
+      pointer-events:none;
+      transform:translate3d(calc(var(--mx) - 280px),calc(var(--my) - 280px),0);
+      background:radial-gradient(circle,rgba(112,72,255,.10),rgba(239,47,54,.035) 35%,transparent 68%);
+      filter:blur(10px);
+      transition:opacity .25s ease;
+      opacity:0;
+      will-change:transform;
+    }
+    body.has-fine-pointer .cursor-glow{opacity:1}
+
+    /* Scroll progress */
+    .scroll-progress{
+      position:fixed;
+      left:0;right:0;top:0;
+      height:3px;
+      z-index:120;
+      pointer-events:none;
+      background:rgba(255,255,255,.02);
+    }
+    .scroll-progress::after{
+      content:"";
+      display:block;
+      height:100%;
+      width:var(--scroll-progress);
+      background:linear-gradient(90deg,#ff2f3b,#ff8a27,#8a5cff);
+      box-shadow:0 0 18px rgba(255,70,76,.55);
+      transition:width .08s linear;
+    }
+
+    /* Topbar glass + live beam */
+    .topbar{
+      box-shadow:0 10px 30px rgba(0,0,0,.14);
+    }
+    .topbar::after{
+      content:"";
+      position:absolute;
+      left:0;right:0;bottom:-1px;
+      height:1px;
+      background:linear-gradient(90deg,transparent,rgba(255,65,72,.8),rgba(121,82,255,.7),transparent);
+      background-size:180% 100%;
+      animation:beamSlide 6s linear infinite;
+      opacity:.5;
+    }
+    @keyframes beamSlide{to{background-position:180% 0}}
+
+    .brand-icon{
+      position:relative;
+      overflow:hidden;
+      animation:brandFloat 4s ease-in-out infinite;
+    }
+    .brand-icon::after{
+      content:"";
+      position:absolute;
+      inset:-30%;
+      background:linear-gradient(110deg,transparent 35%,rgba(255,255,255,.55) 50%,transparent 65%);
+      transform:translateX(-130%) rotate(12deg);
+      animation:brandShine 5s ease-in-out infinite;
+    }
+    @keyframes brandFloat{
+      0%,100%{transform:translateY(0) rotate(-1deg)}
+      50%{transform:translateY(-3px) rotate(2deg)}
+    }
+    @keyframes brandShine{
+      0%,65%{transform:translateX(-130%) rotate(12deg)}
+      86%,100%{transform:translateX(130%) rotate(12deg)}
+    }
+
+    #apiIndicator.green{
+      position:relative;
+      overflow:visible;
+      box-shadow:0 0 0 0 rgba(24,189,134,.28);
+      animation:onlinePulse 2.4s ease-out infinite;
+    }
+    #apiIndicator.green::before{
+      content:"";
+      width:6px;height:6px;border-radius:50%;
+      background:#5df0bd;
+      box-shadow:0 0 12px #5df0bd;
+    }
+    @keyframes onlinePulse{
+      0%{box-shadow:0 0 0 0 rgba(24,189,134,.25)}
+      65%,100%{box-shadow:0 0 0 11px rgba(24,189,134,0)}
+    }
+
+    /* Inputs / controls */
+    .control{
+      position:relative;
+      overflow:hidden;
+      transition:border-color .25s ease,box-shadow .25s ease,transform .25s var(--ease-out);
+    }
+    .control::before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      border-radius:inherit;
+      background:linear-gradient(110deg,transparent 20%,rgba(255,255,255,.08),transparent 80%);
+      transform:translateX(-120%);
+      transition:transform .7s var(--ease-out);
+      pointer-events:none;
+    }
+    .control:hover::before{transform:translateX(120%)}
+    .control:focus-within{
+      transform:translateY(-1px);
+      border-color:rgba(114,98,255,.55);
+      box-shadow:0 0 0 3px rgba(114,98,255,.09),0 14px 30px rgba(0,0,0,.18);
+    }
+
+    /* Category chips */
+    .cat-btn{
+      position:relative;
+      overflow:hidden;
+      transition:transform .2s var(--ease-out),border-color .2s ease,background .2s ease,box-shadow .2s ease;
+    }
+    .cat-btn:hover{
+      transform:translateY(-2px);
+      border-color:#4d536c;
+      box-shadow:0 8px 22px rgba(0,0,0,.18);
+    }
+    .cat-btn.active{
+      box-shadow:0 10px 28px rgba(239,47,54,.22),inset 0 1px rgba(255,255,255,.14);
+    }
+
+    /* Reusable ripple */
+    .ripple-dot{
+      position:absolute;
+      width:12px;height:12px;
+      border-radius:50%;
+      transform:translate(-50%,-50%) scale(0);
+      background:rgba(255,255,255,.34);
+      pointer-events:none;
+      animation:rippleBurst .62s ease-out forwards;
+      z-index:8;
+    }
+    @keyframes rippleBurst{
+      to{transform:translate(-50%,-50%) scale(14);opacity:0}
+    }
+
+    /* Game cards: gradient border + 3D tilt + glare */
+    .grid{perspective:1200px}
+
+    .card{
+      --rx:0deg;
+      --ry:0deg;
+      --lift:0px;
+      --glare-x:50%;
+      --glare-y:35%;
+      position:relative;
+      transform-style:preserve-3d;
+      transform:perspective(900px) translateY(var(--lift)) rotateX(var(--rx)) rotateY(var(--ry));
+      transition:
+        transform .25s var(--ease-out),
+        border-color .25s ease,
+        box-shadow .25s ease,
+        opacity .5s ease;
+      will-change:transform;
+      isolation:isolate;
+    }
+    .card:hover{
+      --lift:-6px;
+      transform:perspective(900px) translateY(var(--lift)) rotateX(var(--rx)) rotateY(var(--ry));
+      box-shadow:
+        0 25px 60px rgba(0,0,0,.42),
+        0 0 0 1px rgba(255,255,255,.03) inset,
+        0 0 35px rgba(113,82,255,.07);
+    }
+    .card::before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      border-radius:inherit;
+      padding:1px;
+      z-index:4;
+      pointer-events:none;
+      background:linear-gradient(
+        130deg,
+        rgba(255,76,82,.0),
+        rgba(255,76,82,.55),
+        rgba(121,90,255,.46),
+        rgba(21,211,166,.22),
+        rgba(255,76,82,.0)
+      );
+      background-size:240% 240%;
+      opacity:0;
+      transition:opacity .25s ease;
+      animation:borderFlow 5s linear infinite;
+      -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite:xor;
+      mask-composite:exclude;
+    }
+    .card:hover::before{opacity:.7}
+    @keyframes borderFlow{to{background-position:220% 220%}}
+
+    .card-glare{
+      position:absolute;
+      inset:0;
+      z-index:5;
+      pointer-events:none;
+      border-radius:inherit;
+      opacity:0;
+      background:radial-gradient(
+        circle at var(--glare-x) var(--glare-y),
+        rgba(255,255,255,.17),
+        rgba(255,255,255,.055) 16%,
+        transparent 42%
+      );
+      mix-blend-mode:screen;
+      transition:opacity .2s ease;
+    }
+    .card:hover .card-glare{opacity:1}
+
+    .card-scan{
+      position:absolute;
+      left:0;right:0;top:-30%;
+      height:24%;
+      z-index:3;
+      pointer-events:none;
+      background:linear-gradient(to bottom,transparent,rgba(255,255,255,.035),transparent);
+      transform:skewY(-4deg);
+      opacity:0;
+    }
+    .card:hover .card-scan{
+      opacity:1;
+      animation:scanCard 1.3s ease-out;
+    }
+    @keyframes scanCard{to{top:112%}}
+
+    .cover img{
+      transition:transform .65s var(--ease-out),filter .35s ease;
+      will-change:transform;
+    }
+    .card:hover .cover img{
+      transform:scale(1.065);
+      filter:saturate(1.08) contrast(1.03);
+    }
+
+    .corner.right:not(.paused):not(.closed){
+      box-shadow:0 0 16px rgba(24,189,134,.16);
+    }
+
+    .game-title,
+    .price,
+    .card-cta,
+    .badges,
+    .sold-count{
+      transform:translateZ(18px);
+    }
+
+    .sold-count{
+      display:flex;
+      align-items:center;
+      gap:5px;
+    }
+    .sold-number{
+      display:inline-block;
+      min-width:.7em;
+      color:#fff;
+      text-shadow:0 0 16px rgba(255,255,255,.12);
+    }
+
+    /* Reveal on scroll */
+    .reveal-card{
+      opacity:0;
+      transform:perspective(900px) translateY(24px) scale(.975);
+    }
+    .reveal-card.is-visible{
+      opacity:1;
+      transform:perspective(900px) translateY(var(--lift)) rotateX(var(--rx)) rotateY(var(--ry)) scale(1);
+    }
+
+    /* CTA/button shine */
+    .primary,.secondary,.card-cta{
+      position:relative;
+      overflow:hidden;
+      isolation:isolate;
+      transition:transform .18s var(--ease-out),box-shadow .2s ease,filter .2s ease;
+    }
+    .primary::after,.secondary::after,.card-cta::after{
+      content:"";
+      position:absolute;
+      top:-80%;bottom:-80%;
+      width:42%;
+      left:-65%;
+      z-index:-1;
+      transform:skewX(-22deg);
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);
+      transition:left .55s var(--ease-out);
+    }
+    .primary:hover::after,.secondary:hover::after,.card-cta:hover::after{left:125%}
+    .primary:hover,.secondary:hover{transform:translateY(-2px)}
+    .primary:hover{
+      filter:brightness(1.06);
+      box-shadow:0 12px 30px rgba(239,47,54,.25);
+    }
+    .primary:active,.secondary:active{transform:translateY(0) scale(.98)}
+
+    /* Service / login tiles */
+    .login-item,.service-item{
+      transition:transform .22s var(--ease-out),border-color .22s ease,background .22s ease,box-shadow .22s ease;
+    }
+    .login-item:hover,.service-item:hover{
+      transform:translateY(-2px);
+      border-color:#414861;
+      box-shadow:0 9px 24px rgba(0,0,0,.15);
+    }
+    .service-item.selected{
+      animation:selectedPulse .34s var(--ease-out);
+      box-shadow:0 0 0 1px rgba(239,47,54,.15) inset,0 10px 28px rgba(0,0,0,.16);
+    }
+    @keyframes selectedPulse{
+      0%{transform:scale(.985)}
+      100%{transform:scale(1)}
+    }
+    .radio-dot{
+      transition:border-color .2s ease,transform .2s var(--ease-out);
+    }
+    .service-item.selected .radio-dot{
+      transform:scale(1.08);
+      border-color:#ff6670;
+    }
+
+    .price-pop{animation:pricePop .38s var(--ease-out)}
+    @keyframes pricePop{
+      0%{transform:scale(.82);opacity:.45}
+      65%{transform:scale(1.12)}
+      100%{transform:scale(1);opacity:1}
+    }
+
+    /* Modals */
+    .modal:not([hidden]) .backdrop{animation:fadeBackdrop .25s ease both}
+    .modal:not([hidden]) .dialog{animation:modalPop .42s var(--ease-out) both}
+    @keyframes fadeBackdrop{from{opacity:0}to{opacity:1}}
+    @keyframes modalPop{
+      from{opacity:0;transform:translateY(20px) scale(.965)}
+      to{opacity:1;transform:translateY(0) scale(1)}
+    }
+    .dialog{
+      overflow-x:hidden;
+    }
+    .dialog::before{
+      content:"";
+      position:absolute;
+      width:260px;height:260px;
+      right:-130px;top:-140px;
+      border-radius:50%;
+      background:radial-gradient(circle,rgba(118,88,255,.14),transparent 68%);
+      pointer-events:none;
+    }
+    .detail-icon{
+      box-shadow:0 18px 40px rgba(0,0,0,.25);
+      animation:detailIconFloat 5s ease-in-out infinite;
+    }
+    @keyframes detailIconFloat{
+      0%,100%{transform:translateY(0)}
+      50%{transform:translateY(-4px)}
+    }
+
+    /* Skeleton loading */
+    .loading-grid{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:15px;
+    }
+    .skeleton-card{
+      height:330px;
+      border-radius:20px;
+      border:1px solid #24293a;
+      background:
+        linear-gradient(100deg,transparent 35%,rgba(255,255,255,.045) 50%,transparent 65%),
+        #11131d;
+      background-size:220% 100%;
+      animation:skeletonMove 1.35s linear infinite;
+    }
+    @keyframes skeletonMove{to{background-position:-220% 0}}
+
+    /* Toast */
+    .toast-root{
+      position:fixed;
+      left:50%;bottom:max(22px,env(safe-area-inset-bottom));
+      transform:translateX(-50%);
+      z-index:160;
+      display:grid;
+      gap:8px;
+      width:min(92vw,430px);
+      pointer-events:none;
+    }
+    .toast{
+      display:flex;align-items:flex-start;gap:10px;
+      padding:12px 14px;
+      border:1px solid #363b50;
+      border-radius:15px;
+      background:rgba(18,20,31,.94);
+      box-shadow:0 18px 55px rgba(0,0,0,.42);
+      backdrop-filter:blur(14px);
+      color:#f7f7fa;
+      font-size:10px;line-height:1.45;
+      animation:toastIn .4s var(--ease-out) both;
+      pointer-events:auto;
+    }
+    .toast.success{border-color:rgba(24,189,134,.35)}
+    .toast.error{border-color:rgba(239,47,54,.35)}
+    .toast.out{animation:toastOut .3s ease forwards}
+    @keyframes toastIn{
+      from{opacity:0;transform:translateY(18px) scale(.97)}
+      to{opacity:1;transform:translateY(0) scale(1)}
+    }
+    @keyframes toastOut{
+      to{opacity:0;transform:translateY(10px) scale(.98)}
+    }
+
+    /* Floating scroll-to-top */
+    .scroll-top{
+      position:fixed;
+      right:max(16px,env(safe-area-inset-right));
+      bottom:max(18px,env(safe-area-inset-bottom));
+      width:44px;height:44px;
+      border:1px solid #353a4e;
+      border-radius:14px;
+      background:rgba(18,20,31,.86);
+      color:#fff;
+      backdrop-filter:blur(12px);
+      box-shadow:0 12px 30px rgba(0,0,0,.25);
+      z-index:55;
+      cursor:pointer;
+      opacity:0;
+      visibility:hidden;
+      transform:translateY(10px);
+      transition:.25s var(--ease-out);
+    }
+    .scroll-top.show{
+      opacity:1;visibility:visible;transform:translateY(0);
+    }
+
+    /* Confetti */
+    .confetti-piece{
+      position:fixed;
+      left:50%;top:44%;
+      width:8px;height:13px;
+      border-radius:2px;
+      z-index:220;
+      pointer-events:none;
+      animation:confettiFly var(--dur,1.2s) var(--ease-out) forwards;
+    }
+    @keyframes confettiFly{
+      0%{opacity:1;transform:translate(-50%,-50%) rotate(0) scale(1)}
+      100%{
+        opacity:0;
+        transform:
+          translate(
+            calc(-50% + var(--dx)),
+            calc(-50% + var(--dy))
+          )
+          rotate(var(--rot))
+          scale(.7);
+      }
+    }
+
+    /* Paid flash */
+    .paid-flash{
+      animation:paidFlash .65s var(--ease-out);
+    }
+    @keyframes paidFlash{
+      0%{box-shadow:0 0 0 0 rgba(24,189,134,.0)}
+      45%{box-shadow:0 0 0 8px rgba(24,189,134,.12),0 0 46px rgba(24,189,134,.18)}
+      100%{box-shadow:0 0 0 0 rgba(24,189,134,0)}
+    }
+
+    /* Mobile tuning */
+    @media(max-width:980px){
+      .loading-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+    }
+    @media(max-width:720px){
+      .loading-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+      .ambient-orb{filter:blur(60px);opacity:.10}
+      .cursor-glow{display:none}
+      .card{
+        transform:none !important;
+        transform-style:flat;
+      }
+      .card:hover{transform:translateY(-2px) !important}
+      .card-glare{display:none}
+      .game-title,.price,.card-cta,.badges,.sold-count{transform:none}
+    }
+
+    @media(max-width:470px){
+      .card-cta{font-size:9px !important}
+    }
+
+    @media(prefers-reduced-motion:reduce){
+      *,*::before,*::after{
+        scroll-behavior:auto !important;
+        animation-duration:.001ms !important;
+        animation-iteration-count:1 !important;
+        transition-duration:.001ms !important;
+      }
+      .cursor-glow{display:none}
+      .card{transform:none !important}
+    }
+
+  </style>
+</head>
+<body>
+
+  <div class="scroll-progress" aria-hidden="true"></div>
+  <div class="ambient" aria-hidden="true">
+    <div class="ambient-orb a"></div>
+    <div class="ambient-orb b"></div>
+    <div class="ambient-orb c"></div>
+  </div>
+  <div id="cursorGlow" class="cursor-glow" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <div class="brand">
+        <div class="brand-icon">🎮</div>
+        <div>
+          <strong>GAME SERVICE</strong>
+          <small>Premium WebShop • เลือกเกม • ชำระเงิน • ส่งคำขอ</small>
+        </div>
+      </div>
+      <div id="apiIndicator" class="badge gray">กำลังเชื่อมต่อ...</div>
+    </div>
+  </header>
+
+  <main class="shell main">
+    <div class="toolbar">
+      <div class="control">
+        <span class="ico">⌕</span>
+        <input id="searchInput" type="search" placeholder="ค้นหาเกม...">
+      </div>
+      <div class="control">
+        <select id="sortSelect" aria-label="เรียงลำดับ">
+          <option value="recommended">เรียง: แนะนำ</option>
+          <option value="low">ราคาต่ำ → สูง</option>
+          <option value="high">ราคาสูง → ต่ำ</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="categoryStrip" class="category-strip"></div>
+
+    <div class="section-head">
+      <div>
+        <h1>รายการเกม</h1>
+        <p>กดการ์ดเพื่อดูบริการและระบบบัญชีที่รองรับ</p>
+      </div>
+      <div id="countText"></div>
+    </div>
+
+    <div id="loading">
+      <div class="loading-grid" aria-label="กำลังโหลดข้อมูล">
+        <div class="skeleton-card"></div><div class="skeleton-card"></div>
+        <div class="skeleton-card"></div><div class="skeleton-card"></div>
+        <div class="skeleton-card"></div><div class="skeleton-card"></div>
+        <div class="skeleton-card"></div><div class="skeleton-card"></div>
+      </div>
+    </div>
+    <div id="errorBox" class="state error" hidden></div>
+    <section id="gameGrid" class="grid"></section>
+  </main>
+
+  <!-- Detail -->
+  <div id="detailModal" class="modal" hidden>
+    <div class="backdrop" data-close-detail></div>
+    <section class="dialog" role="dialog" aria-modal="true">
+      <button class="close" type="button" data-close-detail>×</button>
+
+      <div class="detail-top">
+        <img id="detailIcon" class="detail-icon" alt="">
+        <div>
+          <div id="detailCategory" class="eyebrow"></div>
+          <h2 id="detailName"></h2>
+          <p id="detailDescription" class="muted"></p>
+          <div id="detailBadges" class="badges"></div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">ระบบบัญชี / การซิงก์</div>
+        <div id="loginList" class="login-list"></div>
+      </div>
+
+      <div class="block">
+        <div class="block-title">เลือกบริการ</div>
+        <div id="serviceList" class="service-list"></div>
+      </div>
+
+      <div class="bottom-action">
+        <div class="sum">
+          <small>ยอดชำระ</small>
+          <strong id="selectedPrice">-</strong>
+        </div>
+        <button id="createOrderBtn" class="primary" type="button" disabled>สร้างออเดอร์</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Order / Payment -->
+  <div id="orderModal" class="modal" hidden>
+    <div class="backdrop" data-close-order></div>
+    <section class="dialog" role="dialog" aria-modal="true">
+      <button class="close" type="button" data-close-order>×</button>
+
+      <div class="order-head">
+        <div>
+          <div class="eyebrow">ORDER / PAYMENT</div>
+          <h2 id="orderGame">ออเดอร์</h2>
+          <div id="orderService" class="muted" style="font-size:10px"></div>
+        </div>
+        <div id="paymentStatusPill" class="status-pill">รอชำระเงิน</div>
+      </div>
+
+      <div class="order-summary">
+        <div class="summary-box">
+          <span>ORDER ID</span>
+          <strong id="orderIdText">-</strong>
+        </div>
+        <div class="summary-box">
+          <span>บริการ</span>
+          <strong id="orderServiceText">-</strong>
+        </div>
+      </div>
+
+      <div class="payment-box">
+        <div class="eyebrow">ยอดชำระ</div>
+        <div id="orderAmount" class="payment-amount">0 ฿</div>
+        <p>
+          ชำระเงินตามช่องทางที่ร้านแจ้งไว้ แล้วรอแอดมินยืนยันการชำระเงิน
+          เมื่อระบบพบสถานะ <b>paid</b> ฟอร์มส่งคำขอจะเปิดให้อัตโนมัติ
+        </p>
+        <div class="payment-note">
+          เวอร์ชันนี้ใช้การยืนยันการชำระเงินจากฝั่งแอดมินก่อน
+          ระบบจะไม่อนุญาตให้สร้าง Request หาก Order ยังไม่เป็น paid
+        </div>
+        <div class="action-row">
+          <button id="checkPaymentBtn" class="secondary" type="button">ตรวจสอบสถานะ</button>
+        </div>
+      </div>
+
+      <div id="requestPanel" class="request-panel" hidden>
+        <div class="block-title">✅ ชำระเงินสำเร็จ — ส่งข้อมูลสำหรับดำเนินงาน</div>
+
+        <form id="requestForm">
+          <div class="field">
+            <label for="loginMethodSelect">ระบบบัญชี / การซิงก์</label>
+            <select id="loginMethodSelect" required></select>
+          </div>
+
+          <div class="field">
+            <label id="accountLabel" for="accountRef">ข้อมูลบัญชี / Player ID</label>
+            <input id="accountRef" autocomplete="off" maxlength="140" required>
+            <div id="accountHint" class="hint"></div>
+          </div>
+
+          <div class="field">
+            <label for="customerName">ชื่อ / ชื่อเล่น</label>
+            <input id="customerName" maxlength="80" required>
+          </div>
+
+          <div class="field">
+            <label for="contact">ช่องทางติดต่อ</label>
+            <input id="contact" maxlength="120" placeholder="LINE / Telegram / Facebook / Discord" required>
+          </div>
+
+          <div class="field">
+            <label for="note">รายละเอียดเพิ่มเติม</label>
+            <textarea id="note" maxlength="700" placeholder="รายละเอียดที่ต้องการแจ้ง"></textarea>
+          </div>
+
+          <div id="requestMessage" class="message" hidden></div>
+
+          <button id="submitRequestBtn" class="primary" style="width:100%;margin-top:12px" type="submit">
+            ส่งคำขอ
+          </button>
+        </form>
+      </div>
+    </section>
+  </div>
+
+
+  <div id="toastRoot" class="toast-root" aria-live="polite"></div>
+  <button id="scrollTopBtn" class="scroll-top" type="button" aria-label="กลับขึ้นด้านบน">↑</button>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbzG4srZ2mmottO1zsTyTWB2EYOlvKQwaDXHY6sZJfsXY2JmEeuRYf9KQ_LrzETErLI3/exec";
+    const POLL_MS = 5000;
+
+    let allGames = [];
+    let filteredGames = [];
+    let selectedCategory = "ทั้งหมด";
+    let selectedGame = null;
+    let selectedService = null;
+    let currentOrder = null;
+    let pollTimer = null;
+    let lastPaymentStatus = "";
+    let revealObserver = null;
+
+    const REDUCED_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const FINE_POINTER = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+    const $ = s => document.querySelector(s);
+    const grid = $("#gameGrid");
+
+    document.addEventListener("DOMContentLoaded", () => {
+      $("#searchInput").addEventListener("input", applyFilters);
+      $("#sortSelect").addEventListener("change", applyFilters);
+      $("#createOrderBtn").addEventListener("click", createOrder);
+      $("#checkPaymentBtn").addEventListener("click", () => checkPaymentStatus(true));
+      $("#requestForm").addEventListener("submit", submitRequest);
+      $("#loginMethodSelect").addEventListener("change", updateAccountField);
+
+      initPremiumEffects();
+
+      document.querySelectorAll("[data-close-detail]").forEach(el => el.onclick = closeDetail);
+      document.querySelectorAll("[data-close-order]").forEach(el => el.onclick = closeOrder);
+
+      document.addEventListener("keydown", e => {
+        if (e.key === "Escape") {
+          closeDetail();
+          closeOrder();
+        }
+      });
+
+      loadGames();
+    });
+
+    async function apiGet(params) {
+      const url = new URL(API_URL);
+      Object.entries(params).forEach(([k,v]) => url.searchParams.set(k, v));
+      url.searchParams.set("_t", Date.now());
+      const res = await fetch(url.toString(), { method:"GET", redirect:"follow", cache:"no-store" });
+      return await res.json();
+    }
+
+    async function apiPost(payload) {
+      const res = await fetch(API_URL, {
+        method:"POST",
+        redirect:"follow",
+        headers:{ "Content-Type":"text/plain;charset=utf-8" },
+        body:JSON.stringify(payload)
+      });
+      return await res.json();
+    }
+
+    async function loadGames() {
+      $("#loading").hidden = false;
+      $("#errorBox").hidden = true;
+
+      try {
+        const data = await apiGet({action:"games"});
+        if (!data.ok) throw new Error(data.message || data.error || "API error");
+
+        allGames = Array.isArray(data.games) ? data.games : [];
+        $("#apiIndicator").className = "badge green";
+        $("#apiIndicator").textContent = "ระบบออนไลน์";
+        buildCategories();
+        applyFilters();
+      } catch (err) {
+        console.error(err);
+        $("#apiIndicator").className = "badge gray";
+        $("#apiIndicator").textContent = "เชื่อมต่อไม่ได้";
+        $("#errorBox").hidden = false;
+        $("#errorBox").textContent = "โหลดข้อมูลไม่สำเร็จ กรุณาตรวจสอบ Apps Script Web App";
+      } finally {
+        $("#loading").hidden = true;
+      }
+    }
+
+    function buildCategories() {
+      const cats = ["ทั้งหมด", ...new Set(allGames.map(g => g.category).filter(Boolean))];
+      const strip = $("#categoryStrip");
+      strip.innerHTML = "";
+
+      cats.forEach(cat => {
+        const btn = document.createElement("button");
+        btn.className = "cat-btn" + (cat === selectedCategory ? " active" : "");
+        btn.type = "button";
+        btn.textContent = cat === "ทั้งหมด" ? "▰ ทั้งหมด" : cat;
+        btn.onclick = () => {
+          selectedCategory = cat;
+          [...strip.children].forEach(x => x.classList.remove("active"));
+          btn.classList.add("active");
+          applyFilters();
+        };
+        btn.addEventListener("pointerdown", makeRipple);
+        strip.appendChild(btn);
+      });
+    }
+
+    function applyFilters() {
+      const q = $("#searchInput").value.trim().toLowerCase();
+      const sort = $("#sortSelect").value;
+
+      filteredGames = allGames.filter(g => {
+        const categoryOk = selectedCategory === "ทั้งหมด" || g.category === selectedCategory;
+        const text = [
+          g.name, g.category, g.description, g.packageName,
+          ...(g.services || []).map(s => s.name),
+          ...(g.loginMethods || []).map(m => m.label)
+        ].join(" ").toLowerCase();
+
+        return categoryOk && text.includes(q);
+      });
+
+      if (sort === "low") filteredGames.sort((a,b) => num(a.priceFrom) - num(b.priceFrom));
+      if (sort === "high") filteredGames.sort((a,b) => num(b.priceFrom) - num(a.priceFrom));
+      if (sort === "recommended") filteredGames.sort((a,b) => num(a.sortOrder || 9999) - num(b.sortOrder || 9999));
+
+      renderGames();
+    }
+
+    function renderGames() {
+      grid.innerHTML = "";
+      $("#countText").textContent = `${filteredGames.length} เกม`;
+
+      if (!filteredGames.length) {
+        grid.innerHTML = '<div class="state">ไม่พบเกมที่ตรงกับคำค้นหา</div>';
+        return;
+      }
+
+      filteredGames.forEach(game => {
+        if (String(game.status || "").toLowerCase() === "hidden") return;
+
+        const status = String(game.status || "active").toLowerCase();
+        const card = document.createElement("article");
+        card.className = `card reveal-card ${status === "paused" ? "paused" : status === "closed" ? "closed" : ""}`;
+        card.dataset.sold = String(num(game.soldCount));
+
+        const icon = safeIcon(game.iconUrl, game.name);
+        const loginBadges = (game.loginMethods || []).slice(0,2).map(loginBadgeHtml).join("");
+        const mod = game.modMenu ? '<span class="badge orange">⚙ Mod Menu</span>' : "";
+        const zygisk = game.zygisk ? '<span class="badge green">✓ Zygisk</span>' : '<span class="badge gray">No Zygisk</span>';
+        const ctaText =
+          status === "paused" ? "หยุดชั่วคราว" :
+          status === "closed" ? "ปิดขาย" :
+          "รายละเอียด →";
+        const ctaClass =
+          status === "paused" ? "paused" :
+          status === "closed" ? "closed" : "";
+
+        card.innerHTML = `
+          <button class="card-button" type="button">
+            <div class="card-glare"></div>
+            <div class="card-scan"></div>
+            <div class="cover">
+              <img src="${escapeAttr(icon)}" alt="${escapeAttr(game.name || "Game")}" loading="lazy">
+              <span class="corner left">${escapeHtml(game.category || "GAME")}</span>
+              <span class="corner right ${statusClass(game.status)}">${statusText(game.status)}</span>
+            </div>
+            <div class="card-body">
+              <div class="game-title">${escapeHtml(game.name || "Unnamed Game")}</div>
+              <div class="game-desc">${escapeHtml(game.description || "")}</div>
+              <div class="sold-count">🛒 มีคนซื้อแล้ว <span class="sold-number" data-target="${num(game.soldCount)}">0</span> ครั้ง</div>
+              <div class="badges">
+                ${zygisk}${mod}${loginBadges}
+              </div>
+              <div class="card-footer">
+                <div>
+                  <div class="price-label">เริ่มต้น</div>
+                  <div class="price">${money(game.priceFrom)}</div>
+                </div>
+                <div class="card-cta ${ctaClass}">${ctaText}</div>
+              </div>
+            </div>
+          </button>
+        `;
+
+        card.querySelector("img").addEventListener("error", e => {
+          e.currentTarget.src = fallbackIcon(game.name);
+        });
+
+        const cardBtn = card.querySelector(".card-button");
+        cardBtn.onclick = () => openDetail(game);
+        cardBtn.addEventListener("pointerdown", makeRipple);
+
+        grid.appendChild(card);
+        prepareCardEffects(card);
+      });
+
+      observeCards();
+    }
+
+    function openDetail(game) {
+      selectedGame = game;
+      selectedService = null;
+
+      $("#detailIcon").src = safeIcon(game.iconUrl, game.name);
+      $("#detailIcon").onerror = e => e.currentTarget.src = fallbackIcon(game.name);
+      $("#detailName").textContent = game.name || "";
+      $("#detailCategory").textContent = game.category || "GAME";
+      $("#detailDescription").textContent = game.description || "";
+
+      const badges = $("#detailBadges");
+      badges.innerHTML = "";
+      badges.appendChild(badge(game.zygisk ? "✓ รองรับ Zygisk" : "ไม่รองรับ Zygisk", game.zygisk ? "green" : "gray"));
+      badges.appendChild(badge(game.modMenu ? "⚙ มี Mod Menu" : "ไม่มี Mod Menu", game.modMenu ? "orange" : "gray"));
+      badges.appendChild(badge(`🛒 ซื้อแล้ว ${num(game.soldCount).toLocaleString("th-TH")} ครั้ง`, "blue"));
+
+      const canOrder = String(game.status || "active").toLowerCase() === "active";
+
+      renderLoginMethods(game.loginMethods || []);
+      renderServices(game.services || [], canOrder);
+
+      $("#selectedPrice").textContent = "-";
+      $("#createOrderBtn").disabled = true;
+      $("#createOrderBtn").textContent =
+        String(game.status || "").toLowerCase() === "paused" ? "หยุดรับชั่วคราว" :
+        String(game.status || "").toLowerCase() === "closed" ? "ปิดขาย" :
+        "สร้างออเดอร์";
+      $("#detailModal").hidden = false;
+      document.body.style.overflow = "hidden";
+      requestAnimationFrame(() => $("#detailModal .dialog")?.focus?.());
+    }
+
+    function renderLoginMethods(methods) {
+      const box = $("#loginList");
+      box.innerHTML = "";
+
+      if (!methods.length) {
+        box.innerHTML = '<div class="state">ยังไม่ได้ระบุระบบบัญชีของเกมนี้</div>';
+        return;
+      }
+
+      methods.forEach(m => {
+        const el = document.createElement("div");
+        el.className = "login-item";
+        el.innerHTML = `
+          <div class="login-icon">${loginIcon(m.type)}</div>
+          <div>
+            <div class="item-title">${escapeHtml(m.label || m.type)}</div>
+            <div class="item-desc">${escapeHtml(m.description || "")}</div>
+          </div>
+        `;
+        box.appendChild(el);
+      });
+    }
+
+    function renderServices(services, canOrder = true) {
+      const box = $("#serviceList");
+      box.innerHTML = "";
+
+      const active = services.filter(s => s.active !== false);
+
+      if (!active.length) {
+        box.innerHTML = '<div class="state">เกมนี้ยังไม่มีบริการที่เปิดใช้งาน</div>';
+        return;
+      }
+
+      active.forEach(s => {
+        const el = document.createElement("div");
+        el.className = "service-item";
+        el.innerHTML = `
+          <div class="service-main">
+            <div class="radio-dot"></div>
+            <div>
+              <div class="item-title">${escapeHtml(s.name)}</div>
+              <div class="item-desc">${escapeHtml(s.description || "")}</div>
+            </div>
+          </div>
+          <div class="service-price">${money(s.price)}</div>
+        `;
+        if (!canOrder) {
+          el.style.opacity = ".58";
+          el.style.cursor = "not-allowed";
+        } else {
+          el.onclick = () => {
+            selectedService = s;
+            [...box.children].forEach(x => x.classList.remove("selected"));
+            el.classList.add("selected");
+            $("#selectedPrice").textContent = money(s.price);
+            restartAnimation($("#selectedPrice"), "price-pop");
+            $("#createOrderBtn").disabled = false;
+          };
+        }
+        box.appendChild(el);
+      });
+    }
+
+    async function createOrder() {
+      if (!selectedGame || !selectedService) return;
+
+      if (String(selectedGame.status || "active").toLowerCase() !== "active") {
+        showToast("เกมนี้ยังไม่เปิดรับออเดอร์", "error");
+        return;
+      }
+
+      const btn = $("#createOrderBtn");
+      btn.disabled = true;
+      btn.textContent = "กำลังสร้าง...";
+
+      try {
+        const data = await apiPost({
+          action:"createOrder",
+          gameId:selectedGame.id,
+          serviceId:selectedService.id
+        });
+
+        if (!data.ok) throw new Error(data.error || "CREATE_ORDER_FAILED");
+
+        currentOrder = data.order;
+        showToast(`สร้างออเดอร์ ${currentOrder.orderId} แล้ว`, "success");
+        closeDetail();
+        showOrder(currentOrder);
+      } catch (err) {
+        console.error(err);
+        showToast("สร้างออเดอร์ไม่สำเร็จ: " + err.message, "error");
+      } finally {
+        const canOrder = String(selectedGame?.status || "active").toLowerCase() === "active";
+        btn.textContent = canOrder ? "สร้างออเดอร์" : statusText(selectedGame?.status);
+        btn.disabled = !selectedService || !canOrder;
+      }
+    }
+
+    function showOrder(order) {
+      $("#orderGame").textContent = order.gameName || selectedGame?.name || "ออเดอร์";
+      $("#orderService").textContent = order.serviceName || "";
+      $("#orderIdText").textContent = order.orderId || "-";
+      $("#orderServiceText").textContent = order.serviceName || "-";
+      $("#orderAmount").textContent = money(order.amount);
+      $("#requestPanel").hidden = true;
+      lastPaymentStatus = String(order.paymentStatus || "waiting_payment").toLowerCase();
+      setPaymentStatus(order.paymentStatus || "waiting_payment");
+
+      fillLoginSelect();
+
+      $("#orderModal").hidden = false;
+      document.body.style.overflow = "hidden";
+      startPolling();
+    }
+
+    function fillLoginSelect() {
+      const select = $("#loginMethodSelect");
+      select.innerHTML = "";
+      const methods = selectedGame?.loginMethods || [];
+
+      if (!methods.length) {
+        const opt = document.createElement("option");
+        opt.value = "other";
+        opt.textContent = "อื่น ๆ";
+        select.appendChild(opt);
+      } else {
+        methods.forEach(m => {
+          const opt = document.createElement("option");
+          opt.value = m.type || m.id;
+          opt.dataset.id = m.id || "";
+          opt.textContent = `${loginIcon(m.type)} ${m.label || m.type}`;
+          select.appendChild(opt);
+        });
+      }
+
+      updateAccountField();
+    }
+
+    function updateAccountField() {
+      const type = $("#loginMethodSelect").value;
+      const label = $("#accountLabel");
+      const hint = $("#accountHint");
+      const input = $("#accountRef");
+
+      input.value = "";
+
+      if (type === "google") {
+        label.textContent = "Google Email ที่ผูกกับเกม";
+        input.placeholder = "example@gmail.com";
+        hint.textContent = "กรอกเฉพาะอีเมลเท่านั้น ห้ามกรอกรหัสผ่าน Google";
+      } else if (type === "game_id") {
+        label.textContent = "Game ID / Player ID";
+        input.placeholder = "กรอก ID ในเกม";
+        hint.textContent = "กรอกเฉพาะ ID ที่จำเป็นสำหรับงาน";
+      } else if (type === "create_id") {
+        label.textContent = "ชื่อ ID ที่ต้องการ";
+        input.placeholder = "ชื่อ ID ที่ต้องการ (ถ้ามี)";
+        hint.textContent = "ไม่ต้องกรอกรหัสผ่าน ระบบ/แอดมินจะติดต่อกลับหากต้องใช้ข้อมูลเพิ่มเติม";
+      } else {
+        label.textContent = "ข้อมูลบัญชี / Player ID";
+        input.placeholder = "กรอกข้อมูลที่จำเป็น";
+        hint.textContent = "หลีกเลี่ยงการส่งรหัสผ่านหรือข้อมูลลับ";
+      }
+    }
+
+    async function checkPaymentStatus(showMessage=false) {
+      if (!currentOrder?.orderId) return;
+
+      const btn = $("#checkPaymentBtn");
+      if (showMessage) {
+        btn.disabled = true;
+        btn.textContent = "กำลังตรวจ...";
+      }
+
+      try {
+        const data = await apiGet({
+          action:"orderStatus",
+          orderId:currentOrder.orderId
+        });
+
+        if (!data.ok) throw new Error(data.error || "ORDER_STATUS_FAILED");
+
+        currentOrder = {...currentOrder, ...data.order};
+        const newStatus = String(currentOrder.paymentStatus || "").toLowerCase();
+        setPaymentStatus(newStatus);
+
+        if (newStatus === "paid") {
+          $("#requestPanel").hidden = false;
+          stopPolling();
+
+          if (lastPaymentStatus !== "paid") {
+            celebratePaid();
+          }
+        }
+
+        lastPaymentStatus = newStatus;
+      } catch (err) {
+        console.error(err);
+        if (showMessage) showToast("ตรวจสอบสถานะไม่สำเร็จ: " + err.message, "error");
+      } finally {
+        if (showMessage) {
+          btn.disabled = false;
+          btn.textContent = "ตรวจสอบสถานะ";
+        }
+      }
+    }
+
+    function setPaymentStatus(status) {
+      const s = String(status || "").toLowerCase();
+      const pill = $("#paymentStatusPill");
+      pill.className = "status-pill";
+
+      if (s === "paid") {
+        pill.classList.add("paid");
+        pill.textContent = "ชำระแล้ว ✓";
+        $("#requestPanel").hidden = false;
+      } else if (s === "cancelled") {
+        pill.textContent = "ยกเลิก";
+      } else if (s === "expired") {
+        pill.textContent = "หมดเวลา";
+      } else {
+        pill.textContent = "รอชำระเงิน";
+      }
+    }
+
+    async function submitRequest(e) {
+      e.preventDefault();
+      if (!currentOrder?.orderId) return;
+
+      const btn = $("#submitRequestBtn");
+      const message = $("#requestMessage");
+      btn.disabled = true;
+      btn.textContent = "กำลังส่ง...";
+      message.hidden = true;
+
+      const loginType = $("#loginMethodSelect").value;
+      const accountRef = $("#accountRef").value.trim();
+      const originalNote = $("#note").value.trim();
+
+      const combinedNote = [
+        `LoginMethod: ${loginType}`,
+        originalNote ? `Note: ${originalNote}` : ""
+      ].filter(Boolean).join(" | ");
+
+      try {
+        const data = await apiPost({
+          action:"createRequest",
+          orderId:currentOrder.orderId,
+          customerName:$("#customerName").value.trim(),
+          contact:$("#contact").value.trim(),
+          playerId:accountRef,
+          note:combinedNote
+        });
+
+        if (!data.ok) throw new Error(data.error || "CREATE_REQUEST_FAILED");
+
+        message.className = "message success";
+        message.textContent = `ส่งคำขอสำเร็จ ✓ เลขที่ ${data.request?.requestId || ""}`;
+        message.hidden = false;
+        btn.textContent = "ส่งคำขอแล้ว";
+        btn.disabled = true;
+        stopPolling();
+        showToast(`ส่งคำขอสำเร็จ ${data.request?.requestId || ""}`, "success", 5000);
+        runConfetti(44);
+      } catch (err) {
+        console.error(err);
+        message.className = "message error";
+        message.textContent = err.message === "PAYMENT_REQUIRED"
+          ? "ยังไม่สามารถส่งคำขอได้ เนื่องจากระบบยังไม่ยืนยันการชำระเงิน"
+          : "ส่งคำขอไม่สำเร็จ: " + err.message;
+        message.hidden = false;
+        btn.disabled = false;
+        btn.textContent = "ส่งคำขอ";
+      }
+    }
+
+    function startPolling() {
+      stopPolling();
+      pollTimer = setInterval(() => {
+        if (!$("#orderModal").hidden) checkPaymentStatus(false);
+      }, POLL_MS);
+    }
+
+    function stopPolling() {
+      if (pollTimer) clearInterval(pollTimer);
+      pollTimer = null;
+    }
+
+    function closeDetail() {
+      $("#detailModal").hidden = true;
+      if ($("#orderModal").hidden) document.body.style.overflow = "";
+    }
+
+    function closeOrder() {
+      $("#orderModal").hidden = true;
+      stopPolling();
+      document.body.style.overflow = "";
+    }
+
+    function badge(text, cls) {
+      const el = document.createElement("span");
+      el.className = `badge ${cls || "gray"}`;
+      el.textContent = text;
+      return el;
+    }
+
+    function loginBadgeHtml(m) {
+      return `<span class="badge blue">${loginIcon(m.type)} ${escapeHtml(m.label || m.type)}</span>`;
+    }
+
+    function loginIcon(type) {
+      const t = String(type || "").toLowerCase();
+      if (t === "google") return "G";
+      if (t === "game_id") return "🆔";
+      if (t === "create_id") return "✨";
+      if (t.includes("password")) return "🔐";
+      if (t.includes("cloud")) return "☁";
+      return "🔗";
+    }
+
+    function statusText(status) {
+      const s = String(status || "").toLowerCase();
+      if (s === "active") return "พร้อมรับงาน";
+      if (s === "paused" || s === "maintenance") return "หยุดชั่วคราว";
+      if (s === "closed") return "ปิดขาย";
+      if (s === "hidden") return "ซ่อน";
+      return status || "ไม่ระบุ";
+    }
+
+    function statusClass(status) {
+      const s = String(status || "").toLowerCase();
+      if (s === "paused" || s === "maintenance") return "paused";
+      if (s === "closed") return "closed";
+      return "";
+    }
+
+    function safeIcon(url, name) {
+      const s = String(url || "").trim();
+      if (/^https?:\/\//i.test(s)) return s;
+      return fallbackIcon(name);
+    }
+
+    function fallbackIcon(name) {
+      const text = encodeURIComponent(String(name || "GAME").slice(0,12));
+      return `https://placehold.co/600x600/171a29/ffffff?text=${text}`;
+    }
+
+    function money(value) {
+      return `${num(value).toLocaleString("th-TH",{maximumFractionDigits:2})} ฿`;
+    }
+
+    function num(v) {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function escapeHtml(s) {
+      return String(s ?? "").replace(/[&<>"']/g, c => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+      }[c]));
+    }
+
+
+    /* =========================================================
+       V4 PREMIUM EFFECTS
+       ========================================================= */
+
+    function initPremiumEffects() {
+      if (FINE_POINTER) document.body.classList.add("has-fine-pointer");
+
+      const updateProgress = () => {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = max > 0 ? Math.min(100, Math.max(0, (window.scrollY / max) * 100)) : 0;
+        document.documentElement.style.setProperty("--scroll-progress", `${pct}%`);
+
+        const topBtn = $("#scrollTopBtn");
+        if (topBtn) topBtn.classList.toggle("show", window.scrollY > 520);
+      };
+
+      window.addEventListener("scroll", updateProgress, { passive:true });
+      window.addEventListener("resize", updateProgress, { passive:true });
+      updateProgress();
+
+      $("#scrollTopBtn")?.addEventListener("click", () => {
+        window.scrollTo({ top:0, behavior:REDUCED_MOTION ? "auto" : "smooth" });
+      });
+
+      if (FINE_POINTER && !REDUCED_MOTION) {
+        let raf = 0;
+        let x = innerWidth / 2;
+        let y = innerHeight / 3;
+
+        window.addEventListener("pointermove", e => {
+          x = e.clientX;
+          y = e.clientY;
+
+          if (raf) return;
+          raf = requestAnimationFrame(() => {
+            document.documentElement.style.setProperty("--mx", `${x}px`);
+            document.documentElement.style.setProperty("--my", `${y}px`);
+            raf = 0;
+          });
+        }, { passive:true });
+      }
+
+      // Ripples on global buttons
+      document.querySelectorAll(".primary,.secondary,.scroll-top").forEach(el => {
+        el.addEventListener("pointerdown", makeRipple);
+      });
+    }
+
+    function prepareCardEffects(card) {
+      const soldEl = card.querySelector(".sold-number");
+      if (soldEl) soldEl.textContent = "0";
+
+      if (!FINE_POINTER || REDUCED_MOTION) return;
+
+      let raf = 0;
+      card.addEventListener("pointermove", e => {
+        const rect = card.getBoundingClientRect();
+        const px = (e.clientX - rect.left) / rect.width;
+        const py = (e.clientY - rect.top) / rect.height;
+
+        if (raf) cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          const ry = (px - .5) * 8;
+          const rx = (.5 - py) * 7;
+          card.style.setProperty("--rx", `${rx.toFixed(2)}deg`);
+          card.style.setProperty("--ry", `${ry.toFixed(2)}deg`);
+          card.style.setProperty("--glare-x", `${(px * 100).toFixed(1)}%`);
+          card.style.setProperty("--glare-y", `${(py * 100).toFixed(1)}%`);
+        });
+      }, { passive:true });
+
+      card.addEventListener("pointerleave", () => {
+        card.style.setProperty("--rx", "0deg");
+        card.style.setProperty("--ry", "0deg");
+        card.style.setProperty("--glare-x", "50%");
+        card.style.setProperty("--glare-y", "35%");
+      }, { passive:true });
+    }
+
+    function observeCards() {
+      if (revealObserver) revealObserver.disconnect();
+
+      const cards = [...document.querySelectorAll(".reveal-card")];
+
+      if (REDUCED_MOTION || !("IntersectionObserver" in window)) {
+        cards.forEach(card => {
+          card.classList.add("is-visible");
+          animateSoldNumber(card.querySelector(".sold-number"));
+        });
+        return;
+      }
+
+      revealObserver = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+
+          const card = entry.target;
+          const index = cards.indexOf(card);
+          card.style.transitionDelay = `${Math.min(index % 8, 7) * 38}ms`;
+          card.classList.add("is-visible");
+          animateSoldNumber(card.querySelector(".sold-number"));
+
+          setTimeout(() => {
+            card.style.transitionDelay = "";
+          }, 700);
+
+          revealObserver.unobserve(card);
+        });
+      }, { threshold:.13, rootMargin:"0px 0px 80px 0px" });
+
+      cards.forEach(card => revealObserver.observe(card));
+    }
+
+    function animateSoldNumber(el) {
+      if (!el || el.dataset.animated === "1") return;
+      el.dataset.animated = "1";
+
+      const target = Math.max(0, num(el.dataset.target));
+      if (REDUCED_MOTION || target === 0) {
+        el.textContent = target.toLocaleString("th-TH");
+        return;
+      }
+
+      const duration = Math.min(1000, 380 + target * 12);
+      const started = performance.now();
+
+      const tick = now => {
+        const p = Math.min(1, (now - started) / duration);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(target * eased).toLocaleString("th-TH");
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }
+
+    function makeRipple(e) {
+      const host = e.currentTarget;
+      if (!host || REDUCED_MOTION) return;
+
+      const rect = host.getBoundingClientRect();
+      const dot = document.createElement("span");
+      dot.className = "ripple-dot";
+      dot.style.left = `${e.clientX - rect.left}px`;
+      dot.style.top = `${e.clientY - rect.top}px`;
+
+      // Works best on positioned elements
+      if (getComputedStyle(host).position === "static") host.style.position = "relative";
+      host.appendChild(dot);
+      setTimeout(() => dot.remove(), 700);
+    }
+
+    function restartAnimation(el, className) {
+      if (!el || REDUCED_MOTION) return;
+      el.classList.remove(className);
+      void el.offsetWidth;
+      el.classList.add(className);
+      setTimeout(() => el.classList.remove(className), 520);
+    }
+
+    function showToast(message, type="info", timeout=3600) {
+      const root = $("#toastRoot");
+      if (!root) return;
+
+      const item = document.createElement("div");
+      item.className = `toast ${type}`;
+      const icon =
+        type === "success" ? "✅" :
+        type === "error" ? "⚠️" : "ℹ️";
+
+      item.innerHTML = `<div>${icon}</div><div>${escapeHtml(message)}</div>`;
+      root.appendChild(item);
+
+      const close = () => {
+        item.classList.add("out");
+        setTimeout(() => item.remove(), 330);
+      };
+
+      item.addEventListener("click", close);
+      setTimeout(close, timeout);
+    }
+
+    function celebratePaid() {
+      const panel = document.querySelector(".payment-box");
+      panel?.classList.add("paid-flash");
+      setTimeout(() => panel?.classList.remove("paid-flash"), 800);
+
+      showToast("ยืนยันการชำระเงินแล้ว ✓ ฟอร์มส่งคำขอเปิดแล้ว", "success", 5000);
+      runConfetti(28);
+    }
+
+    function runConfetti(count=32) {
+      if (REDUCED_MOTION) return;
+
+      const colors = ["#ff3645","#ffd42a","#18bd86","#795cff","#39a0ff","#ff8d42"];
+
+      for (let i = 0; i < count; i++) {
+        const piece = document.createElement("i");
+        piece.className = "confetti-piece";
+        piece.style.background = colors[i % colors.length];
+
+        const angle = (Math.PI * 2 * i) / count + (Math.random() - .5) * .5;
+        const distance = 90 + Math.random() * 220;
+
+        piece.style.setProperty("--dx", `${Math.cos(angle) * distance}px`);
+        piece.style.setProperty("--dy", `${Math.sin(angle) * distance + 120}px`);
+        piece.style.setProperty("--rot", `${(Math.random() * 900 - 450).toFixed(0)}deg`);
+        piece.style.setProperty("--dur", `${(.8 + Math.random() * .8).toFixed(2)}s`);
+
+        document.body.appendChild(piece);
+        setTimeout(() => piece.remove(), 1800);
+      }
+    }
+
+    function escapeAttr(s){ return escapeHtml(s); }
+  </script>
+</body>
+</html>
