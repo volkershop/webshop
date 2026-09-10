@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#090a12">
-  <title>0xVoLKER Shop Service • Reviews V5.1</title>
+  <title>0xVoLKER Shop Service • V6.5</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1343,6 +1343,1071 @@
       .star-btn{font-size:31px}
     }
 
+
+    /* =========================================================
+       V6 FULL AUTO UI
+       ========================================================= */
+
+    select{
+      color-scheme:dark;
+      appearance:none;
+      -webkit-appearance:none;
+      background-color:#171a27 !important;
+      color:#f7f8fb !important;
+      background-image:
+        linear-gradient(45deg,transparent 50%,#aeb4c5 50%),
+        linear-gradient(135deg,#aeb4c5 50%,transparent 50%);
+      background-position:
+        calc(100% - 17px) 51%,
+        calc(100% - 12px) 51%;
+      background-size:5px 5px,5px 5px;
+      background-repeat:no-repeat;
+      padding-right:34px !important;
+    }
+    select option{
+      background:#171a27 !important;
+      color:#f7f8fb !important;
+    }
+
+    .v6-bg-layer{
+      position:fixed;
+      inset:-18vh -10vw;
+      z-index:-5;
+      pointer-events:none;
+      overflow:hidden;
+      transform:translate3d(0,var(--v6-parallax-y,0px),0);
+      will-change:transform;
+    }
+    .v6-bg-layer::before,
+    .v6-bg-layer::after{
+      content:"";
+      position:absolute;
+      width:62vw;
+      height:62vw;
+      min-width:520px;
+      min-height:520px;
+      border-radius:44% 56% 61% 39% / 49% 40% 60% 51%;
+      filter:blur(85px);
+      opacity:.105;
+      animation:v6Morph 18s ease-in-out infinite alternate;
+    }
+    .v6-bg-layer::before{
+      left:-18vw;
+      top:8vh;
+      background:linear-gradient(135deg,#ff3047,#ff862b 45%,transparent 72%);
+    }
+    .v6-bg-layer::after{
+      right:-22vw;
+      top:26vh;
+      background:linear-gradient(135deg,#6750ff,#112bff 48%,#00d7a8);
+      animation-duration:24s;
+      animation-direction:alternate-reverse;
+    }
+    .v6-wave{
+      position:absolute;
+      left:20vw;right:10vw;top:52vh;
+      height:340px;
+      border-radius:50%;
+      background:radial-gradient(ellipse,rgba(0,226,177,.10),transparent 67%);
+      filter:blur(55px);
+      animation:v6Wave 10s ease-in-out infinite alternate;
+    }
+    @keyframes v6Morph{
+      0%{transform:translate3d(-2%,0,0) rotate(0deg) scale(.92);border-radius:44% 56% 61% 39% / 49% 40% 60% 51%}
+      100%{transform:translate3d(10%,8%,0) rotate(14deg) scale(1.08);border-radius:58% 42% 36% 64% / 42% 62% 38% 58%}
+    }
+    @keyframes v6Wave{
+      from{transform:translateY(-18px) scale(.92)}
+      to{transform:translateY(26px) scale(1.08)}
+    }
+
+    .hero-banner-card{
+      transform:translate3d(0,var(--hero-shift,0px),0);
+      will-change:transform;
+    }
+
+    .page-tabs{flex-wrap:wrap}
+    .page-tab.guide-tab.active{
+      background:linear-gradient(180deg,#553d20,#342819);
+      color:#ffd696;
+    }
+
+    .game-ribbon{
+      position:absolute;
+      z-index:9;
+      left:-39px;
+      top:16px;
+      width:128px;
+      text-align:center;
+      transform:rotate(-42deg);
+      padding:5px 0;
+      font-size:8px;
+      font-weight:900;
+      letter-spacing:.08em;
+      color:white;
+      background:linear-gradient(90deg,#ff3445,#ff7b2a);
+      box-shadow:0 8px 18px rgba(0,0,0,.28);
+      text-shadow:0 1px 2px rgba(0,0,0,.22);
+    }
+    .game-ribbon.update{background:linear-gradient(90deg,#6d55ff,#38a2ff)}
+    .game-ribbon.hot{background:linear-gradient(90deg,#ff9d20,#ff323f)}
+
+    .badge.zygisk{
+      color:#ffd2a1;
+      border-color:rgba(255,141,66,.38);
+      background:linear-gradient(180deg,rgba(255,141,66,.14),rgba(122,58,22,.16));
+    }
+    .badge.system{
+      color:#b7d9ff;
+      border-color:rgba(56,149,255,.30);
+      background:rgba(56,149,255,.10);
+    }
+    .badge.arch{
+      color:#d7c6ff;
+      border-color:rgba(126,89,255,.30);
+      background:rgba(126,89,255,.10);
+    }
+
+    .service-item{user-select:none}
+    .check-box{
+      width:19px;height:19px;
+      flex:0 0 auto;
+      border:2px solid #747b92;
+      border-radius:6px;
+      display:grid;place-items:center;
+      transition:.18s ease;
+      background:#10131d;
+    }
+    .service-item.selected .check-box{
+      border-color:#ff4957;
+      background:#ff3344;
+      box-shadow:0 0 16px rgba(255,51,68,.18);
+    }
+    .service-item.selected .check-box::after{
+      content:"✓";
+      color:#fff;
+      font-size:11px;
+      font-weight:900;
+    }
+    .multi-note{
+      display:flex;justify-content:space-between;gap:12px;
+      align-items:center;
+      margin-bottom:9px;
+      padding:9px 11px;
+      border-radius:12px;
+      border:1px solid #2e344a;
+      background:#141825;
+      color:#9fa6b8;
+      font-size:8px;
+    }
+    .multi-note strong{color:#fff}
+
+    .compat-grid{
+      display:flex;
+      gap:7px;
+      flex-wrap:wrap;
+    }
+    .compat-card{
+      min-width:105px;
+      flex:1 1 135px;
+      border:1px solid #2f354b;
+      border-radius:13px;
+      background:#161927;
+      padding:10px 11px;
+    }
+    .compat-card strong{display:block;font-size:10px;color:#eef1f8}
+    .compat-card span{display:block;margin-top:3px;font-size:8px;line-height:1.5;color:#8f96a8}
+
+    #guidesView[hidden]{display:none}
+    .guides-head{
+      display:flex;justify-content:space-between;align-items:end;gap:14px;
+      margin:3px 0 14px;
+    }
+    .guides-head h1{margin:0;font-size:24px}
+    .guides-head p{margin:4px 0 0;color:var(--muted);font-size:10px;line-height:1.6}
+    .guide-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:13px;
+    }
+    .guide-card{
+      position:relative;
+      overflow:hidden;
+      border:1px solid #2c3247;
+      border-radius:20px;
+      background:linear-gradient(180deg,#171a28,#11131d);
+      padding:16px;
+      box-shadow:0 14px 45px rgba(0,0,0,.17);
+      transition:.22s var(--ease-out);
+    }
+    .guide-card:hover{transform:translateY(-3px);border-color:#424a65}
+    .guide-card::before{
+      content:"";
+      position:absolute;
+      width:160px;height:160px;
+      right:-65px;top:-75px;
+      border-radius:50%;
+      background:radial-gradient(circle,rgba(255,113,37,.10),transparent 70%);
+      pointer-events:none;
+    }
+    .guide-type{
+      display:inline-flex;
+      padding:5px 8px;
+      border-radius:999px;
+      border:1px solid #343b52;
+      background:#1c2030;
+      color:#cbd0dc;
+      font-size:8px;
+      font-weight:900;
+      text-transform:uppercase;
+    }
+    .guide-card h2{margin:9px 0 3px;font-size:15px}
+    .guide-summary{color:#959cae;font-size:9px;line-height:1.6}
+    .guide-columns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:13px}
+    .guide-box{border:1px solid #2a3043;border-radius:13px;background:#131621;padding:10px}
+    .guide-box h3{font-size:9px;margin:0 0 7px;color:#eef1f8}
+    .guide-box ol,.guide-box ul{margin:0;padding-left:18px;color:#a3a9ba;font-size:8px;line-height:1.7}
+
+    .review-image-picker{
+      margin-top:12px;
+      border:1px dashed #3a4158;
+      border-radius:14px;
+      background:#121520;
+      padding:12px;
+    }
+    .review-image-picker label{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:48px;
+      border-radius:11px;
+      background:#1c2030;
+      border:1px solid #30364b;
+      cursor:pointer;
+      color:#d7dae3;
+      font-size:9px;
+      font-weight:800;
+    }
+    .review-image-picker input{display:none}
+    .review-image-preview{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px}
+    .review-preview-item{
+      position:relative;aspect-ratio:1;overflow:hidden;border-radius:10px;
+      border:1px solid #30364b;background:#0e1119;
+    }
+    .review-preview-item img{width:100%;height:100%;object-fit:cover;display:block}
+    .review-preview-remove{
+      position:absolute;right:4px;top:4px;width:24px;height:24px;
+      border:0;border-radius:8px;background:rgba(5,6,10,.78);
+      color:#fff;cursor:pointer;font-size:13px;
+    }
+    .review-images{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:9px}
+    .review-images img{
+      width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;
+      border:1px solid #30364b;background:#0c0e15;cursor:zoom-in;
+    }
+
+    .maintenance-screen[hidden]{display:none}
+    .maintenance-screen{
+      position:fixed;inset:0;z-index:300;overflow:auto;
+      background:
+        radial-gradient(circle at 20% 25%,rgba(255,85,42,.16),transparent 30rem),
+        radial-gradient(circle at 82% 35%,rgba(96,72,255,.17),transparent 32rem),
+        #070810;
+      color:#fff;padding:20px;
+    }
+    .maintenance-wrap{min-height:100%;width:min(980px,100%);margin:auto;display:grid;place-items:center}
+    .maintenance-card{
+      width:100%;
+      display:grid;
+      grid-template-columns:minmax(260px,.82fr) minmax(0,1.2fr);
+      align-items:center;gap:22px;
+      padding:clamp(18px,4vw,38px);
+      border:1px solid #31384e;border-radius:28px;
+      background:linear-gradient(180deg,rgba(25,28,43,.93),rgba(12,14,23,.95));
+      box-shadow:0 35px 100px rgba(0,0,0,.48);
+      backdrop-filter:blur(16px);
+      overflow:hidden;position:relative;
+    }
+    .maintenance-card::before{
+      content:"";position:absolute;inset:-2px;pointer-events:none;
+      background:linear-gradient(130deg,rgba(255,83,42,.18),transparent 30%,transparent 65%,rgba(105,78,255,.16));
+    }
+    .maintenance-mascot{
+      position:relative;height:330px;overflow:hidden;border-radius:22px;
+      border:1px solid #343b52;background:#10131c;
+      box-shadow:0 20px 50px rgba(0,0,0,.3);
+    }
+    .maintenance-mascot img{
+      width:100%;height:100%;object-fit:cover;object-position:12% center;
+      transform:scale(1.65);transform-origin:left center;
+      filter:saturate(1.08) contrast(1.03);
+    }
+    .maintenance-megaphone{
+      position:absolute;right:18px;bottom:30px;z-index:3;font-size:78px;
+      transform:rotate(-16deg);filter:drop-shadow(0 14px 24px rgba(0,0,0,.4));
+      animation:megaphoneWiggle 1.8s ease-in-out infinite;
+    }
+    @keyframes megaphoneWiggle{
+      0%,100%{transform:rotate(-16deg) translateY(0)}
+      50%{transform:rotate(-8deg) translateY(-5px)}
+    }
+    .maintenance-copy{position:relative;z-index:2}
+    .maintenance-chip{
+      display:inline-flex;gap:7px;align-items:center;padding:7px 10px;border-radius:999px;
+      background:rgba(255,202,55,.10);border:1px solid rgba(255,202,55,.24);
+      color:#ffe18a;font-size:9px;font-weight:900;
+    }
+    .maintenance-copy h1{margin:12px 0 6px;font-size:clamp(25px,5vw,42px);line-height:1.1}
+    .maintenance-copy p{margin:0;color:#aeb4c3;font-size:12px;line-height:1.75}
+    .maintenance-eta{
+      margin-top:14px;padding:12px 14px;border-radius:13px;
+      border:1px solid #30364a;background:#12151f;color:#e4e7ef;font-size:10px;
+    }
+
+    .no-site-animation *,
+    .no-site-animation *::before,
+    .no-site-animation *::after{
+      animation:none !important;
+      transition-duration:.001ms !important;
+    }
+
+    @media(max-width:760px){
+      .guide-grid{grid-template-columns:1fr}
+      .guide-columns{grid-template-columns:1fr}
+      .maintenance-card{grid-template-columns:1fr}
+      .maintenance-mascot{height:225px}
+      .maintenance-mascot img{transform:scale(1.35);object-position:8% center}
+      .maintenance-megaphone{font-size:58px}
+    }
+
+
+    .brand-mascot-icon{
+      background-image:url("banner-0xvolker.png") !important;
+      background-repeat:no-repeat !important;
+      background-size:400% 100% !important;
+      background-position:7% center !important;
+      border:1px solid rgba(255,157,69,.46);
+      box-shadow:
+        0 10px 28px rgba(239,47,54,.18),
+        0 0 20px rgba(255,123,35,.12),
+        inset 0 1px rgba(255,255,255,.22);
+    }
+
+
+    /* =========================================================
+       V6.2 COMMERCE / CUSTOMER / CLAIM / BILINGUAL
+       ========================================================= */
+    html[data-lang="en"] .lang-th{display:none!important}
+    html:not([data-lang="en"]) .lang-en{display:none!important}
+
+    .top-actions{
+      display:flex;align-items:center;justify-content:flex-end;
+      gap:7px;flex-wrap:wrap;
+    }
+    .mini-top-btn,.presence-pill,.customer-badge{
+      min-height:31px;
+      border:1px solid #30364a;
+      border-radius:10px;
+      background:#151822;
+      color:#d9dce5;
+      font-size:8px;
+      font-weight:800;
+      padding:0 9px;
+      display:inline-flex;align-items:center;gap:5px;
+      white-space:nowrap;
+    }
+    .mini-top-btn,.customer-badge{cursor:pointer}
+    .mini-top-btn:hover,.customer-badge:hover{
+      border-color:#4c546e;background:#1d2130
+    }
+    .presence-pill{
+      color:#aeb5c5;
+      background:rgba(18,21,31,.8);
+    }
+
+    .page-tab.claim-tab.active{
+      background:linear-gradient(180deg,#3f304e,#2a2037);
+      color:#e9c9ff;
+    }
+    .page-tab.about-tab.active{
+      background:linear-gradient(180deg,#24413a,#182e29);
+      color:#b7f1dd;
+    }
+    .page-tab.terms-tab.active{
+      background:linear-gradient(180deg,#3d3523,#2b2619);
+      color:#f8dfa0;
+    }
+
+    #claimsView[hidden],#aboutView[hidden],#termsView[hidden]{display:none}
+
+    .content-panel{
+      border:1px solid #2c3247;
+      border-radius:22px;
+      background:linear-gradient(180deg,#151824,#10121b);
+      padding:clamp(15px,2.5vw,24px);
+      box-shadow:0 16px 50px rgba(0,0,0,.18);
+    }
+    .page-heading{
+      display:flex;justify-content:space-between;gap:14px;align-items:end;
+      margin-bottom:14px;
+    }
+    .page-heading h1{margin:0;font-size:24px}
+    .page-heading p{margin:5px 0 0;color:#969dae;font-size:10px;line-height:1.65}
+    .subtle-chip{
+      display:inline-flex;align-items:center;gap:5px;
+      border:1px solid #343a50;background:#1a1e2c;color:#bbc1d0;
+      border-radius:999px;padding:6px 9px;font-size:8px;font-weight:800;
+    }
+
+    .about-grid{
+      display:grid;grid-template-columns:minmax(0,1.25fr) minmax(260px,.75fr);
+      gap:14px;
+    }
+    .about-card,.terms-card,.claim-card{
+      border:1px solid #2b3145;border-radius:18px;background:#171a27;padding:15px;
+    }
+    .about-card h2,.terms-card h2,.claim-card h2{
+      margin:0 0 8px;font-size:15px
+    }
+    .about-card p,.terms-card p,.claim-card p{
+      margin:0;color:#a3a9ba;font-size:10px;line-height:1.75
+    }
+    .about-mascot{
+      overflow:hidden;border-radius:18px;border:1px solid #31374c;
+      min-height:250px;background:#0f1119;position:relative;
+    }
+    .about-mascot img{
+      width:100%;height:100%;min-height:250px;object-fit:cover;object-position:12% center;
+      transform:scale(1.28);transform-origin:left center;
+    }
+    .skill-chips{
+      display:flex;flex-wrap:wrap;gap:7px;margin-top:12px
+    }
+    .skill-chip{
+      padding:6px 9px;border-radius:999px;border:1px solid #353b51;
+      background:#1c2030;color:#d4d8e3;font-size:8px;font-weight:800
+    }
+
+    .contact-buttons{
+      display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:13px
+    }
+    .contact-btn{
+      min-height:46px;border-radius:14px;border:1px solid #343b52;
+      display:flex;align-items:center;justify-content:center;gap:7px;
+      text-decoration:none;font-size:10px;font-weight:900;
+      transition:.2s ease;
+    }
+    .contact-btn:hover{transform:translateY(-2px)}
+    .contact-btn.telegram{background:#168bd1;color:#fff;border-color:#168bd1}
+    .contact-btn.community{background:#252a3b;color:#e8eaf0}
+
+    .terms-grid{display:grid;gap:10px}
+    .terms-card ol,.terms-card ul{
+      margin:8px 0 0;padding-left:20px;color:#a6acbd;font-size:9px;line-height:1.75
+    }
+    .warning-box{
+      margin-top:10px;padding:11px 12px;border-radius:13px;
+      border:1px solid rgba(255,199,57,.24);
+      background:rgba(255,199,57,.07);color:#ecd991;font-size:9px;line-height:1.65;
+    }
+
+    .customer-card{
+      display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px
+    }
+    .customer-stat{
+      border:1px solid #2d3348;border-radius:14px;background:#131621;padding:11px
+    }
+    .customer-stat span{display:block;color:#82899b;font-size:7px}
+    .customer-stat strong{
+      display:block;margin-top:3px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+      font-size:10px;color:#eef0f6;overflow-wrap:anywhere
+    }
+
+    .claim-layout{
+      display:grid;grid-template-columns:minmax(0,1.2fr) minmax(300px,.8fr);gap:13px
+    }
+    .claim-list,.claim-history{display:grid;gap:8px}
+    .claim-item{
+      border:1px solid #2d3348;border-radius:15px;background:#151824;padding:12px
+    }
+    .claim-item-top{
+      display:flex;justify-content:space-between;gap:10px;align-items:start
+    }
+    .claim-item strong{font-size:11px}
+    .claim-meta{margin-top:4px;color:#8f96a9;font-size:8px;line-height:1.6}
+    .claim-actions{margin-top:9px;display:flex;gap:7px;flex-wrap:wrap}
+    .claim-remaining{
+      color:#8ce1c2;font-size:8px;font-weight:800
+    }
+    .claim-form[hidden]{display:none}
+    .claim-empty{padding:22px;text-align:center;color:#9299aa;font-size:9px}
+
+    .payment-method-list{
+      display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:13px
+    }
+    .payment-method{
+      border:1px solid #30364b;border-radius:14px;background:#141722;
+      min-height:64px;padding:10px;cursor:pointer;text-align:left;color:#e5e8ef;
+      transition:.2s ease
+    }
+    .payment-method:hover{transform:translateY(-2px);border-color:#4d5673}
+    .payment-method.selected{
+      border-color:#ff4b59;background:#21171e;
+      box-shadow:0 0 0 1px rgba(255,75,89,.14) inset
+    }
+    .payment-method strong{display:block;font-size:10px}
+    .payment-method span{display:block;margin-top:3px;color:#939aac;font-size:7px}
+
+    .payment-detail{
+      margin-top:11px;border:1px solid #31374d;border-radius:16px;
+      background:#121520;padding:13px;text-align:left
+    }
+    .payment-detail[hidden]{display:none}
+    .payment-due{text-align:center;margin-bottom:12px}
+    .payment-due span{display:block;color:#8e95a8;font-size:8px}
+    .payment-due strong{display:block;color:#ffd33f;font-size:25px;margin-top:2px}
+    .payment-qr{
+      width:min(220px,70vw);aspect-ratio:1;margin:10px auto;
+      border-radius:15px;border:1px solid #343a4f;background:#fff;
+      overflow:hidden;display:grid;place-items:center;color:#333;font-size:9px
+    }
+    .payment-qr img{width:100%;height:100%;object-fit:contain}
+    .pay-info-row{
+      display:grid;grid-template-columns:110px 1fr;gap:8px;
+      padding:7px 0;border-bottom:1px solid rgba(255,255,255,.055);
+      font-size:8px
+    }
+    .pay-info-row span{color:#868d9f}
+    .pay-info-row strong{color:#e0e3eb;overflow-wrap:anywhere}
+    .payment-instruction{
+      margin-top:10px;padding:10px;border-radius:12px;background:#181b28;
+      color:#abb1c1;font-size:8px;line-height:1.65
+    }
+    .paypal-disclaimer{
+      margin-top:8px;padding:9px;border-radius:11px;border:1px solid rgba(255,190,52,.2);
+      background:rgba(255,190,52,.06);color:#ddca8f;font-size:8px;line-height:1.55
+    }
+
+    .floating-contact{
+      position:fixed;right:14px;bottom:72px;z-index:54;
+      display:flex;flex-direction:column;gap:7px
+    }
+    .floating-contact a{
+      width:43px;height:43px;border-radius:14px;display:grid;place-items:center;
+      text-decoration:none;border:1px solid #384057;background:rgba(18,21,32,.9);
+      backdrop-filter:blur(12px);box-shadow:0 12px 30px rgba(0,0,0,.22);
+      font-size:17px
+    }
+    .floating-contact a:first-child{background:#168bd1;border-color:#168bd1}
+
+    .customer-dialog{width:min(520px,100%)}
+    .recovery-box{
+      margin-top:12px;padding:11px;border:1px solid #2e3449;border-radius:13px;background:#131620
+    }
+    .recovery-box code{
+      display:block;margin-top:5px;color:#ffd56b;font-size:10px;overflow-wrap:anywhere
+    }
+
+    @media(max-width:880px){
+      .about-grid,.claim-layout{grid-template-columns:1fr}
+      .payment-method-list{grid-template-columns:1fr}
+    }
+    @media(max-width:650px){
+      .topbar-inner{align-items:flex-start;padding-top:10px;padding-bottom:10px}
+      .top-actions{justify-content:flex-start}
+      .presence-pill{order:4;width:100%;justify-content:center}
+      .contact-buttons{grid-template-columns:1fr}
+      .customer-card{grid-template-columns:1fr}
+      .page-tabs{overflow-x:auto;flex-wrap:nowrap;width:100%;scrollbar-width:none}
+      .page-tab{flex:0 0 auto}
+    }
+
+
+    /* =========================================================
+       V6.3 LANGUAGE + LIVE FX
+       ========================================================= */
+    .language-switch{
+      display:inline-flex;
+      align-items:center;
+      gap:3px;
+      padding:3px;
+      border:1px solid #30364a;
+      border-radius:12px;
+      background:#12151e;
+      box-shadow:inset 0 1px rgba(255,255,255,.035);
+    }
+    .language-switch::before{
+      content:"🌐";
+      margin:0 4px 0 3px;
+      font-size:12px;
+    }
+    .lang-choice{
+      min-height:27px;
+      border:0;
+      border-radius:8px;
+      padding:0 8px;
+      background:transparent;
+      color:#8f96a8;
+      cursor:pointer;
+      font-size:8px;
+      font-weight:900;
+      transition:.18s ease;
+    }
+    .lang-choice:hover{color:#fff;background:#1d2130}
+    .lang-choice.active{
+      color:#fff;
+      background:linear-gradient(135deg,#ef2f36,#ff792b);
+      box-shadow:0 5px 14px rgba(239,47,54,.18);
+    }
+    .fx-pill{
+      min-height:31px;
+      display:inline-flex;
+      align-items:center;
+      gap:5px;
+      padding:0 9px;
+      border:1px solid rgba(255,211,63,.22);
+      border-radius:10px;
+      background:rgba(255,211,63,.065);
+      color:#ecd982;
+      font-size:8px;
+      font-weight:800;
+      white-space:nowrap;
+    }
+    .fx-pill.stale{
+      border-color:rgba(255,137,67,.25);
+      background:rgba(255,137,67,.07);
+      color:#f0b685;
+    }
+    .price-fx-note{
+      display:block;
+      margin-top:2px;
+      color:#737b8e;
+      font-size:7px;
+      font-weight:600;
+    }
+    @media(max-width:650px){
+      .language-switch{order:1}
+      .fx-pill{order:2}
+      .customer-badge{order:3}
+      #apiIndicator{order:4}
+      .presence-pill{order:5}
+    }
+
+
+    /* =========================================================
+       V6.4 SEASONAL THEMES
+       ========================================================= */
+
+    :root{
+      --theme-a:#ef2f36;
+      --theme-b:#7a5cff;
+      --theme-c:#18bd86;
+      --theme-a-rgb:239,47,54;
+      --theme-b-rgb:122,92,255;
+      --theme-c-rgb:24,189,134;
+    }
+
+    .season-theme-layer{
+      position:fixed;
+      inset:0;
+      z-index:-2;
+      pointer-events:none;
+      overflow:hidden;
+      opacity:0;
+      transition:opacity .45s ease;
+    }
+    body.theme-active .season-theme-layer{opacity:1}
+
+    .season-theme-layer::before{
+      content:"";
+      position:absolute;
+      inset:-20%;
+      background:
+        radial-gradient(circle at 12% 20%,rgba(var(--theme-a-rgb),.14),transparent 28%),
+        radial-gradient(circle at 82% 22%,rgba(var(--theme-b-rgb),.12),transparent 31%),
+        radial-gradient(circle at 52% 82%,rgba(var(--theme-c-rgb),.10),transparent 30%);
+      filter:blur(28px);
+      animation:seasonAura 14s ease-in-out infinite alternate;
+      will-change:transform;
+    }
+    .season-theme-layer::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        linear-gradient(120deg,transparent 10%,rgba(var(--theme-a-rgb),.035),transparent 43%),
+        linear-gradient(300deg,transparent 20%,rgba(var(--theme-b-rgb),.028),transparent 60%);
+      background-size:180% 180%;
+      animation:seasonSweep 18s linear infinite;
+    }
+
+    @keyframes seasonAura{
+      from{transform:translate3d(-2%,-1%,0) scale(.96) rotate(-2deg)}
+      to{transform:translate3d(4%,3%,0) scale(1.06) rotate(3deg)}
+    }
+    @keyframes seasonSweep{
+      to{background-position:180% 180%}
+    }
+
+    .season-particle{
+      position:absolute;
+      left:var(--x);
+      top:-8vh;
+      font-size:var(--size);
+      opacity:var(--opacity);
+      filter:drop-shadow(0 6px 12px rgba(0,0,0,.25));
+      animation:
+        seasonalFall var(--duration) linear var(--delay) infinite,
+        seasonalSway calc(var(--duration) * .55) ease-in-out var(--delay) infinite alternate;
+      will-change:transform;
+      user-select:none;
+    }
+
+    @keyframes seasonalFall{
+      from{transform:translate3d(0,-12vh,0) rotate(0deg)}
+      to{transform:translate3d(var(--drift),118vh,0) rotate(var(--rotate))}
+    }
+    @keyframes seasonalSway{
+      from{margin-left:-14px}
+      to{margin-left:14px}
+    }
+
+    .theme-badge{
+      min-height:31px;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      border:1px solid rgba(var(--theme-a-rgb),.30);
+      border-radius:10px;
+      padding:0 9px;
+      background:
+        linear-gradient(
+          135deg,
+          rgba(var(--theme-a-rgb),.11),
+          rgba(var(--theme-b-rgb),.085)
+        );
+      color:#f4f5f8;
+      font-size:8px;
+      font-weight:900;
+      white-space:nowrap;
+      box-shadow:
+        0 8px 22px rgba(0,0,0,.12),
+        inset 0 1px rgba(255,255,255,.04);
+    }
+    .theme-badge[hidden]{display:none}
+
+    body.theme-active .scroll-progress::after{
+      background:
+        linear-gradient(
+          90deg,
+          var(--theme-a),
+          var(--theme-b),
+          var(--theme-c)
+        );
+      box-shadow:0 0 18px rgba(var(--theme-a-rgb),.40);
+    }
+
+    body.theme-active .cat-btn.active{
+      background:
+        linear-gradient(
+          135deg,
+          var(--theme-a),
+          var(--theme-b)
+        );
+      border-color:var(--theme-a);
+      box-shadow:
+        0 10px 28px rgba(var(--theme-a-rgb),.20),
+        inset 0 1px rgba(255,255,255,.14);
+    }
+
+    body.theme-active .page-tab.active{
+      color:#fff;
+      background:
+        linear-gradient(
+          135deg,
+          rgba(var(--theme-a-rgb),.32),
+          rgba(var(--theme-b-rgb),.26)
+        );
+      border-color:rgba(var(--theme-a-rgb),.25);
+    }
+
+    body.theme-active .primary{
+      background:
+        linear-gradient(
+          135deg,
+          var(--theme-a),
+          color-mix(in srgb,var(--theme-a) 60%,var(--theme-b))
+        );
+      box-shadow:
+        0 12px 30px rgba(var(--theme-a-rgb),.18);
+    }
+
+    body.theme-active .card:hover::before{
+      background:
+        linear-gradient(
+          130deg,
+          transparent,
+          rgba(var(--theme-a-rgb),.65),
+          rgba(var(--theme-b-rgb),.55),
+          rgba(var(--theme-c-rgb),.35),
+          transparent
+        );
+      background-size:240% 240%;
+    }
+
+    body[data-season-theme="songkran"] .season-theme-layer::after{
+      background:
+        radial-gradient(circle at 20% 30%,rgba(102,220,255,.10) 0 2px,transparent 3px),
+        radial-gradient(circle at 70% 55%,rgba(34,168,255,.08) 0 3px,transparent 4px);
+      background-size:90px 90px,130px 130px;
+      animation:waterGrid 10s linear infinite;
+    }
+    @keyframes waterGrid{
+      to{background-position:90px 120px,-100px 140px}
+    }
+
+    body[data-season-theme="halloween"] .season-theme-layer{
+      filter:saturate(.92) contrast(1.04);
+    }
+
+    body[data-season-theme="christmas"] .season-theme-layer::before{
+      filter:blur(34px) saturate(1.08);
+    }
+
+    body[data-season-theme="blackfriday"] .season-theme-layer::before{
+      opacity:.76;
+      background:
+        radial-gradient(circle at 20% 18%,rgba(247,201,72,.10),transparent 24%),
+        radial-gradient(circle at 82% 30%,rgba(255,77,85,.09),transparent 28%),
+        linear-gradient(140deg,rgba(0,0,0,.12),transparent 58%);
+    }
+
+    .theme-message-bar{
+      display:none;
+      margin:-4px 0 14px;
+      border:1px solid rgba(var(--theme-a-rgb),.22);
+      border-radius:14px;
+      padding:9px 12px;
+      background:
+        linear-gradient(
+          90deg,
+          rgba(var(--theme-a-rgb),.075),
+          rgba(var(--theme-b-rgb),.055)
+        );
+      color:#cfd3dd;
+      font-size:9px;
+      line-height:1.55;
+      text-align:center;
+    }
+    body.theme-active .theme-message-bar.show{display:block}
+
+    @media(max-width:650px){
+      .theme-badge{order:3}
+      .season-particle:nth-child(n+13){display:none}
+    }
+
+    @media(prefers-reduced-motion:reduce){
+      .season-particle{display:none!important}
+      .season-theme-layer::before,
+      .season-theme-layer::after{
+        animation:none!important;
+      }
+    }
+
+
+    /* =========================================================
+       V6.5 ZYGISK INSTALL GUIDE
+       ========================================================= */
+    #zygiskInstallView[hidden]{display:none}
+
+    .install-hero{
+      position:relative;
+      overflow:hidden;
+      border:1px solid #343a50;
+      border-radius:24px;
+      background:
+        radial-gradient(circle at 85% 12%,rgba(255,133,52,.12),transparent 28rem),
+        radial-gradient(circle at 12% 90%,rgba(105,82,255,.11),transparent 24rem),
+        linear-gradient(180deg,#171a29,#10131d);
+      padding:clamp(16px,3vw,28px);
+      box-shadow:0 20px 65px rgba(0,0,0,.22);
+      margin-bottom:14px;
+    }
+    .install-hero h1{
+      margin:5px 0 6px;
+      font-size:clamp(23px,4vw,34px);
+      line-height:1.15;
+    }
+    .install-hero p{
+      margin:0;
+      max-width:820px;
+      color:#a4aaba;
+      font-size:10px;
+      line-height:1.75;
+    }
+    .install-warning{
+      margin-top:13px;
+      padding:11px 13px;
+      border-radius:14px;
+      border:1px solid rgba(255,194,61,.24);
+      background:rgba(255,194,61,.06);
+      color:#ddca8c;
+      font-size:9px;
+      line-height:1.65;
+    }
+
+    .install-flow{
+      display:grid;
+      grid-template-columns:repeat(7,minmax(0,1fr));
+      gap:7px;
+      margin:15px 0;
+    }
+    .install-step{
+      position:relative;
+      min-height:88px;
+      border:1px solid #2d3348;
+      border-radius:14px;
+      background:#141722;
+      padding:10px;
+      text-align:center;
+      display:grid;
+      place-items:center;
+      align-content:center;
+      gap:5px;
+    }
+    .install-step b{
+      width:25px;height:25px;
+      display:grid;place-items:center;
+      margin:auto;
+      border-radius:9px;
+      background:linear-gradient(135deg,#ef2f36,#ff7c2b);
+      color:#fff;
+      font-size:9px;
+    }
+    .install-step span{
+      color:#cfd3dd;
+      font-size:8px;
+      line-height:1.4;
+    }
+
+    .license-path{
+      margin:12px 0;
+      border:1px solid rgba(24,189,134,.25);
+      background:rgba(24,189,134,.065);
+      border-radius:14px;
+      padding:11px 13px;
+    }
+    .license-path small{
+      display:block;
+      color:#8fcfb9;
+      font-size:8px;
+    }
+    .license-path code{
+      display:block;
+      margin-top:5px;
+      color:#c9fff0;
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+      font-size:11px;
+      overflow-wrap:anywhere;
+    }
+
+    .install-guide-grid{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+    }
+    .install-guide-card{
+      position:relative;
+      overflow:hidden;
+      border:1px solid #2c3248;
+      border-radius:18px;
+      background:linear-gradient(180deg,#171a27,#11131d);
+      padding:15px;
+      transition:.22s var(--ease-out);
+    }
+    .install-guide-card:hover{
+      transform:translateY(-3px);
+      border-color:#434b66;
+      box-shadow:0 14px 35px rgba(0,0,0,.18);
+    }
+    .install-guide-card .guide-index{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:5px 8px;
+      border-radius:999px;
+      border:1px solid #343a51;
+      background:#1d2130;
+      color:#cbd0de;
+      font-size:8px;
+      font-weight:900;
+    }
+    .install-guide-card h2{
+      margin:9px 0 4px;
+      font-size:15px;
+    }
+    .install-guide-card .summary{
+      color:#969daf;
+      font-size:9px;
+      line-height:1.65;
+    }
+    .install-columns{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:9px;
+      margin-top:11px;
+    }
+    .install-box{
+      border:1px solid #2a3044;
+      border-radius:12px;
+      background:#12151f;
+      padding:10px;
+    }
+    .install-box h3{
+      margin:0 0 6px;
+      font-size:9px;
+      color:#edf0f7;
+    }
+    .install-box ul,.install-box ol{
+      margin:0;
+      padding-left:18px;
+      color:#a0a7b8;
+      font-size:8px;
+      line-height:1.72;
+    }
+
+    .install-validation{
+      margin-top:13px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex-wrap:wrap;
+      gap:7px;
+      padding:12px;
+      border:1px solid #2e3449;
+      border-radius:15px;
+      background:#131621;
+    }
+    .install-node{
+      padding:7px 9px;
+      border-radius:10px;
+      background:#1b1f2e;
+      border:1px solid #343b52;
+      color:#d8dce6;
+      font-size:8px;
+      font-weight:800;
+    }
+    .install-arrow{color:#70788d;font-size:12px}
+
+    @media(max-width:900px){
+      .install-flow{grid-template-columns:repeat(4,minmax(0,1fr))}
+    }
+    @media(max-width:680px){
+      .install-flow{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .install-guide-grid{grid-template-columns:1fr}
+      .install-columns{grid-template-columns:1fr}
+    }
+
   </style>
 </head>
 <body>
@@ -1354,17 +2419,46 @@
     <div class="ambient-orb c"></div>
   </div>
   <div id="cursorGlow" class="cursor-glow" aria-hidden="true"></div>
+  <div class="v6-bg-layer" aria-hidden="true"><div class="v6-wave"></div></div>
+  <div id="seasonThemeLayer" class="season-theme-layer" aria-hidden="true"></div>
+
+  <section id="maintenanceScreen" class="maintenance-screen" hidden>
+    <div class="maintenance-wrap">
+      <article class="maintenance-card">
+        <div class="maintenance-mascot">
+          <img src="banner-0xvolker.png" alt="0xVoLKER">
+          <div class="maintenance-megaphone">📣</div>
+        </div>
+        <div class="maintenance-copy">
+          <div class="maintenance-chip">🛠 MAINTENANCE MODE</div>
+          <h1 id="maintenanceTitle">กำลังปรับปรุงระบบชั่วคราว</h1>
+          <p id="maintenanceMessage">กำลังอัปเดตระบบเพื่อให้ใช้งานได้ดีขึ้น</p>
+          <div id="maintenanceEta" class="maintenance-eta" hidden></div>
+        </div>
+      </article>
+    </div>
+  </section>
 
   <header class="topbar">
     <div class="shell topbar-inner">
       <div class="brand">
-        <div class="brand-icon">🎮</div>
+        <div class="brand-icon brand-mascot-icon" aria-hidden="true"></div>
         <div>
           <strong>0xVoLKER Shop Service</strong>
-          <small>Premium WebShop • เลือกเกม • ชำระเงิน • ส่งคำขอ</small>
+          <small><span class="lang-th">Premium WebShop • เลือกเกม • ชำระเงิน • ส่งคำขอ</span><span class="lang-en">Premium WebShop • Choose a game • Pay • Submit request</span></small>
         </div>
       </div>
-      <div id="apiIndicator" class="badge gray">กำลังเชื่อมต่อ...</div>
+      <div class="top-actions">
+        <div class="language-switch" aria-label="Language">
+          <button id="langThBtn" class="lang-choice" type="button">TH</button>
+          <button id="langEnBtn" class="lang-choice" type="button">EN</button>
+        </div>
+        <div id="fxRatePill" class="fx-pill">FX: --</div>
+        <div id="themeBadge" class="theme-badge" hidden></div>
+        <div id="presencePill" class="presence-pill">👀 -- · 🛒 --</div>
+        <button id="customerBadge" class="customer-badge" type="button">ID: ...</button>
+        <div id="apiIndicator" class="badge gray">กำลังเชื่อมต่อ...</div>
+      </div>
     </div>
   </header>
 
@@ -1375,15 +2469,22 @@
         <img src="banner-0xvolker.png" alt="0xVoLKER Shop Service banner">
         <div class="hero-banner-note">
           <strong>0xVoLKER Shop Service</strong>
-          <span>แบนเนอร์นี้แสดงผลแบบ responsive รองรับคอม มือถือ และแท็บเล็ต</span>
+          <span><span class="lang-th">Game Service • Zygisk Mod Menu • Verified Reviews</span><span class="lang-en">Game Service • Zygisk Mod Menu • Verified Reviews</span></span>
         </div>
       </div>
     </section>
 
     <nav class="page-tabs" aria-label="เมนูหน้าเว็บ">
-      <button id="catalogTab" class="page-tab active" type="button">🎮 เกม</button>
-      <button id="reviewsTab" class="page-tab" type="button">⭐ รีวิว <span id="reviewReadyBadge" class="tab-dot" hidden>1</span></button>
+      <button id="catalogTab" class="page-tab active" type="button">🎮 <span data-i18n="navGames">เกม</span></button>
+      <button id="guidesTab" class="page-tab guide-tab" type="button">📘 <span data-i18n="navGuides">วิธีการใช้งาน</span></button>
+      <button id="zygiskInstallTab" class="page-tab" type="button">⚙ <span data-i18n="navInstall">ติดตั้ง Zygisk</span></button>
+      <button id="reviewsTab" class="page-tab" type="button">⭐ <span data-i18n="navReviews">รีวิว</span> <span id="reviewReadyBadge" class="tab-dot" hidden>1</span></button>
+      <button id="claimsTab" class="page-tab claim-tab" type="button">🛡 <span data-i18n="navClaims">เคลม</span></button>
+      <button id="aboutTab" class="page-tab about-tab" type="button">👤 <span data-i18n="navAbout">เกี่ยวกับเรา</span></button>
+      <button id="termsTab" class="page-tab terms-tab" type="button">📄 <span data-i18n="navTerms">ข้อตกลง</span></button>
     </nav>
+
+    <div id="themeMessageBar" class="theme-message-bar"></div>
 
     <section id="catalogView">
 
@@ -1423,6 +2524,82 @@
     <section id="gameGrid" class="grid"></section>
     </section>
 
+
+    <section id="guidesView" hidden>
+      <div class="guides-head">
+        <div>
+          <h1>วิธีการใช้งาน</h1>
+          <p>ระบบดึงคู่มือจากหลังบ้านอัตโนมัติ แอดมินแก้ข้อความใน UsageGuides ได้โดยไม่ต้องแก้หน้าเว็บ</p>
+        </div>
+      </div>
+      <div id="guideGrid" class="guide-grid"></div>
+    </section>
+
+
+    <section id="zygiskInstallView" hidden>
+      <div class="install-hero">
+        <div class="eyebrow">VoLKER ZYGISK MOD MENU</div>
+        <h1>
+          <span class="lang-th">คู่มือติดตั้งแบบเรียงลำดับ</span>
+          <span class="lang-en">Step-by-step installation guide</span>
+        </h1>
+
+        <p class="lang-th">
+          หน้าเดียวจบตั้งแต่ขอข้อมูลเครื่อง รับ License วางไฟล์ให้ถูกตำแหน่ง
+          เตรียม Zygisk ตาม Root Manager ติดตั้ง Module รีบูต และเปิดใช้งาน
+        </p>
+        <p class="lang-en">
+          A single guide covering device verification, license delivery, the correct license path,
+          Zygisk preparation for each root manager, module installation, reboot, and final validation.
+        </p>
+
+        <div class="install-warning">
+          <span class="lang-th">
+            License เป็นแบบผูกกับอุปกรณ์ 1 เครื่อง ห้ามแก้ไข <b>volker_license.cert</b>
+            และ KernelSU/APatch ต้องใช้เฉพาะ Zygisk implementation ที่ VoLKER ระบุว่าทดสอบผ่าน
+            ไม่ควรถือว่าใช้ได้กับทุก implementation
+          </span>
+          <span class="lang-en">
+            The license is device-bound to one registered device. Do not modify <b>volker_license.cert</b>.
+            KernelSU/APatch must use a Zygisk implementation explicitly tested and supported by VoLKER;
+            compatibility with every implementation is not implied.
+          </span>
+        </div>
+
+        <div class="install-flow">
+          <div class="install-step"><b>1</b><span class="lang-th">ส่ง Device Request</span><span class="lang-en">Send Device Request</span></div>
+          <div class="install-step"><b>2</b><span class="lang-th">รับ License</span><span class="lang-en">Receive License</span></div>
+          <div class="install-step"><b>3</b><span class="lang-th">วาง License</span><span class="lang-en">Place License</span></div>
+          <div class="install-step"><b>4</b><span class="lang-th">เตรียม Zygisk</span><span class="lang-en">Prepare Zygisk</span></div>
+          <div class="install-step"><b>5</b><span class="lang-th">ติดตั้ง Module</span><span class="lang-en">Install Module</span></div>
+          <div class="install-step"><b>6</b><span>Reboot / Restart</span></div>
+          <div class="install-step"><b>7</b><span class="lang-th">เปิดเกมและตรวจ License</span><span class="lang-en">Launch and validate</span></div>
+        </div>
+
+        <div class="license-path">
+          <small class="lang-th">พาธ License ที่ต้องได้หลังแตกไฟล์</small>
+          <small class="lang-en">Final license path after extraction</small>
+          <code>/data/adb/volker-license/volker_license.cert</code>
+        </div>
+
+        <div class="install-validation">
+          <span class="install-node">Zygisk</span>
+          <span class="install-arrow">→</span>
+          <span class="install-node">VoLKER Module</span>
+          <span class="install-arrow">→</span>
+          <span class="install-node">Signature</span>
+          <span class="install-arrow">→</span>
+          <span class="install-node">Device / Fingerprint</span>
+          <span class="install-arrow">→</span>
+          <span class="install-node">Expiration</span>
+          <span class="install-arrow">→</span>
+          <span class="install-node">VALID / INVALID</span>
+        </div>
+      </div>
+
+      <div id="zygiskInstallGrid" class="install-guide-grid"></div>
+    </section>
+
     <section id="reviewsView" hidden>
       <div class="reviews-hero">
         <div>
@@ -1445,7 +2622,8 @@
             <div>
               <div id="reviewSummaryStars" class="review-stars-readonly">☆☆☆☆☆</div>
               <div style="margin-top:5px;color:#9aa0b1;font-size:9px;line-height:1.55">
-                คะแนนเฉลี่ยจากรีวิวที่เผยแพร่บนหน้าเว็บเท่านั้น
+                <span class="lang-th">คะแนนเฉลี่ยจากรีวิวที่เผยแพร่บนหน้าเว็บเท่านั้น</span>
+                <span class="lang-en">Average rating from published reviews only</span>
               </div>
             </div>
           </div>
@@ -1462,7 +2640,7 @@
             </div>
           </div>
 
-          <div id="reviewsLoading" class="state" hidden>กำลังโหลดรีวิว...</div>
+          <div id="reviewsLoading" class="state" hidden><span class="lang-th">กำลังโหลดรีวิว...</span><span class="lang-en">Loading reviews...</span></div>
           <div id="reviewList" class="review-list"></div>
         </section>
 
@@ -1480,11 +2658,12 @@
             </button>
 
             <div id="reviewEligibilityStatus" class="review-status-box">
-              หากซื้อผ่านอุปกรณ์นี้ ระบบจะจำสิทธิ์รีวิวไว้ให้
+              <span class="lang-th">หากซื้อผ่านอุปกรณ์นี้ ระบบจะจำสิทธิ์รีวิวไว้ให้</span>
+              <span class="lang-en">If you purchased on this device, your review eligibility is remembered automatically.</span>
             </div>
 
             <details class="manual-access">
-              <summary>ซื้อจากอุปกรณ์อื่น / มี Order ID และรหัสรีวิว</summary>
+              <summary><span class="lang-th">ซื้อจากอุปกรณ์อื่น / มี Order ID และรหัสรีวิว</span><span class="lang-en">Purchased on another device / Have Order ID and review code</span></summary>
 
               <div class="field">
                 <label for="manualReviewOrderId">Order ID</label>
@@ -1492,18 +2671,18 @@
               </div>
 
               <div class="field">
-                <label for="manualReviewToken">รหัสรีวิว</label>
+                <label for="manualReviewToken"><span class="lang-th">รหัสรีวิว</span><span class="lang-en">Review code</span></label>
                 <input id="manualReviewToken" placeholder="รหัสรีวิวจากหน้าออเดอร์">
               </div>
 
               <button id="manualReviewCheckBtn" class="secondary" type="button" style="width:100%;margin-top:10px">
-                ตรวจสิทธิ์
+                <span class="lang-th">ตรวจสิทธิ์</span><span class="lang-en">Check eligibility</span>
               </button>
             </details>
 
             <div class="review-help">
-              แนะนำให้รีวิวหลังร้านทำงานเสร็จแล้ว เพื่อให้คะแนนสะท้อนประสบการณ์จริง
-              โดยค่าเริ่มต้นระบบจะปลดล็อกเมื่อ Request เป็น <b>completed</b>
+              <span class="lang-th">แนะนำให้รีวิวหลังร้านทำงานเสร็จแล้ว เพื่อให้คะแนนสะท้อนประสบการณ์จริง โดยค่าเริ่มต้นระบบจะปลดล็อกเมื่อ Request เป็น <b>completed</b></span>
+              <span class="lang-en">We recommend reviewing after the service is completed so your rating reflects the actual experience. By default, reviews unlock when the Request is <b>completed</b>.</span>
             </div>
           </div>
 
@@ -1526,14 +2705,21 @@
             <div id="starCaption" class="star-caption">กดดาวเพื่อให้คะแนน</div>
 
             <div class="field">
-              <label for="reviewerName">ชื่อที่แสดงในรีวิว (ไม่บังคับ)</label>
+              <label for="reviewerName"><span class="lang-th">ชื่อที่แสดงในรีวิว (ไม่บังคับ)</span><span class="lang-en">Display name (optional)</span></label>
               <input id="reviewerName" maxlength="50" placeholder="เช่น Ton">
             </div>
 
             <div class="field">
-              <label for="reviewText">เขียนรีวิว (ไม่บังคับ)</label>
+              <label for="reviewText"><span class="lang-th">เขียนรีวิว (ไม่บังคับ)</span><span class="lang-en">Write a review (optional)</span></label>
               <textarea id="reviewText" maxlength="700" placeholder="ประสบการณ์ใช้งานเป็นอย่างไร..."></textarea>
-              <div class="hint">ดาว 1–5 ดาวเป็นข้อมูลที่จำเป็น ส่วนข้อความรีวิวจะเว้นว่างก็ได้</div>
+              <div class="hint"><span class="lang-th">ดาว 1–5 ดาวเป็นข้อมูลที่จำเป็น ส่วนข้อความรีวิวจะเว้นว่างก็ได้</span><span class="lang-en">A 1–5 star rating is required. Review text is optional.</span></div>
+            </div>
+
+            <div id="reviewImagePicker" class="review-image-picker">
+              <label for="reviewImagesInput">📷 เพิ่มรูปรีวิว (สูงสุด 3 รูป)</label>
+              <input id="reviewImagesInput" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+              <div id="reviewImagePreview" class="review-image-preview"></div>
+              <div class="hint" style="margin-top:7px"><span class="lang-th">ระบบจะย่อรูปก่อนอัปโหลดอัตโนมัติเพื่อลดขนาดไฟล์</span><span class="lang-en">Images are compressed automatically before upload.</span></div>
             </div>
 
             <div id="reviewSubmitMessage" class="message" hidden></div>
@@ -1549,7 +2735,249 @@
         </aside>
       </div>
     </section>
+    <section id="claimsView" hidden>
+      <div class="page-heading">
+        <div>
+          <h1><span class="lang-th">🛡 ระบบเคลม / รับประกัน</span><span class="lang-en">🛡 Warranty Claims</span></h1>
+          <p class="lang-th">เฉพาะบริการทรัพยากรที่เข้าเงื่อนไข ระบบตรวจหมายเลขลูกค้า ออเดอร์ ระยะเวลา และจำนวนสิทธิ์อัตโนมัติ</p>
+          <p class="lang-en">For eligible resource services. Customer ID, order, warranty period and claim allowance are verified automatically.</p>
+        </div>
+        <span id="claimCustomerChip" class="subtle-chip">ID: -</span>
+      </div>
+
+      <div class="claim-layout">
+        <div class="content-panel">
+          <div class="claim-card">
+            <h2 class="lang-th">สิทธิ์ที่ยังใช้ได้</h2>
+            <h2 class="lang-en">Available warranty claims</h2>
+            <p class="lang-th">ค่าเริ่มต้น: ภายใน 7 วันหลังงาน completed และสูงสุด 2 สิทธิ์ต่อบริการ</p>
+            <p class="lang-en">Default: within 7 days after job completion, up to 2 claim credits per eligible service.</p>
+          </div>
+          <div id="claimEligibilityList" class="claim-list" style="margin-top:10px"></div>
+        </div>
+
+        <div class="content-panel">
+          <div id="claimFormWrap" class="claim-form" hidden>
+            <div class="claim-card">
+              <h2 class="lang-th">แจ้งเคลม</h2>
+              <h2 class="lang-en">Submit a claim</h2>
+
+              <div id="claimSelectedInfo" class="review-status-box good"></div>
+
+              <div class="field">
+                <label class="lang-th">รูปแบบการเคลม</label>
+                <label class="lang-en">Claim option</label>
+                <select id="claimTypeSelect">
+                  <option value="redo">ทำใหม่ฟรี / Free redo</option>
+                  <option value="switch_equal_price">เปลี่ยนเกมราคาเท่ากัน / Switch to equal-price game</option>
+                </select>
+              </div>
+
+              <div id="claimSwitchFields" hidden>
+                <div class="field">
+                  <label class="lang-th">เกมใหม่ที่ราคาเท่ากัน</label>
+                  <label class="lang-en">Replacement game at the same price</label>
+                  <select id="claimTargetSelect"></select>
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="lang-th">เหตุผล / รายละเอียดการแบน</label>
+                <label class="lang-en">Reason / ban details</label>
+                <textarea id="claimReason" maxlength="1000" placeholder="อธิบายเหตุการณ์ให้ชัดเจน"></textarea>
+              </div>
+
+              <button id="submitClaimBtn" class="primary" type="button" style="width:100%;margin-top:10px">ส่งคำขอเคลม</button>
+              <button id="cancelClaimBtn" class="secondary" type="button" style="width:100%;margin-top:8px">ยกเลิก</button>
+            </div>
+          </div>
+
+          <div class="claim-card" style="margin-top:10px">
+            <h2 class="lang-th">ประวัติการเคลม</h2>
+            <h2 class="lang-en">Claim history</h2>
+            <div id="claimHistory" class="claim-history"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="aboutView" hidden>
+      <div class="page-heading">
+        <div>
+          <h1 class="lang-th">เกี่ยวกับ 0xVoLKER</h1>
+          <h1 class="lang-en">About 0xVoLKER</h1>
+          <p class="lang-th">จริงจังกับโค้ด แต่โปรไฟล์ขอเล่นใหญ่ไว้ก่อน 555+</p>
+          <p class="lang-en">Serious about code, slightly less serious about the bio 😄</p>
+        </div>
+      </div>
+
+      <div class="about-grid">
+        <div class="content-panel">
+          <div class="about-card">
+            <div class="lang-th">
+              <h2>0xVoLKER คือใคร?</h2>
+              <p>
+                0xVoLKER คือ Hacker สาย Cracker ในเวอร์ชันคนชอบแกะ ชอบทดลอง และชอบขลุกอยู่กับเกมกับโค้ดจนลืมเวลา 😅
+                สนใจงานสคริปต์ .Lua, reverse engineering, Android modding และ Zygisk Mod Menu เป็นพิเศษ
+                ถ้าวันไหนเงียบ ๆ มีโอกาสสูงว่ากำลังนั่งไล่โค้ด หรือกำลังถามตัวเองว่า “ทำไมมันยังไม่ hook อีกวะ” 555+
+                งานทดลองควรทำกับระบบ/บัญชี/สภาพแวดล้อมที่ตนเองมีสิทธิ์ทดสอบเท่านั้น
+              </p>
+            </div>
+            <div class="lang-en">
+              <h2>Who is 0xVoLKER?</h2>
+              <p>
+                0xVoLKER is a hacker/cracker-minded tinkerer who enjoys pulling systems apart, experimenting with games and code,
+                and occasionally forgetting what time it is. Main interests include .Lua scripting, reverse engineering,
+                Android modding and Zygisk Mod Menu development. If he goes quiet, he is probably debugging something and asking,
+                “why is this hook still not firing?” 😄 Experiments should be limited to systems, accounts and environments you are authorized to test.
+              </p>
+            </div>
+
+            <div class="skill-chips">
+              <span class="skill-chip">.Lua</span>
+              <span class="skill-chip">Zygisk Mod Menu</span>
+              <span class="skill-chip">Android</span>
+              <span class="skill-chip">Reverse Engineering</span>
+              <span class="skill-chip">Automation</span>
+            </div>
+
+            <div class="contact-buttons">
+              <a id="aboutAdminTelegram" class="contact-btn telegram" href="https://t.me/volkergg" target="_blank" rel="noopener">✈ Telegram Admin</a>
+              <a id="aboutCommunityTelegram" class="contact-btn community" href="https://t.me/volker_gg" target="_blank" rel="noopener">👥 Community</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-panel">
+          <div class="about-mascot"><img src="banner-0xvolker.png" alt="0xVoLKER"></div>
+          <div class="customer-card">
+            <div class="customer-stat">
+              <span class="lang-th">หมายเลขลูกค้าของคุณ</span><span class="lang-en">Your customer ID</span>
+              <strong id="aboutCustomerNo">-</strong>
+            </div>
+            <div class="customer-stat">
+              <span class="lang-th">เคลมที่เคยแจ้ง</span><span class="lang-en">Claims submitted</span>
+              <strong id="aboutClaimCount">0</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="termsView" hidden>
+      <div class="page-heading">
+        <div>
+          <h1 class="lang-th">ข้อตกลงการใช้งาน</h1>
+          <h1 class="lang-en">Terms of Service</h1>
+          <p class="lang-th">เขียนให้เข้าใจง่าย เพื่อให้ลูกค้ากับแอดมินอ้างอิงกติกาเดียวกัน</p>
+          <p class="lang-en">Plain-language terms so customers and admin follow the same rules.</p>
+        </div>
+      </div>
+
+      <div class="terms-grid">
+        <div class="terms-card">
+          <div class="lang-th">
+            <h2>1. ก่อนสั่งบริการ</h2>
+            <ul>
+              <li>ตรวจชื่อเกม บริการ ระบบบัญชี และ Compatibility ให้ตรงกับอุปกรณ์ของคุณก่อนชำระเงิน</li>
+              <li>การดัดแปลงเกมอาจขัดกับกติกาของเกมและมีความเสี่ยงถูกจำกัด/แบนบัญชี ลูกค้าต้องยอมรับความเสี่ยงก่อนใช้บริการ</li>
+              <li>ห้ามส่งรหัสผ่าน Google ให้เว็บไซต์หรือแอดมิน เว้นแต่เป็นรหัสบัญชีภายในเกมที่บริการนั้นจำเป็นจริง ๆ และคุณยินยอม</li>
+            </ul>
+          </div>
+          <div class="lang-en">
+            <h2>1. Before ordering</h2>
+            <ul>
+              <li>Check the game, service, login method and compatibility before payment.</li>
+              <li>Game modifications may violate a game's rules and can carry suspension/ban risk. Customers must accept that risk before ordering.</li>
+              <li>Do not send your Google password. Only provide in-game credentials when strictly required for the selected service and you consent to doing so.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="terms-card">
+          <div class="lang-th">
+            <h2>2. การชำระเงิน</h2>
+            <ul>
+              <li>ช่องทางที่เปิดให้ใช้จริงจะแสดงในหน้า Order: PromptPay, PayPal และ/หรือ USDT</li>
+              <li>PayPal: เว็บไซต์ไม่สามารถปิดระบบ dispute/chargeback ของ PayPal ได้ ร้านจะเก็บ Order ID, Customer ID และ Payment Log เป็นหลักฐาน และลูกค้าควรชำระผ่านวิธีที่เป็นไปตามกติกา PayPal</li>
+              <li>PayPal หลังจ่ายให้ส่งหลักฐานไปที่ Telegram แอดมินตามปุ่มในหน้า Order</li>
+              <li>USDT: ผู้ส่งรับผิดชอบค่าธรรมเนียมเครือข่าย/Exchange ทั้งหมด ยอดที่กระเป๋าร้านได้รับสุทธิต้องไม่น้อยกว่ายอดที่ใบสั่งซื้อแสดง และต้องใช้ Network ให้ถูกต้อง</li>
+            </ul>
+          </div>
+          <div class="lang-en">
+            <h2>2. Payments</h2>
+            <ul>
+              <li>Available checkout methods are shown on the order page: PromptPay, PayPal and/or USDT.</li>
+              <li>PayPal disputes/chargebacks cannot be disabled by this website. Order ID, Customer ID and payment logs are retained as transaction evidence, and customers should use a PayPal-compliant payment method.</li>
+              <li>After PayPal payment, send proof to the admin via the Telegram button on the order page.</li>
+              <li>USDT: the sender pays all network/exchange fees. The shop wallet must receive at least the exact net invoice amount, on the correct network.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="terms-card">
+          <div class="lang-th">
+            <h2>3. นโยบายไม่คืนเงินหลังงานสำเร็จ</h2>
+            <ul>
+              <li>เมื่อร้านยืนยันรับชำระเงินและงานตามออเดอร์ถูกดำเนินการ/ส่งมอบสำเร็จแล้ว <b>ไม่มีการคืนเงิน</b> ไม่ว่าบางส่วนหรือทั้งหมด เว้นแต่กฎหมายที่ใช้บังคับกำหนดไว้เป็นอย่างอื่น</li>
+              <li>หากบริการประเภท Resource เข้าเงื่อนไขรับประกัน ลูกค้าจะใช้สิทธิ์ตามระบบเคลมของร้าน เช่น ทำใหม่ฟรีหรือเปลี่ยนเป็นบริการเกมอื่นที่ราคาเท่ากัน แทนการขอคืนเงิน</li>
+              <li>ก่อนชำระเงิน ลูกค้าควรตรวจเกม บริการ ราคา Compatibility และข้อมูลที่ต้องเตรียมให้ถูกต้อง หากไม่แน่ใจให้ติดต่อแอดมินก่อนชำระ</li>
+            </ul>
+          </div>
+          <div class="lang-en">
+            <h2>3. No refunds after successful completion</h2>
+            <ul>
+              <li>Once payment has been confirmed and the ordered work has been successfully completed/delivered, <b>no full or partial refund is provided</b>, except where applicable law requires otherwise.</li>
+              <li>If an eligible Resource service falls within the warranty terms, the available remedy is handled through the shop's claim system, such as a free redo or an equal-price replacement service, rather than a cash refund.</li>
+              <li>Before payment, customers should verify the game, service, price, compatibility and required information. Contact the admin before paying if anything is unclear.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="terms-card">
+          <div class="lang-th">
+            <h2>4. รับประกันบริการทรัพยากร</h2>
+            <ul>
+              <li>ถ้าเป็นบริการประเภท Resource และบัญชีถูกแบนภายใน 7 วันหลังงาน completed สามารถใช้สิทธิ์เคลมได้สูงสุด 2 ครั้งต่อบริการ</li>
+              <li>แต่ละสิทธิ์เลือกได้อย่างใดอย่างหนึ่ง: ทำใหม่ฟรี หรือเปลี่ยนเป็นเกมอื่นในร้านที่บริการมีราคาเท่ากันพอดี</li>
+              <li>ระบบจะผูกสิทธิ์กับ Customer ID + Order ID + Service ID เพื่อป้องกันการเคลมซ้ำเกินจำนวน</li>
+              <li>แอดมินมีสิทธิ์ตรวจข้อมูลก่อนอนุมัติเคลม หากข้อมูลไม่ตรงออเดอร์หรืออยู่นอกระยะรับประกันสามารถปฏิเสธได้</li>
+            </ul>
+          </div>
+          <div class="lang-en">
+            <h2>4. Resource-service warranty</h2>
+            <ul>
+              <li>Eligible Resource services include a 7-day warranty after the job is marked completed, with up to 2 claim credits per service.</li>
+              <li>Each credit can be used for either a free redo or a switch to another game's service at exactly the same price.</li>
+              <li>Claims are tied to Customer ID + Order ID + Service ID to prevent duplicate/excess claims.</li>
+              <li>Admin may verify claim details and reject claims that do not match the order or fall outside the warranty period.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="terms-card">
+          <div class="lang-th">
+            <h2>5. หมายเลขลูกค้าและประวัติ</h2>
+            <p>เว็บสร้าง Customer ID ให้โดยอัตโนมัติและจำไว้ในเบราว์เซอร์เดิม มี Recovery Key สำหรับย้ายอุปกรณ์ ประวัติออเดอร์ การจ่าย รีวิว และเคลมจะอ้างอิงหมายเลขนี้เพื่อป้องกันความสับสนของแอดมิน</p>
+          </div>
+          <div class="lang-en">
+            <h2>5. Customer ID and history</h2>
+            <p>A Customer ID is created automatically and remembered in the same browser. A recovery key can restore the ID on another device. Orders, payments, reviews and claims reference this ID to reduce admin mistakes.</p>
+          </div>
+          <div class="warning-box">
+            <span class="lang-th">หมายเหตุ: อย่าเผยแพร่ Recovery Key ต่อสาธารณะ เพราะใช้กู้หมายเลขลูกค้าบนอุปกรณ์ใหม่ได้</span>
+            <span class="lang-en">Note: Do not share your recovery key publicly. It can restore your customer identity on another device.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
+
+  <div class="floating-contact">
+    <a id="floatAdminTelegram" href="https://t.me/volkergg" target="_blank" rel="noopener" title="Telegram Admin">✈</a>
+    <a id="floatCommunityTelegram" href="https://t.me/volker_gg" target="_blank" rel="noopener" title="Community">👥</a>
+  </div>
 
   <!-- Detail -->
   <div id="detailModal" class="modal" hidden>
@@ -1568,21 +2996,30 @@
       </div>
 
       <div class="block">
-        <div class="block-title">ระบบบัญชี / การซิงก์</div>
+        <div class="block-title"><span class="lang-th">ระบบบัญชี / การซิงก์</span><span class="lang-en">Login / Sync method</span></div>
         <div id="loginList" class="login-list"></div>
       </div>
 
       <div class="block">
-        <div class="block-title">เลือกบริการ</div>
+        <div class="block-title"><span class="lang-th">ระบบ / อุปกรณ์ที่รองรับ</span><span class="lang-en">Supported systems / devices</span></div>
+        <div id="compatibilityList" class="compat-grid"></div>
+      </div>
+
+      <div class="block">
+        <div class="block-title"><span class="lang-th">เลือกบริการ</span><span class="lang-en">Select services</span></div>
+        <div class="multi-note">
+          <span><span class="lang-th">เลือกได้มากกว่า 1 รายการ</span><span class="lang-en">You can select multiple services</span></span>
+          <strong id="selectedServiceCount">0 รายการ</strong>
+        </div>
         <div id="serviceList" class="service-list"></div>
       </div>
 
       <div class="bottom-action">
         <div class="sum">
-          <small>ยอดชำระ</small>
+          <small><span class="lang-th">ยอดชำระ</span><span class="lang-en">Total</span></small>
           <strong id="selectedPrice">-</strong>
         </div>
-        <button id="createOrderBtn" class="primary" type="button" disabled>สร้างออเดอร์</button>
+        <button id="createOrderBtn" class="primary" type="button" disabled><span class="lang-th">สร้างออเดอร์</span><span class="lang-en">Create order</span></button>
       </div>
     </section>
   </div>
@@ -1608,41 +3045,62 @@
           <strong id="orderIdText">-</strong>
         </div>
         <div class="summary-box">
-          <span>บริการ</span>
+          <span><span class="lang-th">บริการ</span><span class="lang-en">Services</span></span>
           <strong id="orderServiceText">-</strong>
         </div>
       </div>
 
       <div id="reviewCodeBox" class="review-code-box" hidden>
         <div>
-          <span>รหัสรีวิว — เก็บไว้หากต้องการรีวิวจากอุปกรณ์อื่น</span>
+          <span><span class="lang-th">รหัสรีวิว — เก็บไว้หากต้องการรีวิวจากอุปกรณ์อื่น</span><span class="lang-en">Review code — keep it if you want to review from another device</span></span>
           <strong id="reviewTokenText">-</strong>
         </div>
-        <button id="copyReviewTokenBtn" class="copy-mini" type="button">คัดลอก</button>
+        <button id="copyReviewTokenBtn" class="copy-mini" type="button"><span class="lang-th">คัดลอก</span><span class="lang-en">Copy</span></button>
       </div>
 
       <div class="payment-box">
-        <div class="eyebrow">ยอดชำระ</div>
-        <div id="orderAmount" class="payment-amount">0 ฿</div>
-        <p>
-          ชำระเงินตามช่องทางที่ร้านแจ้งไว้ แล้วรอแอดมินยืนยันการชำระเงิน
-          เมื่อระบบพบสถานะ <b>paid</b> ฟอร์มส่งคำขอจะเปิดให้อัตโนมัติ
-        </p>
-        <div class="payment-note">
-          เวอร์ชันนี้ใช้การยืนยันการชำระเงินจากฝั่งแอดมินก่อน
-          ระบบจะไม่อนุญาตให้สร้าง Request หาก Order ยังไม่เป็น paid
+        <div class="eyebrow">PAYMENT</div>
+        <div class="payment-amount"><span id="orderAmount">0 ฿</span></div>
+        <p id="paymentIntro">เลือกช่องทางชำระเงิน แล้วระบบจะแสดงยอดและรายละเอียดที่ต้องใช้</p>
+
+        <div id="paymentMethodList" class="payment-method-list"></div>
+
+        <div id="paymentMethodDetail" class="payment-detail" hidden>
+          <div class="payment-due">
+            <span id="paymentDueLabel">ยอดที่ต้องชำระ</span>
+            <strong id="paymentDueAmount">-</strong>
+          </div>
+
+          <div id="paymentQrWrap" class="payment-qr" hidden>
+            <img id="paymentQrImage" alt="Payment QR">
+          </div>
+
+          <div id="paymentInfoRows"></div>
+          <div id="paymentInstruction" class="payment-instruction"></div>
+          <div id="paypalDisclaimer" class="paypal-disclaimer" hidden></div>
+
+          <div class="action-row">
+            <a id="paymentExternalLink" class="secondary" href="#" target="_blank" rel="noopener" hidden>เปิดหน้าชำระเงิน</a>
+            <a id="sendProofTelegramBtn" class="secondary" href="https://t.me/volkergg" target="_blank" rel="noopener">✈ ส่งหลักฐานให้แอดมิน</a>
+          </div>
         </div>
+
+        <div class="payment-note" style="margin-top:11px">
+          <span class="lang-th">ระบบจะไม่เปิดฟอร์มส่งงานจนกว่าแอดมินจะยืนยัน <b>paymentStatus = paid</b></span>
+          <span class="lang-en">The request form stays locked until the admin confirms <b>paymentStatus = paid</b>.</span>
+        </div>
+
         <div class="action-row">
           <button id="checkPaymentBtn" class="secondary" type="button">ตรวจสอบสถานะ</button>
         </div>
       </div>
 
       <div id="requestPanel" class="request-panel" hidden>
-        <div class="block-title">✅ ชำระเงินสำเร็จ — ส่งข้อมูลสำหรับดำเนินงาน</div>
+        <div class="block-title"><span class="lang-th">✅ ชำระเงินสำเร็จ — ส่งข้อมูลสำหรับดำเนินงาน</span><span class="lang-en">✅ Payment confirmed — submit the information needed for the service</span></div>
 
         <form id="requestForm">
           <div class="field">
-            <label for="loginMethodSelect">ระบบบัญชี / การซิงก์</label>
+            <label for="loginMethodSelect"><span class="lang-th">ระบบบัญชี / การซิงก์</span><span class="lang-en">Login / Sync method</span></label>
             <select id="loginMethodSelect" required></select>
           </div>
 
@@ -1653,30 +3111,61 @@
           </div>
 
           <div class="field">
-            <label for="customerName">ชื่อ / ชื่อเล่น</label>
+            <label for="customerName"><span class="lang-th">ชื่อ / ชื่อเล่น</span><span class="lang-en">Name / nickname</span></label>
             <input id="customerName" maxlength="80" required>
           </div>
 
           <div class="field">
-            <label for="contact">ช่องทางติดต่อ</label>
+            <label for="contact"><span class="lang-th">ช่องทางติดต่อ</span><span class="lang-en">Contact</span></label>
             <input id="contact" maxlength="120" placeholder="LINE / Telegram / Facebook / Discord" required>
           </div>
 
           <div class="field">
-            <label for="note">รายละเอียดเพิ่มเติม</label>
+            <label for="note"><span class="lang-th">รายละเอียดเพิ่มเติม</span><span class="lang-en">Additional details</span></label>
             <textarea id="note" maxlength="700" placeholder="รายละเอียดที่ต้องการแจ้ง"></textarea>
           </div>
 
           <div id="requestMessage" class="message" hidden></div>
 
           <button id="submitRequestBtn" class="primary" style="width:100%;margin-top:12px" type="submit">
-            ส่งคำขอ
+            <span class="lang-th">ส่งคำขอ</span><span class="lang-en">Submit request</span>
           </button>
         </form>
       </div>
     </section>
   </div>
 
+
+  <div id="customerModal" class="modal" hidden>
+    <div class="backdrop" data-close-customer></div>
+    <section class="dialog customer-dialog" role="dialog" aria-modal="true">
+      <button class="close" type="button" data-close-customer>×</button>
+      <div class="eyebrow">CUSTOMER ID</div>
+      <h2 style="margin:4px 0 0" id="customerModalNo">-</h2>
+      <p class="muted lang-th">หมายเลขนี้ช่วยให้แอดมินแยกออเดอร์ รีวิว และประวัติการเคลมของคุณได้ถูกต้อง</p>
+      <p class="muted lang-en">This ID links your orders, reviews and warranty history so the admin can identify your records correctly.</p>
+
+      <div class="recovery-box">
+        <span class="lang-th">Recovery Key ของอุปกรณ์นี้</span>
+        <span class="lang-en">Recovery key on this device</span>
+        <code id="customerRecoveryKey">-</code>
+        <button id="copyRecoveryBtn" class="secondary" type="button" style="width:100%;margin-top:9px">คัดลอก / Copy</button>
+      </div>
+
+      <details class="manual-access" style="margin-top:13px">
+        <summary><span class="lang-th">กู้ Customer ID บนอุปกรณ์นี้</span><span class="lang-en">Recover a Customer ID on this device</span></summary>
+        <div class="field">
+          <label>Customer ID</label>
+          <input id="recoverCustomerNo" placeholder="VKR-000001">
+        </div>
+        <div class="field">
+          <label>Recovery Key</label>
+          <input id="recoverCustomerKey" placeholder="VKR-XXXX-XXXX-XXXX">
+        </div>
+        <button id="recoverCustomerBtn" class="primary" type="button" style="width:100%;margin-top:10px">Recover</button>
+      </details>
+    </section>
+  </div>
 
   <div id="toastRoot" class="toast-root" aria-live="polite"></div>
   <button id="scrollTopBtn" class="scroll-top" type="button" aria-label="กลับขึ้นด้านบน">↑</button>
@@ -1689,7 +3178,7 @@
     let filteredGames = [];
     let selectedCategory = "ทั้งหมด";
     let selectedGame = null;
-    let selectedService = null;
+    let selectedServices = new Map();
     let currentOrder = null;
     let pollTimer = null;
     let lastPaymentStatus = "";
@@ -1700,8 +3189,46 @@
     let reviewUnlockRule = "completed";
     let eligibleReviewAccess = null;
     let selectedReviewRating = 0;
+    let reviewImagesData = [];
+    let siteConfig = {};
+    let allGuides = [];
+    let paymentMethods = [];
+    let selectedPayment = null;
+    let pricingConfig = {};
+    let activeTheme = null;
+    let themeRefreshTimer = null;
+
+    let customerNo = "";
+    let customerToken = "";
+    let customerRecoveryKey = "";
+    let customerStats = {};
+    let presenceTimer = null;
+    let presenceState = "viewing";
+    let claimData = {eligible:[], history:[]};
+    let selectedClaimItem = null;
+
+    let currentLang =
+      localStorage.getItem("volker_lang") ||
+      (
+        (navigator.language || "").toLowerCase().startsWith("th")
+          ? "th"
+          : "en"
+      );
 
     const REVIEW_STORAGE_KEY = "volker_review_access_v1";
+    const CUSTOMER_TOKEN_KEY = "volker_customer_token_v1";
+    const CUSTOMER_NO_KEY = "volker_customer_no_v1";
+    const CUSTOMER_RECOVERY_KEY = "volker_customer_recovery_v1";
+    const SESSION_ID =
+      sessionStorage.getItem("volker_session_id") ||
+      (
+        "SES-" +
+        Date.now().toString(36) +
+        "-" +
+        Math.random().toString(36).slice(2,10)
+      );
+
+    sessionStorage.setItem("volker_session_id", SESSION_ID);
 
     const REDUCED_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const FINE_POINTER = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
@@ -1718,7 +3245,23 @@
       $("#loginMethodSelect").addEventListener("change", updateAccountField);
 
       $("#catalogTab").addEventListener("click", () => switchPage("catalog"));
+      $("#guidesTab").addEventListener("click", () => switchPage("guides"));
+      $("#zygiskInstallTab").addEventListener("click", () => switchPage("zygiskInstall"));
       $("#reviewsTab").addEventListener("click", () => switchPage("reviews"));
+      $("#claimsTab").addEventListener("click", () => switchPage("claims"));
+      $("#aboutTab").addEventListener("click", () => switchPage("about"));
+      $("#termsTab").addEventListener("click", () => switchPage("terms"));
+
+      $("#langThBtn").addEventListener("click", () => setLanguage("th"));
+      $("#langEnBtn").addEventListener("click", () => setLanguage("en"));
+      $("#customerBadge").addEventListener("click", openCustomerModal);
+      $("#copyRecoveryBtn").addEventListener("click", copyRecoveryKey);
+      $("#recoverCustomerBtn").addEventListener("click", recoverCustomer);
+
+      $("#claimTypeSelect").addEventListener("change", updateClaimSwitchFields);
+      $("#submitClaimBtn").addEventListener("click", submitClaim);
+      $("#cancelClaimBtn").addEventListener("click", closeClaimForm);
+
       $("#reviewSearch").addEventListener("input", renderReviews);
       $("#reviewGameFilter").addEventListener("change", () => loadReviews($("#reviewGameFilter").value));
       $("#checkMyReviewBtn").addEventListener("click", () => checkSavedReviewAccess(false));
@@ -1726,25 +3269,41 @@
       $("#reviewForm").addEventListener("submit", submitReview);
       $("#cancelReviewBtn").addEventListener("click", closeReviewForm);
       $("#copyReviewTokenBtn").addEventListener("click", copyReviewToken);
+      $("#reviewImagesInput").addEventListener("change", handleReviewImages);
 
       document.querySelectorAll(".star-btn").forEach(btn => {
         btn.addEventListener("click", () => selectReviewRating(Number(btn.dataset.rating)));
       });
 
       initPremiumEffects();
+      applyLanguage();
 
       document.querySelectorAll("[data-close-detail]").forEach(el => el.onclick = closeDetail);
       document.querySelectorAll("[data-close-order]").forEach(el => el.onclick = closeOrder);
+      document.querySelectorAll("[data-close-customer]").forEach(el => el.onclick = closeCustomerModal);
 
       document.addEventListener("keydown", e => {
         if (e.key === "Escape") {
           closeDetail();
           closeOrder();
+          closeCustomerModal();
         }
       });
 
-      loadGames();
+      bootApp();
     });
+
+    async function bootApp() {
+      try {
+        await initCustomer();
+      } catch (err) {
+        console.error(err);
+        showToast(tr("สร้างหมายเลขลูกค้าไม่สำเร็จ", "Could not initialize customer ID"), "error");
+      }
+
+      await loadGames();
+      startPresenceHeartbeat();
+    }
 
     async function apiGet(params) {
       const url = new URL(API_URL);
@@ -1764,82 +3323,755 @@
       return await res.json();
     }
 
+    function tr(th, en) {
+      return currentLang === "en" ? en : th;
+    }
+
+    function localField(obj, base) {
+      if (!obj) return "";
+      if (currentLang === "en") {
+        return obj[base + "En"] || obj[base] || "";
+      }
+      return obj[base] || obj[base + "En"] || "";
+    }
+
+    function setLanguage(lang) {
+      const next = lang === "en" ? "en" : "th";
+
+      if (currentLang === next) {
+        applyLanguage();
+        return;
+      }
+
+      currentLang = next;
+      localStorage.setItem("volker_lang", currentLang);
+      applyLanguage();
+
+      showToast(
+        currentLang === "en"
+          ? "Language changed to English · prices shown in USD"
+          : "เปลี่ยนเป็นภาษาไทย · ราคาแสดงเป็นเงินบาท",
+        "success",
+        3000
+      );
+    }
+    function applyLanguage() {
+      document.documentElement.dataset.lang = currentLang;
+      $("#langThBtn").classList.toggle("active", currentLang === "th");
+      $("#langEnBtn").classList.toggle("active", currentLang === "en");
+      updateFxPill();
+      applyTheme(activeTheme);
+
+      const dict = {
+        navGames:["เกม","Games"],
+        navGuides:["วิธีการใช้งาน","How to Use"],
+        navInstall:["ติดตั้ง Zygisk","Install Zygisk"],
+        navReviews:["รีวิว","Reviews"],
+        navClaims:["เคลม","Claims"],
+        navAbout:["เกี่ยวกับเรา","About"],
+        navTerms:["ข้อตกลง","Terms"],
+      };
+
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.dataset.i18n;
+        const pair = dict[key];
+        if (pair) el.textContent = currentLang === "en" ? pair[1] : pair[0];
+      });
+
+      $("#searchInput").placeholder = tr("ค้นหาเกม...", "Search games...");
+      $("#reviewSearch").placeholder = tr("ค้นหาในรีวิว...", "Search reviews...");
+      $("#manualReviewToken").placeholder = tr("รหัสรีวิวจากหน้าออเดอร์","Review code from your order");
+      $("#reviewerName").placeholder = tr("เช่น Ton","e.g. Ton");
+      $("#reviewText").placeholder = tr("ประสบการณ์ใช้งานเป็นอย่างไร...","How was your experience?");
+      $("#claimReason").placeholder = tr("อธิบายเหตุการณ์ให้ชัดเจน","Describe what happened");
+      $("#note").placeholder = tr("รายละเอียดที่ต้องการแจ้ง","Additional information");
+
+      const sort = $("#sortSelect");
+      if (sort && sort.options.length >= 3) {
+        sort.options[0].textContent = tr("เรียง: แนะนำ", "Sort: Recommended");
+        sort.options[1].textContent = tr("ราคาต่ำ → สูง", "Price: Low → High");
+        sort.options[2].textContent = tr("ราคาสูง → ต่ำ", "Price: High → Low");
+      }
+
+      const catalogHead = $("#catalogView .section-head h1");
+      const catalogSub = $("#catalogView .section-head p");
+
+      if (catalogHead) catalogHead.textContent = tr("รายการเกม","Games");
+      if (catalogSub) {
+        catalogSub.textContent = tr(
+          "กดการ์ดเพื่อดูบริการและระบบบัญชีที่รองรับ",
+          "Open a game card to see services, login methods and compatibility."
+        );
+      }
+
+      const guideHead = $("#guidesView .guides-head h1");
+      const guideSub = $("#guidesView .guides-head p");
+      if (guideHead) guideHead.textContent = tr("วิธีการใช้งาน","How to Use");
+      if (guideSub) {
+        guideSub.textContent = tr(
+          "ระบบดึงคู่มือจากหลังบ้านอัตโนมัติ แอดมินแก้ข้อความใน UsageGuides ได้โดยไม่ต้องแก้หน้าเว็บ",
+          "Guides are loaded automatically from the admin database."
+        );
+      }
+
+      const reviewsHead = $("#reviewsView .reviews-hero h1");
+      const reviewsSub = $("#reviewsView .reviews-hero p");
+      if (reviewsHead) reviewsHead.textContent = tr("รีวิวจากลูกค้าที่ซื้อจริง","Verified customer reviews");
+      if (reviewsSub) {
+        reviewsSub.textContent = tr(
+          "ทุกคะแนนมาจากออเดอร์ที่ผ่านการตรวจสิทธิ์ ระบบไม่อนุญาตให้ผู้ที่ไม่ได้ซื้อเขียนรีวิว",
+          "Only verified buyers can submit ratings and reviews."
+        );
+      }
+
+      const gateHead = $("#reviewGate h2");
+      const gateP = $("#reviewGate p");
+      if (gateHead) gateHead.textContent = tr("เขียนรีวิวสำหรับผู้ซื้อเท่านั้น","Reviews are for verified buyers only");
+      if (gateP) {
+        gateP.textContent = tr(
+          "ระบบตรวจ Order ID + รหัสรีวิว และสถานะออเดอร์จาก Backend ก่อนเปิดฟอร์มให้คะแนน",
+          "The backend verifies the Order ID, review token and order status before enabling the review form."
+        );
+      }
+
+      $("#checkMyReviewBtn").textContent = tr("ตรวจสิทธิ์จากออเดอร์ของฉัน","Check my review eligibility");
+      $("#submitReviewBtn").textContent = tr("ส่งรีวิว","Submit review");
+      $("#cancelReviewBtn").textContent = tr("กลับ","Back");
+      $("#checkPaymentBtn").textContent = tr("ตรวจสอบสถานะ","Check payment status");
+      $("#paymentIntro").textContent = tr(
+        "เลือกช่องทางชำระเงิน แล้วระบบจะแสดงยอดจริง โดยเงินบาทเป็นราคาหลัก ส่วนช่องทางต่างประเทศจะบวก FX safety buffer และค่าธรรมเนียมตามช่องทาง",
+        "Choose a payment method to see the exact checkout amount. THB is the base price; foreign-currency checkout adds an FX safety buffer and configured processor fees."
+      );
+      $("#paymentDueLabel").textContent = tr("ยอดที่ต้องชำระ", "Amount to pay");
+      $("#sendProofTelegramBtn").textContent = tr("✈ ส่งหลักฐานให้แอดมิน", "✈ Send proof to admin");
+      $("#submitClaimBtn").textContent = tr("ส่งคำขอเคลม","Submit claim");
+      $("#cancelClaimBtn").textContent = tr("ยกเลิก","Cancel");
+
+      const reviewClosed = $("#reviewsClosedBanner");
+      if (reviewClosed) {
+        reviewClosed.textContent = tr(
+          "🔒 ขณะนี้ร้านปิดรับการเขียนรีวิวชั่วคราว แต่ยังสามารถอ่านรีวิวเดิมได้ตามปกติ",
+          "🔒 Review submissions are temporarily closed. Existing reviews remain visible."
+        );
+      }
+
+      const imageLabel = $("#reviewImagePicker label");
+      if (imageLabel) {
+        imageLabel.textContent = tr(
+          "📷 เพิ่มรูปรีวิว (สูงสุด 3 รูป)",
+          "📷 Add review images (up to 3)"
+        );
+      }
+
+      updateStarPicker();
+
+      buildCategories();
+      buildReviewGameFilter();
+      updateCustomerUI();
+      renderPaymentMethods();
+      applyFilters();
+      renderGuides();
+      renderZygiskInstall();
+      renderReviews();
+      renderClaimEligibility();
+      renderClaimHistory();
+    }
+    function applyTheme(theme) {
+      const body = document.body;
+      const layer = $("#seasonThemeLayer");
+      const badge = $("#themeBadge");
+      const messageBar = $("#themeMessageBar");
+
+      activeTheme = theme || {themeKey:"default"};
+
+      const key = String(activeTheme.themeKey || "default").toLowerCase();
+      const isActive = key && key !== "default";
+
+      body.classList.toggle("theme-active", isActive);
+      body.dataset.seasonTheme = isActive ? key : "default";
+
+      const accent1 = normalizeHexColor(activeTheme.accent1, "#ef2f36");
+      const accent2 = normalizeHexColor(activeTheme.accent2, "#7a5cff");
+      const accent3 = normalizeHexColor(activeTheme.accent3, "#18bd86");
+
+      document.documentElement.style.setProperty("--theme-a", accent1);
+      document.documentElement.style.setProperty("--theme-b", accent2);
+      document.documentElement.style.setProperty("--theme-c", accent3);
+
+      document.documentElement.style.setProperty(
+        "--theme-a-rgb",
+        hexToRgbCss(accent1)
+      );
+      document.documentElement.style.setProperty(
+        "--theme-b-rgb",
+        hexToRgbCss(accent2)
+      );
+      document.documentElement.style.setProperty(
+        "--theme-c-rgb",
+        hexToRgbCss(accent3)
+      );
+
+      if (!isActive) {
+        if (badge) badge.hidden = true;
+        if (messageBar) {
+          messageBar.classList.remove("show");
+          messageBar.textContent = "";
+        }
+        if (layer) layer.innerHTML = "";
+        return;
+      }
+
+      const label =
+        currentLang === "en"
+          ? (activeTheme.labelEn || activeTheme.label || key)
+          : (activeTheme.labelTh || activeTheme.label || key);
+
+      const message =
+        currentLang === "en"
+          ? (activeTheme.messageEn || activeTheme.message || "")
+          : (activeTheme.messageTh || activeTheme.message || "");
+
+      if (badge) {
+        badge.hidden = activeTheme.showBadge === false;
+        badge.textContent =
+          `${activeTheme.icon || "✨"} ${label}`;
+        badge.title =
+          `${activeTheme.mode === "manual" ? tr("ธีม Manual","Manual theme") : tr("ธีม Auto","Auto theme")} · ${label}`;
+      }
+
+      if (messageBar) {
+        messageBar.textContent =
+          `${activeTheme.icon || "✨"} ${message || label}`;
+        messageBar.classList.toggle(
+          "show",
+          Boolean(message || label)
+        );
+      }
+
+      renderThemeParticles(activeTheme);
+    }
+
+    function renderThemeParticles(theme) {
+      const layer = $("#seasonThemeLayer");
+      if (!layer) return;
+
+      layer.innerHTML = "";
+
+      if (
+        !theme ||
+        theme.particlesEnabled === false ||
+        REDUCED_MOTION ||
+        siteConfig.animationsEnabled === false
+      ) {
+        return;
+      }
+
+      const particle = String(theme.particle || "").trim();
+      if (!particle) return;
+
+      const count =
+        window.matchMedia("(max-width:650px)").matches
+          ? 11
+          : 20;
+
+      for (let i = 0; i < count; i++) {
+        const el = document.createElement("span");
+        el.className = "season-particle";
+        el.textContent = particle;
+
+        const x = Math.random() * 100;
+        const size = 12 + Math.random() * 15;
+        const duration = 8 + Math.random() * 12;
+        const delay = -Math.random() * duration;
+        const drift = -55 + Math.random() * 110;
+        const rotate = -220 + Math.random() * 440;
+        const opacity = .18 + Math.random() * .38;
+
+        el.style.setProperty("--x", `${x}%`);
+        el.style.setProperty("--size", `${size}px`);
+        el.style.setProperty("--duration", `${duration.toFixed(2)}s`);
+        el.style.setProperty("--delay", `${delay.toFixed(2)}s`);
+        el.style.setProperty("--drift", `${drift.toFixed(0)}px`);
+        el.style.setProperty("--rotate", `${rotate.toFixed(0)}deg`);
+        el.style.setProperty("--opacity", opacity.toFixed(2));
+
+        layer.appendChild(el);
+      }
+    }
+
+    function normalizeHexColor(value, fallback) {
+      const text = String(value || "").trim();
+
+      if (/^#[0-9a-f]{6}$/i.test(text)) return text;
+      if (/^#[0-9a-f]{3}$/i.test(text)) {
+        return (
+          "#" +
+          text
+            .slice(1)
+            .split("")
+            .map(x => x + x)
+            .join("")
+        );
+      }
+
+      return fallback;
+    }
+
+    function hexToRgbCss(hex) {
+      const value = normalizeHexColor(hex, "#000000").slice(1);
+
+      const r = parseInt(value.slice(0,2), 16);
+      const g = parseInt(value.slice(2,4), 16);
+      const b = parseInt(value.slice(4,6), 16);
+
+      return `${r},${g},${b}`;
+    }
+
+    async function refreshTheme() {
+      try {
+        const data = await apiGet({
+          action:"theme",
+          lang:currentLang
+        });
+
+        if (!data.ok || !data.theme) return;
+
+        const oldKey = String(activeTheme?.themeKey || "default");
+        const newKey = String(data.theme.themeKey || "default");
+
+        activeTheme = data.theme;
+        applyTheme(activeTheme);
+
+        if (oldKey !== newKey) {
+          showToast(
+            currentLang === "en"
+              ? `Theme changed: ${activeTheme.labelEn || newKey}`
+              : `เปลี่ยนธีมอัตโนมัติ: ${activeTheme.labelTh || newKey}`,
+            "success",
+            4200
+          );
+        }
+      } catch (err) {
+        console.warn("Theme refresh failed", err);
+      }
+    }
+
+    function startThemeAutoRefresh() {
+      if (themeRefreshTimer) {
+        clearInterval(themeRefreshTimer);
+      }
+
+      // เผื่อแอดมินเปลี่ยน Manual/Auto ขณะที่ลูกค้าเปิดหน้าเว็บค้างไว้
+      themeRefreshTimer = setInterval(
+        refreshTheme,
+        10 * 60 * 1000
+      );
+    }
+
+
+    function updateFxPill() {
+      const pill = $("#fxRatePill");
+      if (!pill) return;
+
+      const rate = Number(pricingConfig.thbPerUsd || 0);
+
+      if (!rate) {
+        pill.textContent = "FX: --";
+        pill.classList.add("stale");
+        return;
+      }
+
+      pill.classList.toggle("stale", Boolean(pricingConfig.stale));
+
+      pill.textContent =
+        currentLang === "en"
+          ? `1 USD = ฿${rate.toFixed(2)}${pricingConfig.stale ? " *" : ""}`
+          : `FX $1 = ฿${rate.toFixed(2)}${pricingConfig.stale ? " *" : ""}`;
+
+      pill.title =
+        (currentLang === "en"
+          ? "Automatic USD/THB reference rate"
+          : "อัตราอ้างอิง USD/THB อัตโนมัติ") +
+        (pricingConfig.source ? ` · ${pricingConfig.source}` : "");
+    }
+
+    function thbToUsdDisplay(thb) {
+      const rate = Number(pricingConfig.thbPerUsd || 0);
+
+      if (!(rate > 0)) {
+        return 0;
+      }
+
+      // Card/service display uses the raw live conversion.
+      // Protection buffers and payment fees are added only at checkout.
+      const raw = Number(thb || 0) / rate;
+
+      // Round upward to the nearest cent so the displayed amount
+      // never rounds below the direct THB-equivalent value.
+      return Math.ceil((raw + Number.EPSILON) * 100) / 100;
+    }
+
+
+    async function initCustomer() {
+      const storedToken = localStorage.getItem(CUSTOMER_TOKEN_KEY) || "";
+      const data = await apiPost({
+        action:"ensureCustomer",
+        customerToken:storedToken
+      });
+
+      if (!data.ok) throw new Error(data.error || "CUSTOMER_INIT_FAILED");
+
+      const c = data.customer || {};
+      customerNo = c.customerNo || "";
+      customerStats = c;
+
+      if (c.customerToken) {
+        customerToken = c.customerToken;
+        localStorage.setItem(CUSTOMER_TOKEN_KEY, customerToken);
+      } else {
+        customerToken = storedToken;
+      }
+
+      if (c.recoveryKey) {
+        customerRecoveryKey = c.recoveryKey;
+        localStorage.setItem(CUSTOMER_RECOVERY_KEY, customerRecoveryKey);
+      } else {
+        customerRecoveryKey = localStorage.getItem(CUSTOMER_RECOVERY_KEY) || "";
+      }
+
+      if (customerNo) localStorage.setItem(CUSTOMER_NO_KEY, customerNo);
+
+      updateCustomerUI();
+
+      if (!data.existing && customerNo) {
+        showToast(
+          tr(
+            `สร้างหมายเลขลูกค้า ${customerNo} แล้ว — กดปุ่ม ID ด้านบนเพื่อเก็บ Recovery Key`,
+            `Customer ID ${customerNo} created — tap the ID button above and save your recovery key`
+          ),
+          "success",
+          7000
+        );
+      }
+    }
+
+    function updateCustomerUI() {
+      const no = customerNo || localStorage.getItem(CUSTOMER_NO_KEY) || "-";
+      $("#customerBadge").textContent = `ID: ${no}`;
+      $("#customerModalNo").textContent = no;
+      $("#customerRecoveryKey").textContent =
+        customerRecoveryKey || localStorage.getItem(CUSTOMER_RECOVERY_KEY) || "-";
+      $("#aboutCustomerNo").textContent = no;
+      $("#aboutClaimCount").textContent = String(customerStats.claimCount || 0);
+      $("#claimCustomerChip").textContent = `ID: ${no}`;
+    }
+
+    function openCustomerModal() {
+      updateCustomerUI();
+      $("#customerModal").hidden = false;
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeCustomerModal() {
+      $("#customerModal").hidden = true;
+      if ($("#detailModal").hidden && $("#orderModal").hidden) {
+        document.body.style.overflow = "";
+      }
+    }
+
+    async function copyRecoveryKey() {
+      const value = customerRecoveryKey || localStorage.getItem(CUSTOMER_RECOVERY_KEY) || "";
+      if (!value) return;
+
+      try {
+        await navigator.clipboard.writeText(value);
+        showToast(tr("คัดลอก Recovery Key แล้ว", "Recovery key copied"), "success");
+      } catch (_) {
+        showToast(tr("คัดลอกไม่สำเร็จ", "Copy failed"), "error");
+      }
+    }
+
+    async function recoverCustomer() {
+      const no = $("#recoverCustomerNo").value.trim();
+      const key = $("#recoverCustomerKey").value.trim();
+
+      if (!no || !key) {
+        showToast(tr("กรอก Customer ID และ Recovery Key ให้ครบ", "Enter Customer ID and recovery key"), "error");
+        return;
+      }
+
+      try {
+        const data = await apiPost({
+          action:"recoverCustomer",
+          customerNo:no,
+          recoveryKey:key
+        });
+
+        if (!data.ok) throw new Error(data.error || "RECOVERY_FAILED");
+
+        customerNo = data.customer.customerNo;
+        customerToken = data.customer.customerToken;
+        customerRecoveryKey = key;
+
+        localStorage.setItem(CUSTOMER_NO_KEY, customerNo);
+        localStorage.setItem(CUSTOMER_TOKEN_KEY, customerToken);
+        localStorage.setItem(CUSTOMER_RECOVERY_KEY, customerRecoveryKey);
+
+        updateCustomerUI();
+        closeCustomerModal();
+        startPresenceHeartbeat();
+
+        showToast(tr("กู้หมายเลขลูกค้าสำเร็จ", "Customer ID recovered"), "success");
+      } catch (err) {
+        showToast(tr("กู้หมายเลขไม่สำเร็จ: ", "Recovery failed: ") + err.message, "error");
+      }
+    }
+
+    function setPresenceState(state) {
+      presenceState = state === "shopping" ? "shopping" : "viewing";
+      presencePing();
+    }
+
+    async function presencePing() {
+      if (!customerToken || siteConfig.presenceEnabled === false) return;
+
+      try {
+        const data = await apiPost({
+          action:"presencePing",
+          customerToken:customerToken,
+          sessionId:SESSION_ID,
+          state:presenceState
+        });
+
+        if (!data.ok) return;
+
+        const p = data.presence || {};
+        $("#presencePill").textContent =
+          `👀 ${Number(p.viewers || 0)} · 🛒 ${Number(p.shoppers || 0)}`;
+      } catch (err) {
+        console.warn("Presence failed", err);
+      }
+    }
+
+    function startPresenceHeartbeat() {
+      if (presenceTimer) clearInterval(presenceTimer);
+      presencePing();
+      presenceTimer = setInterval(presencePing, 45000);
+    }
+
+    async function sendActivity(eventType, detail="") {
+      if (!customerToken) return;
+      try {
+        await apiPost({
+          action:"activityEvent",
+          customerToken:customerToken,
+          sessionId:SESSION_ID,
+          eventType:eventType,
+          detail:detail
+        });
+      } catch (_) {}
+    }
+
+
     async function loadGames() {
       $("#loading").hidden = false;
       $("#errorBox").hidden = true;
 
       try {
-        const data = await apiGet({action:"games"});
-        if (!data.ok) throw new Error(data.message || data.error || "API error");
+        const data = await apiGet({
+          action:"bootstrap",
+          lang:currentLang
+        });
 
+        if (!data.ok) {
+          throw new Error(data.message || data.error || "API error");
+        }
+
+        siteConfig = data.site || {};
+        activeTheme = data.theme || {themeKey:"default"};
+        pricingConfig = data.pricing || {};
         allGames = Array.isArray(data.games) ? data.games : [];
+        allGuides = Array.isArray(data.guides) ? data.guides : [];
+        paymentMethods = Array.isArray(data.paymentMethods)
+          ? data.paymentMethods
+          : [];
+
+        document.documentElement.classList.toggle(
+          "no-site-animation",
+          siteConfig.animationsEnabled === false
+        );
+
+        applyMaintenanceMode(siteConfig);
+        applyTheme(activeTheme);
+        startThemeAutoRefresh();
+
+        const adminUrl =
+          siteConfig.telegramAdminUrl || "https://t.me/volkergg";
+
+        const communityUrl =
+          siteConfig.telegramCommunityUrl || "https://t.me/volker_gg";
+
+        [
+          "#aboutAdminTelegram",
+          "#floatAdminTelegram",
+          "#sendProofTelegramBtn"
+        ].forEach(sel => {
+          const el = $(sel);
+          if (el) el.href = adminUrl;
+        });
+
+        [
+          "#aboutCommunityTelegram",
+          "#floatCommunityTelegram"
+        ].forEach(sel => {
+          const el = $(sel);
+          if (el) el.href = communityUrl;
+        });
+
         $("#apiIndicator").className = "badge green";
-        $("#apiIndicator").textContent = "ระบบออนไลน์";
+        $("#apiIndicator").textContent = tr("ระบบออนไลน์", "Online");
+
         buildCategories();
         buildReviewGameFilter();
+        renderGuides();
+        renderZygiskInstall();
         applyFilters();
+        renderPaymentMethods();
+        applyLanguage();
+
         loadReviews("");
         checkSavedReviewAccess(true);
+        presencePing();
       } catch (err) {
         console.error(err);
+
         $("#apiIndicator").className = "badge gray";
-        $("#apiIndicator").textContent = "เชื่อมต่อไม่ได้";
+        $("#apiIndicator").textContent = tr("เชื่อมต่อไม่ได้", "Offline");
+
         $("#errorBox").hidden = false;
-        $("#errorBox").textContent = "โหลดข้อมูลไม่สำเร็จ กรุณาตรวจสอบ Apps Script Web App";
+        $("#errorBox").textContent = tr(
+          "โหลดข้อมูลไม่สำเร็จ กรุณาตรวจสอบ Apps Script Web App",
+          "Could not load data. Please check the Apps Script Web App."
+        );
       } finally {
         $("#loading").hidden = true;
       }
     }
 
     function buildCategories() {
-      const cats = ["ทั้งหมด", ...new Set(allGames.map(g => g.category).filter(Boolean))];
+      const counts = {};
+
+      allGames.forEach(g => {
+        const key = g.category || "Other";
+        counts[key] = (counts[key] || 0) + 1;
+      });
+
+      const keys = Object.keys(counts).sort((a,b) =>
+        String(a).localeCompare(String(b))
+      );
+
       const strip = $("#categoryStrip");
       strip.innerHTML = "";
 
-      cats.forEach(cat => {
+      const allBtn = document.createElement("button");
+      allBtn.className =
+        "cat-btn" + (selectedCategory === "ทั้งหมด" ? " active" : "");
+      allBtn.type = "button";
+      allBtn.textContent =
+        `▰ ${tr("ทั้งหมด","All")} (${allGames.length})`;
+
+      allBtn.onclick = () => {
+        selectedCategory = "ทั้งหมด";
+        [...strip.children].forEach(x => x.classList.remove("active"));
+        allBtn.classList.add("active");
+        applyFilters();
+      };
+
+      allBtn.addEventListener("pointerdown", makeRipple);
+      strip.appendChild(allBtn);
+
+      keys.forEach(key => {
+        const sample = allGames.find(g => (g.category || "Other") === key) || {};
+        const label = currentLang === "en"
+          ? (sample.categoryEn || key)
+          : key;
+
         const btn = document.createElement("button");
-        btn.className = "cat-btn" + (cat === selectedCategory ? " active" : "");
+        btn.className =
+          "cat-btn" + (key === selectedCategory ? " active" : "");
         btn.type = "button";
-        btn.textContent = cat === "ทั้งหมด" ? "▰ ทั้งหมด" : cat;
+        btn.textContent = `${label} (${counts[key] || 0})`;
+
         btn.onclick = () => {
-          selectedCategory = cat;
+          selectedCategory = key;
           [...strip.children].forEach(x => x.classList.remove("active"));
           btn.classList.add("active");
           applyFilters();
         };
+
         btn.addEventListener("pointerdown", makeRipple);
         strip.appendChild(btn);
       });
     }
 
     function applyFilters() {
-      const q = $("#searchInput").value.trim().toLowerCase();
+      const q = ($("#searchInput").value || "").trim().toLowerCase();
       const sort = $("#sortSelect").value;
 
       filteredGames = allGames.filter(g => {
-        const categoryOk = selectedCategory === "ทั้งหมด" || g.category === selectedCategory;
+        const categoryOk =
+          selectedCategory === "ทั้งหมด" ||
+          (g.category || "Other") === selectedCategory;
+
         const text = [
-          g.name, g.category, g.description, g.packageName,
-          ...(g.services || []).map(s => s.name),
-          ...(g.loginMethods || []).map(m => m.label)
-        ].join(" ").toLowerCase();
+          g.name,
+          g.nameEn,
+          g.category,
+          g.categoryEn,
+          g.description,
+          g.descriptionEn,
+          g.packageName,
+          ...(g.services || []).flatMap(s => [
+            s.name,s.nameEn,s.description,s.descriptionEn
+          ]),
+          ...(g.loginMethods || []).flatMap(m => [
+            m.label,m.labelEn,m.description,m.descriptionEn
+          ]),
+          ...(g.compatibility || []).flatMap(c => [
+            c.label,c.labelEn,c.detail,c.detailEn
+          ])
+        ].filter(Boolean).join(" ").toLowerCase();
 
         return categoryOk && text.includes(q);
       });
 
-      if (sort === "low") filteredGames.sort((a,b) => num(a.priceFrom) - num(b.priceFrom));
-      if (sort === "high") filteredGames.sort((a,b) => num(b.priceFrom) - num(a.priceFrom));
-      if (sort === "recommended") filteredGames.sort((a,b) => num(a.sortOrder || 9999) - num(b.sortOrder || 9999));
+      if (sort === "low") {
+        filteredGames.sort((a,b) => num(a.priceFrom) - num(b.priceFrom));
+      }
+
+      if (sort === "high") {
+        filteredGames.sort((a,b) => num(b.priceFrom) - num(a.priceFrom));
+      }
+
+      if (sort === "recommended") {
+        filteredGames.sort(
+          (a,b) =>
+            num(a.sortOrder || 9999) -
+            num(b.sortOrder || 9999)
+        );
+      }
 
       renderGames();
     }
 
     function renderGames() {
       grid.innerHTML = "";
-      $("#countText").textContent = `${filteredGames.length} เกม`;
+      $("#countText").textContent =
+        `${filteredGames.length} ${tr("เกม","games")}`;
 
       if (!filteredGames.length) {
-        grid.innerHTML = '<div class="state">ไม่พบเกมที่ตรงกับคำค้นหา</div>';
+        grid.innerHTML =
+          `<div class="state">${tr("ไม่พบเกมที่ตรงกับคำค้นหา","No games match your search")}</div>`;
         return;
       }
 
@@ -1848,55 +4080,139 @@
 
         const status = String(game.status || "active").toLowerCase();
         const card = document.createElement("article");
-        card.className = `card reveal-card ${status === "paused" ? "paused" : status === "closed" ? "closed" : ""}`;
+
+        card.className =
+          `card reveal-card ${
+            status === "paused"
+              ? "paused"
+              : status === "closed"
+              ? "closed"
+              : ""
+          }`;
+
         card.dataset.sold = String(num(game.soldCount));
 
-        const icon = safeIcon(game.iconUrl, game.name);
-        const loginBadges = (game.loginMethods || []).slice(0,2).map(loginBadgeHtml).join("");
-        const mod = game.modMenu ? '<span class="badge orange">⚙ Mod Menu</span>' : "";
-        const zygisk = game.zygisk ? '<span class="badge green">✓ Zygisk</span>' : '<span class="badge gray">No Zygisk</span>';
+        const displayName = localField(game, "name") || "Unnamed Game";
+        const displayDesc = localField(game, "description") || "";
+        const displayCategory = currentLang === "en"
+          ? (game.categoryEn || game.category || "GAME")
+          : (game.category || game.categoryEn || "GAME");
+
+        const icon = safeIcon(game.iconUrl, displayName);
+
+        const loginBadges = (game.loginMethods || [])
+          .slice(0,1)
+          .map(loginBadgeHtml)
+          .join("");
+
+        const zygiskBadge = game.zygiskModMenu
+          ? '<span class="badge zygisk">⚙ Zygisk Mod Menu</span>'
+          : "";
+
+        const systemBadges = (game.compatibility || [])
+          .slice(0,4)
+          .map(compatBadgeHtml)
+          .join("");
+
+        const ribbon = String(game.ribbon || "").toUpperCase();
+
+        const ribbonClass =
+          ribbon === "UPDATE"
+            ? "update"
+            : ribbon === "HOT"
+            ? "hot"
+            : "";
+
         const ctaText =
-          status === "paused" ? "หยุดชั่วคราว" :
-          status === "closed" ? "ปิดขาย" :
-          "รายละเอียด →";
+          status === "paused"
+            ? tr("หยุดชั่วคราว","Paused")
+            : status === "closed"
+            ? tr("ปิดขาย","Closed")
+            : tr("รายละเอียด →","Details →");
+
         const ctaClass =
-          status === "paused" ? "paused" :
-          status === "closed" ? "closed" : "";
+          status === "paused"
+            ? "paused"
+            : status === "closed"
+            ? "closed"
+            : "";
 
         card.innerHTML = `
           <button class="card-button" type="button">
             <div class="card-glare"></div>
             <div class="card-scan"></div>
+
             <div class="cover">
-              <img src="${escapeAttr(icon)}" alt="${escapeAttr(game.name || "Game")}" loading="lazy">
-              <span class="corner left">${escapeHtml(game.category || "GAME")}</span>
-              <span class="corner right ${statusClass(game.status)}">${statusText(game.status)}</span>
+              ${
+                ribbon
+                  ? `<div class="game-ribbon ${ribbonClass}">${escapeHtml(ribbon)}</div>`
+                  : ""
+              }
+
+              <img
+                src="${escapeAttr(icon)}"
+                alt="${escapeAttr(displayName)}"
+                loading="lazy"
+              >
+
+              <span class="corner left">
+                ${escapeHtml(displayCategory)}
+              </span>
+
+              <span class="corner right ${statusClass(game.status)}">
+                ${statusText(game.status)}
+              </span>
             </div>
+
             <div class="card-body">
-              <div class="game-title">${escapeHtml(game.name || "Unnamed Game")}</div>
-              <div class="game-desc">${escapeHtml(game.description || "")}</div>
-              <div class="sold-count">🛒 มีคนซื้อแล้ว <span class="sold-number" data-target="${num(game.soldCount)}">0</span> ครั้ง</div>
+              <div class="game-title">${escapeHtml(displayName)}</div>
+              <div class="game-desc">${escapeHtml(displayDesc)}</div>
+
+              <div class="sold-count">
+                🛒 ${tr("มีคนซื้อแล้ว","Purchased")}
+                <span class="sold-number" data-target="${num(game.soldCount)}">0</span>
+                ${tr("ครั้ง","times")}
+              </div>
+
               <div class="rating-line">
-                ${game.ratingCount > 0
-                  ? `⭐ ${Number(game.ratingAverage).toFixed(1)} <span class="rating-count">(${num(game.ratingCount)} รีวิว)</span>`
-                  : `☆ <span class="rating-count">ยังไม่มีรีวิว</span>`}
+                ${
+                  game.ratingCount > 0
+                    ? `⭐ ${Number(game.ratingAverage).toFixed(1)}
+                       <span class="rating-count">
+                         (${num(game.ratingCount)} ${tr("รีวิว","reviews")})
+                       </span>`
+                    : `☆
+                       <span class="rating-count">
+                         ${tr("ยังไม่มีรีวิว","No reviews yet")}
+                       </span>`
+                }
               </div>
+
               <div class="badges">
-                ${zygisk}${mod}${loginBadges}
+                ${zygiskBadge}
+                ${systemBadges}
+                ${loginBadges}
               </div>
+
               <div class="card-footer">
                 <div>
-                  <div class="price-label">เริ่มต้น</div>
+                  <div class="price-label">${tr("เริ่มต้น","From")}</div>
                   <div class="price">${money(game.priceFrom)}</div>
+                  ${currentLang === "en"
+                    ? `<span class="price-fx-note">Live FX · checkout fees calculated later</span>`
+                    : ""}
                 </div>
-                <div class="card-cta ${ctaClass}">${ctaText}</div>
+
+                <div class="card-cta ${ctaClass}">
+                  ${ctaText}
+                </div>
               </div>
             </div>
           </button>
         `;
 
         card.querySelector("img").addEventListener("error", e => {
-          e.currentTarget.src = fallbackIcon(game.name);
+          e.currentTarget.src = fallbackIcon(displayName);
         });
 
         const cardBtn = card.querySelector(".card-button");
@@ -1912,42 +4228,67 @@
 
     function openDetail(game) {
       selectedGame = game;
-      selectedService = null;
+      selectedServices = new Map();
+      setPresenceState("shopping");
 
-      $("#detailIcon").src = safeIcon(game.iconUrl, game.name);
-      $("#detailIcon").onerror = e => e.currentTarget.src = fallbackIcon(game.name);
-      $("#detailName").textContent = game.name || "";
-      $("#detailCategory").textContent = game.category || "GAME";
-      $("#detailDescription").textContent = game.description || "";
+      const displayName = localField(game, "name") || game.name || "";
+      const displayDesc = localField(game, "description") || "";
+      const displayCategory = currentLang === "en"
+        ? (game.categoryEn || game.category || "GAME")
+        : (game.category || game.categoryEn || "GAME");
+
+      $("#detailIcon").src = safeIcon(game.iconUrl, displayName);
+      $("#detailIcon").onerror =
+        e => e.currentTarget.src = fallbackIcon(displayName);
+
+      $("#detailName").textContent = displayName;
+      $("#detailCategory").textContent = displayCategory;
+      $("#detailDescription").textContent = displayDesc;
 
       const badges = $("#detailBadges");
       badges.innerHTML = "";
-      badges.appendChild(badge(game.zygisk ? "✓ รองรับ Zygisk" : "ไม่รองรับ Zygisk", game.zygisk ? "green" : "gray"));
-      badges.appendChild(badge(game.modMenu ? "⚙ มี Mod Menu" : "ไม่มี Mod Menu", game.modMenu ? "orange" : "gray"));
-      badges.appendChild(badge(`🛒 ซื้อแล้ว ${num(game.soldCount).toLocaleString("th-TH")} ครั้ง`, "blue"));
+
+      if (game.zygiskModMenu) {
+        badges.appendChild(
+          badge("⚙ Zygisk Mod Menu", "orange")
+        );
+      }
+
       badges.appendChild(
         badge(
-          game.ratingCount > 0
-            ? `⭐ ${Number(game.ratingAverage).toFixed(1)} (${num(game.ratingCount)} รีวิว)`
-            : "☆ ยังไม่มีรีวิว",
+          `🛒 ${tr("ซื้อแล้ว","Purchased")} ${num(game.soldCount).toLocaleString(currentLang === "en" ? "en-US" : "th-TH")} ${tr("ครั้ง","times")}`,
           "blue"
         )
       );
 
-      const canOrder = String(game.status || "active").toLowerCase() === "active";
+      badges.appendChild(
+        badge(
+          game.ratingCount > 0
+            ? `⭐ ${Number(game.ratingAverage).toFixed(1)} (${num(game.ratingCount)} ${tr("รีวิว","reviews")})`
+            : `☆ ${tr("ยังไม่มีรีวิว","No reviews yet")}`,
+          "blue"
+        )
+      );
+
+      const canOrder =
+        String(game.status || "active").toLowerCase() === "active";
 
       renderLoginMethods(game.loginMethods || []);
+      renderCompatibility(game.compatibility || []);
       renderServices(game.services || [], canOrder);
 
-      $("#selectedPrice").textContent = "-";
+      updateSelectedServicesUI();
+
       $("#createOrderBtn").disabled = true;
       $("#createOrderBtn").textContent =
-        String(game.status || "").toLowerCase() === "paused" ? "หยุดรับชั่วคราว" :
-        String(game.status || "").toLowerCase() === "closed" ? "ปิดขาย" :
-        "สร้างออเดอร์";
+        String(game.status || "").toLowerCase() === "paused"
+          ? tr("หยุดรับชั่วคราว","Temporarily paused")
+          : String(game.status || "").toLowerCase() === "closed"
+          ? tr("ปิดขาย","Closed")
+          : tr("สร้างออเดอร์","Create order");
+
       $("#detailModal").hidden = false;
       document.body.style.overflow = "hidden";
-      requestAnimationFrame(() => $("#detailModal .dialog")?.focus?.());
     }
 
     function renderLoginMethods(methods) {
@@ -1955,20 +4296,57 @@
       box.innerHTML = "";
 
       if (!methods.length) {
-        box.innerHTML = '<div class="state">ยังไม่ได้ระบุระบบบัญชีของเกมนี้</div>';
+        box.innerHTML =
+          `<div class="state">${tr("ยังไม่ได้ระบุระบบบัญชีของเกมนี้","No login/sync method has been listed for this game")}</div>`;
         return;
       }
 
       methods.forEach(m => {
         const el = document.createElement("div");
         el.className = "login-item";
+
+        const label = localField(m, "label") || m.type;
+        const desc = localField(m, "description") || "";
+
         el.innerHTML = `
           <div class="login-icon">${loginIcon(m.type)}</div>
           <div>
-            <div class="item-title">${escapeHtml(m.label || m.type)}</div>
-            <div class="item-desc">${escapeHtml(m.description || "")}</div>
+            <div class="item-title">${escapeHtml(label)}</div>
+            <div class="item-desc">${escapeHtml(desc)}</div>
           </div>
         `;
+
+        box.appendChild(el);
+      });
+    }
+
+    function renderCompatibility(items) {
+      const box = $("#compatibilityList");
+      box.innerHTML = "";
+
+      if (!items.length) {
+        box.innerHTML =
+          `<div class="state" style="padding:16px">${tr("ยังไม่ได้ระบุระบบที่รองรับสำหรับเกมนี้","Compatibility has not been listed for this game")}</div>`;
+        return;
+      }
+
+      items.forEach(item => {
+        const el = document.createElement("div");
+        el.className = "compat-card";
+
+        const label = localField(item, "label") || item.type;
+        const detail =
+          localField(item, "detail") ||
+          compatibilityTypeText(item.type);
+
+        el.innerHTML = `
+          <strong>
+            ${compatIcon(item.type)}
+            ${escapeHtml(label)}
+          </strong>
+          <span>${escapeHtml(detail)}</span>
+        `;
+
         box.appendChild(el);
       });
     }
@@ -1980,128 +4358,478 @@
       const active = services.filter(s => s.active !== false);
 
       if (!active.length) {
-        box.innerHTML = '<div class="state">เกมนี้ยังไม่มีบริการที่เปิดใช้งาน</div>';
+        box.innerHTML =
+          `<div class="state">${tr("เกมนี้ยังไม่มีบริการที่เปิดใช้งาน","No active services for this game")}</div>`;
         return;
       }
 
       active.forEach(s => {
         const el = document.createElement("div");
         el.className = "service-item";
+
+        const name = localField(s, "name") || s.name || "";
+        const desc = localField(s, "description") || "";
+
         el.innerHTML = `
           <div class="service-main">
-            <div class="radio-dot"></div>
+            <div class="check-box"></div>
             <div>
-              <div class="item-title">${escapeHtml(s.name)}</div>
-              <div class="item-desc">${escapeHtml(s.description || "")}</div>
+              <div class="item-title">${escapeHtml(name)}</div>
+              <div class="item-desc">${escapeHtml(desc)}</div>
             </div>
           </div>
           <div class="service-price">${money(s.price)}</div>
         `;
+
         if (!canOrder) {
           el.style.opacity = ".58";
           el.style.cursor = "not-allowed";
         } else {
           el.onclick = () => {
-            selectedService = s;
-            [...box.children].forEach(x => x.classList.remove("selected"));
-            el.classList.add("selected");
-            $("#selectedPrice").textContent = money(s.price);
-            restartAnimation($("#selectedPrice"), "price-pop");
-            $("#createOrderBtn").disabled = false;
+            if (selectedServices.has(s.id)) {
+              selectedServices.delete(s.id);
+              el.classList.remove("selected");
+            } else {
+              selectedServices.set(s.id, s);
+              el.classList.add("selected");
+            }
+
+            updateSelectedServicesUI();
           };
         }
+
         box.appendChild(el);
       });
     }
 
-    async function createOrder() {
-      if (!selectedGame || !selectedService) return;
+    function updateSelectedServicesUI() {
+      const items = [...selectedServices.values()];
 
-      if (String(selectedGame.status || "active").toLowerCase() !== "active") {
-        showToast("เกมนี้ยังไม่เปิดรับออเดอร์", "error");
+      const total = items.reduce(
+        (sum, item) => sum + num(item.price),
+        0
+      );
+
+      $("#selectedServiceCount").textContent =
+        `${items.length} ${tr("รายการ","items")}`;
+
+      $("#selectedPrice").textContent =
+        items.length ? money(total) : "-";
+
+      if (items.length) {
+        restartAnimation(
+          $("#selectedPrice"),
+          "price-pop"
+        );
+      }
+
+      const canOrder =
+        String(selectedGame?.status || "active").toLowerCase() === "active";
+
+      $("#createOrderBtn").disabled =
+        !items.length || !canOrder;
+    }
+
+    async function createOrder() {
+      if (!selectedGame || !selectedServices.size) return;
+
+      if (!customerToken) {
+        showToast(
+          tr("ระบบยังไม่มี Customer ID กรุณารีเฟรชหน้าเว็บ","Customer ID is not ready. Please refresh the page."),
+          "error"
+        );
+        return;
+      }
+
+      if (
+        String(selectedGame.status || "active").toLowerCase() !== "active"
+      ) {
+        showToast(
+          tr("เกมนี้ยังไม่เปิดรับออเดอร์","This game is not accepting orders"),
+          "error"
+        );
         return;
       }
 
       const btn = $("#createOrderBtn");
       btn.disabled = true;
-      btn.textContent = "กำลังสร้าง...";
+      btn.textContent = tr("กำลังสร้าง...","Creating...");
 
       try {
         const data = await apiPost({
           action:"createOrder",
+          customerToken:customerToken,
           gameId:selectedGame.id,
-          serviceId:selectedService.id
+          serviceIds:[...selectedServices.keys()]
         });
 
-        if (!data.ok) throw new Error(data.error || "CREATE_ORDER_FAILED");
+        if (!data.ok) {
+          throw new Error(data.error || "CREATE_ORDER_FAILED");
+        }
 
         currentOrder = data.order;
 
         if (currentOrder.reviewToken) {
           saveReviewAccess({
-            orderId: currentOrder.orderId,
-            reviewToken: currentOrder.reviewToken,
-            gameId: currentOrder.gameId,
-            gameName: currentOrder.gameName,
-            serviceName: currentOrder.serviceName,
-            createdAt: Date.now()
+            orderId:currentOrder.orderId,
+            reviewToken:currentOrder.reviewToken,
+            gameId:currentOrder.gameId,
+            gameName:currentOrder.gameName,
+            serviceName:(currentOrder.serviceNames || []).join(" + "),
+            createdAt:Date.now()
           });
         }
 
-        showToast(`สร้างออเดอร์ ${currentOrder.orderId} แล้ว`, "success");
-        closeDetail();
+        showToast(
+          tr(
+            `สร้างออเดอร์ ${currentOrder.orderId} แล้ว`,
+            `Order ${currentOrder.orderId} created`
+          ),
+          "success"
+        );
+
+        closeDetail(false);
         showOrder(currentOrder);
       } catch (err) {
         console.error(err);
-        showToast("สร้างออเดอร์ไม่สำเร็จ: " + err.message, "error");
+
+        showToast(
+          tr("สร้างออเดอร์ไม่สำเร็จ: ","Could not create order: ") + err.message,
+          "error"
+        );
       } finally {
-        const canOrder = String(selectedGame?.status || "active").toLowerCase() === "active";
-        btn.textContent = canOrder ? "สร้างออเดอร์" : statusText(selectedGame?.status);
-        btn.disabled = !selectedService || !canOrder;
+        const canOrder =
+          String(
+            selectedGame?.status || "active"
+          ).toLowerCase() === "active";
+
+        btn.textContent =
+          canOrder
+            ? tr("สร้างออเดอร์","Create order")
+            : statusText(selectedGame?.status);
+
+        btn.disabled =
+          !selectedServices.size || !canOrder;
       }
     }
 
     function showOrder(order) {
-      $("#orderGame").textContent = order.gameName || selectedGame?.name || "ออเดอร์";
-      $("#orderService").textContent = order.serviceName || "";
-      $("#orderIdText").textContent = order.orderId || "-";
-      $("#orderServiceText").textContent = order.serviceName || "-";
-      $("#orderAmount").textContent = money(order.amount);
+      setPresenceState("shopping");
+
+      const serviceNames =
+        Array.isArray(order.serviceNames)
+          ? order.serviceNames
+          : order.serviceName
+          ? [order.serviceName]
+          : [];
+
+      $("#orderGame").textContent =
+        order.gameName ||
+        localField(selectedGame, "name") ||
+        tr("ออเดอร์","Order");
+
+      $("#orderService").textContent =
+        serviceNames.join(" + ");
+
+      $("#orderIdText").textContent =
+        order.orderId || "-";
+
+      $("#orderServiceText").textContent =
+        serviceNames.length
+          ? serviceNames.join(" • ")
+          : "-";
+
+      $("#orderAmount").textContent =
+        money(order.amount);
 
       if (order.reviewToken) {
-        $("#reviewTokenText").textContent = order.reviewToken;
+        $("#reviewTokenText").textContent =
+          order.reviewToken;
         $("#reviewCodeBox").hidden = false;
       } else {
         $("#reviewCodeBox").hidden = true;
       }
 
+      selectedPayment = null;
+      renderPaymentMethods();
+      $("#paymentMethodDetail").hidden = true;
+
       $("#requestPanel").hidden = true;
-      lastPaymentStatus = String(order.paymentStatus || "waiting_payment").toLowerCase();
-      setPaymentStatus(order.paymentStatus || "waiting_payment");
+
+      lastPaymentStatus =
+        String(
+          order.paymentStatus || "waiting_payment"
+        ).toLowerCase();
+
+      setPaymentStatus(
+        order.paymentStatus || "waiting_payment"
+      );
 
       fillLoginSelect();
 
       $("#orderModal").hidden = false;
       document.body.style.overflow = "hidden";
+
       startPolling();
     }
+
+    function renderPaymentMethods() {
+      const box = $("#paymentMethodList");
+      if (!box) return;
+
+      box.innerHTML = "";
+
+      if (!currentOrder) return;
+
+      if (!paymentMethods.length) {
+        box.innerHTML =
+          `<div class="state" style="grid-column:1/-1;padding:16px">
+            ${tr(
+              "แอดมินยังไม่ได้เปิดช่องทางชำระเงิน กรุณาติดต่อ Telegram",
+              "No payment method is enabled yet. Please contact the admin on Telegram."
+            )}
+          </div>`;
+        return;
+      }
+
+      paymentMethods.forEach(method => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className =
+          "payment-method" +
+          (selectedPayment?.methodId === method.id ? " selected" : "");
+
+        const label =
+          currentLang === "en"
+            ? (method.labelEn || method.labelTh || method.type)
+            : (method.labelTh || method.labelEn || method.type);
+
+        const icon =
+          method.type === "promptpay"
+            ? "📱"
+            : method.type === "paypal"
+            ? "🅿"
+            : "₮";
+
+        btn.innerHTML = `
+          <strong>${icon} ${escapeHtml(label)}</strong>
+          <span>${escapeHtml(method.currency || "THB")}</span>
+        `;
+
+        btn.onclick = () => choosePaymentMethod(method);
+        box.appendChild(btn);
+      });
+    }
+
+    async function choosePaymentMethod(method) {
+      if (!currentOrder?.orderId || !customerToken) return;
+
+      const buttons = [...document.querySelectorAll(".payment-method")];
+      buttons.forEach(x => x.disabled = true);
+
+      try {
+        const data = await apiPost({
+          action:"selectPaymentMethod",
+          customerToken:customerToken,
+          orderId:currentOrder.orderId,
+          paymentMethodId:method.id
+        });
+
+        if (!data.ok) {
+          throw new Error(data.error || "PAYMENT_METHOD_FAILED");
+        }
+
+        selectedPayment = data.payment;
+
+        buttons.forEach(x => {
+          x.classList.remove("selected");
+          x.disabled = false;
+        });
+
+        const target = paymentMethods.findIndex(x => x.id === method.id);
+        if (target >= 0 && buttons[target]) {
+          buttons[target].classList.add("selected");
+        }
+
+        renderPaymentDetail(selectedPayment);
+
+        showToast(
+          tr(
+            `เลือกชำระด้วย ${method.labelTh || method.type}`,
+            `Payment method: ${method.labelEn || method.type}`
+          ),
+          "success"
+        );
+      } catch (err) {
+        buttons.forEach(x => x.disabled = false);
+        showToast(
+          tr("เลือกช่องทางชำระเงินไม่สำเร็จ: ","Could not select payment method: ") +
+            err.message,
+          "error"
+        );
+      }
+    }
+
+    function renderPaymentDetail(payment) {
+      const wrap = $("#paymentMethodDetail");
+      if (!wrap || !payment) return;
+
+      wrap.hidden = false;
+
+      $("#paymentDueAmount").textContent =
+        formatPaymentAmount(payment.amount, payment.currency);
+
+      const qrWrap = $("#paymentQrWrap");
+      const qrImg = $("#paymentQrImage");
+
+      if (payment.qrImageUrl) {
+        qrWrap.hidden = false;
+        qrImg.src = payment.qrImageUrl;
+      } else {
+        qrWrap.hidden = true;
+        qrImg.removeAttribute("src");
+      }
+
+      const rows = [];
+      const type = String(payment.type || "").toLowerCase();
+
+      if (payment.accountDisplay) {
+        rows.push([
+          tr("บัญชี / ผู้รับ","Account / recipient"),
+          payment.accountDisplay
+        ]);
+      }
+
+      if (payment.walletAddress) {
+        rows.push([
+          tr("ที่อยู่กระเป๋า","Wallet address"),
+          payment.walletAddress
+        ]);
+      }
+
+      if (payment.network) {
+        rows.push([
+          tr("เครือข่าย","Network"),
+          payment.network
+        ]);
+      }
+
+      if (payment.fxProtected && Number(payment.thbPerUsd || 0) > 0) {
+        rows.push([
+          tr("ราคาอ้างอิงร้าน","Shop base price"),
+          `${Number(payment.baseAmountTHB || payment.invoiceAmountTHB || 0).toLocaleString("th-TH",{maximumFractionDigits:2})} ฿`
+        ]);
+
+        rows.push([
+          tr("อัตรา USD/THB","USD/THB rate"),
+          `1 USD = ${Number(payment.thbPerUsd).toFixed(4)} THB`
+        ]);
+
+        rows.push([
+          tr("กันความผันผวน FX","FX safety buffer"),
+          `${Number(payment.settlementBufferPct || 0).toFixed(2)}%`
+        ]);
+
+        if (Number(payment.processorFeePct || 0) > 0) {
+          rows.push([
+            tr("เผื่อค่าธรรมเนียมช่องทาง","Processor fee buffer"),
+            `${Number(payment.processorFeePct || 0).toFixed(2)}%`
+          ]);
+        }
+
+        if (Number(payment.flatFee || 0) > 0) {
+          rows.push([
+            tr("ค่าธรรมเนียมคงที่ที่ตั้งไว้","Configured fixed-fee buffer"),
+            `${Number(payment.flatFee).toFixed(2)} ${escapeHtml(payment.currency || "USD")}`
+          ]);
+        }
+      }
+
+      if (type === "usdt") {
+        rows.push([
+          tr("เงื่อนไขค่าธรรมเนียม","Fee rule"),
+          tr(
+            "ผู้ส่งรับผิดชอบค่าธรรมเนียมทั้งหมด ยอดถึงกระเป๋าร้านต้องครบตามใบสั่งซื้อ",
+            "Sender pays all network/exchange fees. The shop wallet must receive the exact net invoice amount."
+          )
+        ]);
+      }
+
+      $("#paymentInfoRows").innerHTML =
+        rows
+          .map(([label,value]) => `
+            <div class="pay-info-row">
+              <span>${escapeHtml(label)}</span>
+              <strong>${escapeHtml(value)}</strong>
+            </div>
+          `)
+          .join("");
+
+      $("#paymentInstruction").textContent =
+        currentLang === "en"
+          ? (payment.instructionsEn || payment.instructionsTh || "")
+          : (payment.instructionsTh || payment.instructionsEn || "");
+
+      const paypal = $("#paypalDisclaimer");
+
+      if (type === "paypal") {
+        paypal.hidden = false;
+        paypal.textContent = tr(
+          "หมายเหตุ: เว็บไซต์ไม่สามารถปิด dispute/chargeback ของ PayPal ได้ ระบบจึงเก็บ Customer ID, Order ID และ Payment Log เป็นหลักฐาน หลังชำระให้ส่งหลักฐานทาง Telegram แอดมิน",
+          "Note: This website cannot disable PayPal disputes/chargebacks. Customer ID, Order ID and payment logs are retained as transaction evidence. Send proof to the admin on Telegram after payment."
+        );
+      } else {
+        paypal.hidden = true;
+      }
+
+      const external = $("#paymentExternalLink");
+
+      if (payment.paymentLink) {
+        external.hidden = false;
+        external.href = payment.paymentLink;
+        external.textContent = tr("เปิดหน้าชำระเงิน","Open payment page");
+      } else {
+        external.hidden = true;
+      }
+    }
+
+    function formatPaymentAmount(amount, currency) {
+      const cur = String(currency || "THB").toUpperCase();
+      const value = Number(amount || 0);
+
+      if (cur === "THB") {
+        return `${value.toLocaleString(
+          currentLang === "en" ? "en-US" : "th-TH",
+          {maximumFractionDigits:2}
+        )} ฿`;
+      }
+
+      if (cur === "USDT") {
+        return `${value.toFixed(4)} USDT`;
+      }
+
+      return `${value.toLocaleString("en-US",{maximumFractionDigits:4})} ${cur}`;
+    }
+
 
     function fillLoginSelect() {
       const select = $("#loginMethodSelect");
       select.innerHTML = "";
+
       const methods = selectedGame?.loginMethods || [];
 
       if (!methods.length) {
         const opt = document.createElement("option");
         opt.value = "other";
-        opt.textContent = "อื่น ๆ";
+        opt.textContent = tr("อื่น ๆ","Other");
         select.appendChild(opt);
       } else {
         methods.forEach(m => {
           const opt = document.createElement("option");
           opt.value = m.type || m.id;
           opt.dataset.id = m.id || "";
-          opt.textContent = `${loginIcon(m.type)} ${m.label || m.type}`;
+          opt.textContent =
+            `${loginIcon(m.type)} ${localField(m,"label") || m.type}`;
           select.appendChild(opt);
         });
       }
@@ -2118,21 +4846,33 @@
       input.value = "";
 
       if (type === "google") {
-        label.textContent = "Google Email ที่ผูกกับเกม";
+        label.textContent = tr("Google Email ที่ผูกกับเกม","Google email linked to the game");
         input.placeholder = "example@gmail.com";
-        hint.textContent = "กรอกเฉพาะอีเมลเท่านั้น ห้ามกรอกรหัสผ่าน Google";
+        hint.textContent = tr(
+          "กรอกเฉพาะอีเมลเท่านั้น ห้ามกรอกรหัสผ่าน Google",
+          "Enter the email only. Never enter your Google password."
+        );
       } else if (type === "game_id") {
         label.textContent = "Game ID / Player ID";
-        input.placeholder = "กรอก ID ในเกม";
-        hint.textContent = "กรอกเฉพาะ ID ที่จำเป็นสำหรับงาน";
+        input.placeholder = tr("กรอก ID ในเกม","Enter your in-game ID");
+        hint.textContent = tr(
+          "กรอกเฉพาะ ID ที่จำเป็นสำหรับงาน",
+          "Only provide the ID required for this service."
+        );
       } else if (type === "create_id") {
-        label.textContent = "ชื่อ ID ที่ต้องการ";
-        input.placeholder = "ชื่อ ID ที่ต้องการ (ถ้ามี)";
-        hint.textContent = "ไม่ต้องกรอกรหัสผ่าน ระบบ/แอดมินจะติดต่อกลับหากต้องใช้ข้อมูลเพิ่มเติม";
+        label.textContent = tr("ชื่อ ID ที่ต้องการ","Requested ID name");
+        input.placeholder = tr("ชื่อ ID ที่ต้องการ (ถ้ามี)","Requested ID name (if applicable)");
+        hint.textContent = tr(
+          "ไม่ต้องกรอกรหัสผ่าน ระบบ/แอดมินจะติดต่อกลับหากต้องใช้ข้อมูลเพิ่มเติม",
+          "Do not enter a password here. Admin will contact you if more information is needed."
+        );
       } else {
-        label.textContent = "ข้อมูลบัญชี / Player ID";
-        input.placeholder = "กรอกข้อมูลที่จำเป็น";
-        hint.textContent = "หลีกเลี่ยงการส่งรหัสผ่านหรือข้อมูลลับ";
+        label.textContent = tr("ข้อมูลบัญชี / Player ID","Account info / Player ID");
+        input.placeholder = tr("กรอกข้อมูลที่จำเป็น","Enter required information");
+        hint.textContent = tr(
+          "หลีกเลี่ยงการส่งรหัสผ่านหรือข้อมูลลับ",
+          "Avoid sending passwords or other secrets."
+        );
       }
     }
 
@@ -2142,7 +4882,7 @@
       const btn = $("#checkPaymentBtn");
       if (showMessage) {
         btn.disabled = true;
-        btn.textContent = "กำลังตรวจ...";
+        btn.textContent = tr("กำลังตรวจ...","Checking...");
       }
 
       try {
@@ -2169,11 +4909,11 @@
         lastPaymentStatus = newStatus;
       } catch (err) {
         console.error(err);
-        if (showMessage) showToast("ตรวจสอบสถานะไม่สำเร็จ: " + err.message, "error");
+        if (showMessage) showToast(tr("ตรวจสอบสถานะไม่สำเร็จ: ","Could not check payment status: ") + err.message, "error");
       } finally {
         if (showMessage) {
           btn.disabled = false;
-          btn.textContent = "ตรวจสอบสถานะ";
+          btn.textContent = tr("ตรวจสอบสถานะ","Check payment status");
         }
       }
     }
@@ -2185,14 +4925,16 @@
 
       if (s === "paid") {
         pill.classList.add("paid");
-        pill.textContent = "ชำระแล้ว ✓";
+        pill.textContent = tr("ชำระแล้ว ✓","Paid ✓");
         $("#requestPanel").hidden = false;
       } else if (s === "cancelled") {
-        pill.textContent = "ยกเลิก";
+        pill.textContent = tr("ยกเลิก","Cancelled");
+        $("#requestPanel").hidden = true;
       } else if (s === "expired") {
-        pill.textContent = "หมดเวลา";
+        pill.textContent = tr("หมดเวลาชำระ","Expired");
+        $("#requestPanel").hidden = true;
       } else {
-        pill.textContent = "รอชำระเงิน";
+        pill.textContent = tr("รอชำระเงิน","Waiting for payment");
       }
     }
 
@@ -2203,7 +4945,7 @@
       const btn = $("#submitRequestBtn");
       const message = $("#requestMessage");
       btn.disabled = true;
-      btn.textContent = "กำลังส่ง...";
+      btn.textContent = tr("กำลังส่ง...","Sending...");
       message.hidden = true;
 
       const loginType = $("#loginMethodSelect").value;
@@ -2218,6 +4960,7 @@
       try {
         const data = await apiPost({
           action:"createRequest",
+          customerToken:customerToken,
           orderId:currentOrder.orderId,
           customerName:$("#customerName").value.trim(),
           contact:$("#contact").value.trim(),
@@ -2228,25 +4971,45 @@
         if (!data.ok) throw new Error(data.error || "CREATE_REQUEST_FAILED");
 
         message.className = "message success";
-        message.textContent = `ส่งคำขอสำเร็จ ✓ เลขที่ ${data.request?.requestId || ""}`;
+        message.textContent = tr(
+          `ส่งคำขอสำเร็จ ✓ เลขที่ ${data.request?.requestId || ""}`,
+          `Request submitted ✓ ${data.request?.requestId || ""}`
+        );
         message.hidden = false;
-        btn.textContent = "ส่งคำขอแล้ว";
+        btn.textContent = tr("ส่งคำขอแล้ว","Request sent");
         btn.disabled = true;
         stopPolling();
-        showToast(`ส่งคำขอสำเร็จ ${data.request?.requestId || ""}`, "success", 5000);
+        showToast(
+          tr(
+            `ส่งคำขอสำเร็จ ${data.request?.requestId || ""}`,
+            `Request submitted ${data.request?.requestId || ""}`
+          ),
+          "success",
+          5000
+        );
         setTimeout(() => {
-          showToast("เมื่อแอดมินทำงานเป็น completed ระบบจะปลดล็อกรีวิวให้อัตโนมัติ ⭐", "info", 6000);
+          showToast(
+            tr(
+              "เมื่อแอดมินทำงานเป็น completed ระบบจะปลดล็อกรีวิวให้อัตโนมัติ ⭐",
+              "Your review will unlock automatically after the job is marked completed ⭐"
+            ),
+            "info",
+            6000
+          );
         }, 700);
         runConfetti(44);
       } catch (err) {
         console.error(err);
         message.className = "message error";
         message.textContent = err.message === "PAYMENT_REQUIRED"
-          ? "ยังไม่สามารถส่งคำขอได้ เนื่องจากระบบยังไม่ยืนยันการชำระเงิน"
-          : "ส่งคำขอไม่สำเร็จ: " + err.message;
+          ? tr(
+              "ยังไม่สามารถส่งคำขอได้ เนื่องจากระบบยังไม่ยืนยันการชำระเงิน",
+              "The request cannot be submitted until payment is confirmed."
+            )
+          : tr("ส่งคำขอไม่สำเร็จ: ","Request failed: ") + err.message;
         message.hidden = false;
         btn.disabled = false;
-        btn.textContent = "ส่งคำขอ";
+        btn.textContent = tr("ส่งคำขอ","Submit request");
       }
     }
 
@@ -2262,14 +5025,16 @@
       pollTimer = null;
     }
 
-    function closeDetail() {
+    function closeDetail(resetPresence=true) {
       $("#detailModal").hidden = true;
+      if (resetPresence && $("#orderModal").hidden) setPresenceState("viewing");
       if ($("#orderModal").hidden) document.body.style.overflow = "";
     }
 
     function closeOrder() {
       $("#orderModal").hidden = true;
       stopPolling();
+      setPresenceState("viewing");
       document.body.style.overflow = "";
     }
 
@@ -2280,8 +5045,51 @@
       return el;
     }
 
+    function compatBadgeHtml(item) {
+      const type = String(item.type || "").toLowerCase();
+      const cls = type === "architecture" ? "arch" : "system";
+      const label = localField(item, "label") || type;
+
+      return `
+        <span class="badge ${cls}">
+          ${compatIcon(type)}
+          ${escapeHtml(label)}
+        </span>
+      `;
+    }
+
+    function compatIcon(type) {
+      const t =
+        String(type || "").toLowerCase();
+
+      if (t === "architecture") return "◈";
+      if (t === "mobile") return "📱";
+      if (t === "emulator") return "🖥";
+      if (t === "platform") return "◉";
+      return "⚙";
+    }
+
+    function compatibilityTypeText(type) {
+      const t = String(type || "").toLowerCase();
+
+      if (t === "architecture")
+        return tr("สถาปัตยกรรมที่รองรับ","Supported architecture");
+
+      if (t === "mobile")
+        return tr("อุปกรณ์มือถือที่รองรับ","Supported mobile device");
+
+      if (t === "emulator")
+        return tr("อีมูเลเตอร์ที่รองรับ","Supported emulator");
+
+      if (t === "platform")
+        return tr("แพลตฟอร์มที่รองรับ","Supported platform");
+
+      return tr("ระบบที่รองรับ","Supported system");
+    }
+
+
     function loginBadgeHtml(m) {
-      return `<span class="badge blue">${loginIcon(m.type)} ${escapeHtml(m.label || m.type)}</span>`;
+      return `<span class="badge blue">${loginIcon(m.type)} ${escapeHtml(localField(m,"label") || m.type)}</span>`;
     }
 
     function loginIcon(type) {
@@ -2296,11 +5104,11 @@
 
     function statusText(status) {
       const s = String(status || "").toLowerCase();
-      if (s === "active") return "พร้อมรับงาน";
-      if (s === "paused" || s === "maintenance") return "หยุดชั่วคราว";
-      if (s === "closed") return "ปิดขาย";
-      if (s === "hidden") return "ซ่อน";
-      return status || "ไม่ระบุ";
+      if (s === "active") return tr("พร้อมรับงาน","Available");
+      if (s === "paused" || s === "maintenance") return tr("หยุดชั่วคราว","Paused");
+      if (s === "closed") return tr("ปิดขาย","Closed");
+      if (s === "hidden") return tr("ซ่อน","Hidden");
+      return status || tr("ไม่ระบุ","Unknown");
     }
 
     function statusClass(status) {
@@ -2322,9 +5130,18 @@
     }
 
     function money(value) {
-      return `${num(value).toLocaleString("th-TH",{maximumFractionDigits:2})} ฿`;
-    }
+      const thb = num(value);
 
+      if (currentLang === "en") {
+        const usd = thbToUsdDisplay(thb);
+
+        if (usd > 0) {
+          return `$${usd.toFixed(2)}`;
+        }
+      }
+
+      return `${thb.toLocaleString("th-TH",{maximumFractionDigits:2})} ฿`;
+    }
     function num(v) {
       const n = Number(v);
       return Number.isFinite(n) ? n : 0;
@@ -2337,38 +5154,599 @@
     }
 
 
+
+    /* =========================================================
+       V6.2 WARRANTY CLAIMS
+       ========================================================= */
+
+    async function loadClaimEligibility() {
+      const list = $("#claimEligibilityList");
+      const history = $("#claimHistory");
+
+      if (!customerToken) {
+        list.innerHTML =
+          `<div class="claim-empty">${tr("ยังไม่มี Customer ID","Customer ID is not ready")}</div>`;
+        history.innerHTML = "";
+        return;
+      }
+
+      list.innerHTML =
+        `<div class="state" style="padding:16px">${tr("กำลังตรวจสิทธิ์...","Checking warranty eligibility...")}</div>`;
+
+      try {
+        const data = await apiPost({
+          action:"claimEligibility",
+          customerToken:customerToken
+        });
+
+        if (!data.ok) {
+          throw new Error(data.error || "CLAIM_ELIGIBILITY_FAILED");
+        }
+
+        claimData = data;
+        renderClaimEligibility();
+        renderClaimHistory();
+      } catch (err) {
+        list.innerHTML =
+          `<div class="state error">${escapeHtml(
+            tr("ตรวจสิทธิ์เคลมไม่สำเร็จ: ","Could not check warranty eligibility: ") +
+            err.message
+          )}</div>`;
+      }
+    }
+
+    function renderClaimEligibility() {
+      const list = $("#claimEligibilityList");
+      list.innerHTML = "";
+
+      const rows = Array.isArray(claimData.eligible)
+        ? claimData.eligible
+        : [];
+
+      if (!rows.length) {
+        list.innerHTML =
+          `<div class="claim-empty">
+            ${tr(
+              "ตอนนี้ยังไม่มีบริการที่เข้าเงื่อนไขเคลม อาจยังไม่ completed, เกิน 7 วัน หรือใช้สิทธิ์ครบแล้ว",
+              "No service is currently eligible. The job may not be completed yet, the warranty may have expired, or all claim credits may have been used."
+            )}
+          </div>`;
+        return;
+      }
+
+      rows.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "claim-item";
+
+        const until = item.warrantyUntil
+          ? new Date(item.warrantyUntil).toLocaleString(
+              currentLang === "en" ? "en-US" : "th-TH"
+            )
+          : "-";
+
+        card.innerHTML = `
+          <div class="claim-item-top">
+            <div>
+              <strong>${escapeHtml(item.gameName)} — ${escapeHtml(item.serviceName)}</strong>
+              <div class="claim-meta">
+                Order: ${escapeHtml(item.orderId)}<br>
+                ${tr("ราคาบริการ","Service price")}: ${money(item.price)}<br>
+                ${tr("รับประกันถึง","Warranty until")}: ${escapeHtml(until)}
+              </div>
+            </div>
+            <div class="claim-remaining">
+              ${tr("เหลือ","Remaining")} ${Number(item.claimsRemaining || 0)}/${Number(claimData.maxClaims || 2)}
+            </div>
+          </div>
+
+          <div class="claim-actions">
+            <button class="primary claim-open-btn" type="button" ${item.pendingExists ? "disabled" : ""}>
+              ${item.pendingExists
+                ? tr("มีเคลมกำลังรอตรวจ","Claim pending")
+                : tr("แจ้งเคลม","Submit claim")}
+            </button>
+          </div>
+        `;
+
+        const btn = card.querySelector(".claim-open-btn");
+        if (!item.pendingExists) {
+          btn.onclick = () => openClaimForm(item);
+        }
+
+        list.appendChild(card);
+      });
+    }
+
+    function renderClaimHistory() {
+      const box = $("#claimHistory");
+      box.innerHTML = "";
+
+      const rows = Array.isArray(claimData.history)
+        ? claimData.history
+        : [];
+
+      if (!rows.length) {
+        box.innerHTML =
+          `<div class="claim-empty">${tr("ยังไม่มีประวัติการเคลม","No claim history yet")}</div>`;
+        return;
+      }
+
+      rows.forEach(item => {
+        const el = document.createElement("div");
+        el.className = "claim-item";
+
+        const typeText =
+          item.claimType === "switch_equal_price"
+            ? tr("เปลี่ยนเกมราคาเท่ากัน","Switch to equal-price game")
+            : tr("ทำใหม่ฟรี","Free redo");
+
+        el.innerHTML = `
+          <div class="claim-item-top">
+            <div>
+              <strong>${escapeHtml(item.claimId)}</strong>
+              <div class="claim-meta">
+                ${escapeHtml(item.gameName || "")} — ${escapeHtml(item.serviceName || "")}<br>
+                ${escapeHtml(typeText)}
+                ${
+                  item.targetGameName
+                    ? `<br>→ ${escapeHtml(item.targetGameName)} — ${escapeHtml(item.targetServiceName || "")}`
+                    : ""
+                }
+              </div>
+            </div>
+            <span class="subtle-chip">${escapeHtml(item.status || "")}</span>
+          </div>
+        `;
+
+        box.appendChild(el);
+      });
+    }
+
+    function openClaimForm(item) {
+      selectedClaimItem = item;
+      setPresenceState("viewing");
+
+      $("#claimSelectedInfo").textContent =
+        `${item.gameName} — ${item.serviceName} | ` +
+        `${tr("เหลือ","Remaining")} ${item.claimsRemaining}/${claimData.maxClaims}`;
+
+      $("#claimTypeSelect").value = "redo";
+      $("#claimReason").value = "";
+      $("#claimFormWrap").hidden = false;
+
+      updateClaimSwitchFields();
+
+      $("#claimFormWrap").scrollIntoView({
+        behavior:REDUCED_MOTION ? "auto" : "smooth",
+        block:"start"
+      });
+    }
+
+    function closeClaimForm() {
+      selectedClaimItem = null;
+      $("#claimFormWrap").hidden = true;
+      $("#claimReason").value = "";
+    }
+
+    function updateClaimSwitchFields() {
+      const type = $("#claimTypeSelect").value;
+      const wrap = $("#claimSwitchFields");
+
+      wrap.hidden = type !== "switch_equal_price";
+
+      if (wrap.hidden || !selectedClaimItem) return;
+
+      const select = $("#claimTargetSelect");
+      select.innerHTML = "";
+
+      const matches = [];
+
+      allGames.forEach(game => {
+        if (
+          game.id === selectedClaimItem.gameId ||
+          String(game.status || "").toLowerCase() !== "active"
+        ) {
+          return;
+        }
+
+        (game.services || []).forEach(service => {
+          if (
+            service.active !== false &&
+            Number(service.price) === Number(selectedClaimItem.price)
+          ) {
+            matches.push({
+              gameId:game.id,
+              gameName:localField(game,"name") || game.name,
+              serviceId:service.id,
+              serviceName:localField(service,"name") || service.name,
+              price:service.price
+            });
+          }
+        });
+      });
+
+      if (!matches.length) {
+        const opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = tr(
+          "ไม่มีเกมอื่นที่มีบริการราคาเท่ากัน",
+          "No equal-price replacement is currently available"
+        );
+        select.appendChild(opt);
+        $("#submitClaimBtn").disabled = true;
+        return;
+      }
+
+      $("#submitClaimBtn").disabled = false;
+
+      matches.forEach(m => {
+        const opt = document.createElement("option");
+        opt.value = `${m.gameId}::${m.serviceId}`;
+        opt.textContent =
+          `${m.gameName} — ${m.serviceName} — ${money(m.price)}`;
+        select.appendChild(opt);
+      });
+    }
+
+    async function submitClaim() {
+      if (!selectedClaimItem || !customerToken) return;
+
+      const reason = $("#claimReason").value.trim();
+
+      if (!reason) {
+        showToast(
+          tr("กรุณาอธิบายเหตุผลการเคลม","Please describe the reason for your claim"),
+          "error"
+        );
+        return;
+      }
+
+      const claimType = $("#claimTypeSelect").value;
+      let targetGameId = "";
+      let targetServiceId = "";
+
+      if (claimType === "switch_equal_price") {
+        const value = $("#claimTargetSelect").value;
+
+        if (!value || !value.includes("::")) {
+          showToast(
+            tr("กรุณาเลือกเกมสำหรับเปลี่ยน","Please select a replacement game"),
+            "error"
+          );
+          return;
+        }
+
+        [targetGameId,targetServiceId] = value.split("::");
+      }
+
+      const btn = $("#submitClaimBtn");
+      btn.disabled = true;
+      btn.textContent = tr("กำลังส่ง...","Submitting...");
+
+      try {
+        const data = await apiPost({
+          action:"submitClaim",
+          customerToken:customerToken,
+          orderId:selectedClaimItem.orderId,
+          serviceId:selectedClaimItem.serviceId,
+          claimType:claimType,
+          targetGameId:targetGameId,
+          targetServiceId:targetServiceId,
+          reason:reason
+        });
+
+        if (!data.ok) {
+          throw new Error(data.error || "CLAIM_FAILED");
+        }
+
+        customerStats.claimCount =
+          Number(customerStats.claimCount || 0) + 1;
+
+        updateCustomerUI();
+
+        showToast(
+          tr(
+            `ส่งเคลมสำเร็จ ${data.claim.claimId}`,
+            `Claim ${data.claim.claimId} submitted`
+          ),
+          "success",
+          5200
+        );
+
+        runConfetti(26);
+        closeClaimForm();
+        await loadClaimEligibility();
+      } catch (err) {
+        showToast(
+          tr("ส่งเคลมไม่สำเร็จ: ","Claim failed: ") + err.message,
+          "error"
+        );
+      } finally {
+        btn.disabled = false;
+        btn.textContent = tr("ส่งคำขอเคลม","Submit claim");
+      }
+    }
+
     /* =========================================================
        V5 REVIEW SYSTEM
        ========================================================= */
 
     function switchPage(page) {
-      const isReviews = page === "reviews";
+      const views = {
+        catalog:"#catalogView",
+        guides:"#guidesView",
+        zygiskInstall:"#zygiskInstallView",
+        reviews:"#reviewsView",
+        claims:"#claimsView",
+        about:"#aboutView",
+        terms:"#termsView",
+      };
 
-      $("#catalogView").hidden = isReviews;
-      $("#reviewsView").hidden = !isReviews;
+      Object.entries(views).forEach(([key, selector]) => {
+        const el = $(selector);
+        if (el) el.hidden = key !== page;
+      });
 
-      $("#catalogTab").classList.toggle("active", !isReviews);
-      $("#reviewsTab").classList.toggle("active", isReviews);
+      const tabs = {
+        catalog:"#catalogTab",
+        guides:"#guidesTab",
+        zygiskInstall:"#zygiskInstallTab",
+        reviews:"#reviewsTab",
+        claims:"#claimsTab",
+        about:"#aboutTab",
+        terms:"#termsTab",
+      };
 
-      if (isReviews) {
+      Object.entries(tabs).forEach(([key, selector]) => {
+        const el = $(selector);
+        if (el) el.classList.toggle("active", key === page);
+      });
+
+      setPresenceState("viewing");
+
+      if (page === "guides") {
+        renderGuides();
+      }
+
+      if (page === "zygiskInstall") {
+        renderZygiskInstall();
+      }
+
+      if (page === "reviews") {
         loadReviews($("#reviewGameFilter").value || "");
         checkSavedReviewAccess(true);
       }
 
-      window.scrollTo({ top:0, behavior:REDUCED_MOTION ? "auto" : "smooth" });
+      if (page === "claims") {
+        loadClaimEligibility();
+      }
+
+      updateCustomerUI();
+
+      window.scrollTo({
+        top:0,
+        behavior:REDUCED_MOTION ? "auto" : "smooth"
+      });
     }
+    function renderGuides() {
+      const grid = $("#guideGrid");
+      if (!grid) return;
+
+      grid.innerHTML = "";
+
+      const guides = [...allGuides]
+        .filter(g => String(g.guideType || "").toLowerCase() !== "zygisk_install")
+        .sort(
+        (a,b) =>
+          num(a.sortOrder || 9999) -
+          num(b.sortOrder || 9999)
+      );
+
+      if (!guides.length) {
+        grid.innerHTML =
+          `<div class="state">${tr("ยังไม่มีคู่มือในระบบ","No guides are available yet")}</div>`;
+        return;
+      }
+
+      guides.forEach(guide => {
+        const card = document.createElement("article");
+        card.className = "guide-card reveal-card";
+
+        const requirements =
+          currentLang === "en" && (guide.requirementsEn || []).length
+            ? guide.requirementsEn
+            : (guide.requirements || []);
+
+        const steps =
+          currentLang === "en" && (guide.stepsEn || []).length
+            ? guide.stepsEn
+            : (guide.steps || []);
+
+        const reqHtml = requirements
+          .map(x => `<li>${escapeHtml(x)}</li>`)
+          .join("");
+
+        const stepsHtml = steps
+          .map(x => `<li>${escapeHtml(x)}</li>`)
+          .join("");
+
+        const title = currentLang === "en"
+          ? (guide.titleEn || guide.title || "")
+          : (guide.title || guide.titleEn || "");
+
+        const summary = currentLang === "en"
+          ? (guide.summaryEn || guide.summary || "")
+          : (guide.summary || guide.summaryEn || "");
+
+        card.innerHTML = `
+          <span class="guide-type">
+            ${guideTypeIcon(guide.guideType)}
+            ${escapeHtml(guide.guideType || "general")}
+          </span>
+
+          <h2>${escapeHtml(title)}</h2>
+          <div class="guide-summary">${escapeHtml(summary)}</div>
+
+          <div class="guide-columns">
+            <div class="guide-box">
+              <h3>${tr("ต้องเตรียมอะไรบ้าง","What to prepare")}</h3>
+              <ul>
+                ${reqHtml || `<li>${tr("ตรวจสอบรายละเอียดของเกมก่อนสั่ง","Check the game details before ordering")}</li>`}
+              </ul>
+            </div>
+
+            <div class="guide-box">
+              <h3>${tr("ขั้นตอน","Steps")}</h3>
+              <ol>
+                ${stepsHtml || `<li>${tr("เปิดรายละเอียดเกมและทำตามข้อมูลที่ระบุ","Open the game details and follow the listed instructions")}</li>`}
+              </ol>
+            </div>
+          </div>
+        `;
+
+        grid.appendChild(card);
+        prepareCardEffects(card);
+      });
+
+      observeCards();
+    }
+
+    function renderZygiskInstall() {
+      const grid = $("#zygiskInstallGrid");
+      if (!grid) return;
+
+      grid.innerHTML = "";
+
+      const guides = [...allGuides]
+        .filter(g =>
+          String(g.guideType || "").toLowerCase() === "zygisk_install"
+        )
+        .sort(
+          (a,b) =>
+            num(a.sortOrder || 9999) -
+            num(b.sortOrder || 9999)
+        );
+
+      if (!guides.length) {
+        grid.innerHTML =
+          `<div class="state" style="grid-column:1/-1">
+            ${tr(
+              "ยังไม่มีข้อมูลคู่มือติดตั้ง ให้แอดมินรัน setupV6System ของ V6.5 อีกครั้ง",
+              "Installation guides are not available yet. The admin should run the V6.5 setupV6System once."
+            )}
+          </div>`;
+        return;
+      }
+
+      guides.forEach((guide, index) => {
+        const card = document.createElement("article");
+        card.className = "install-guide-card reveal-card";
+
+        const requirements =
+          currentLang === "en" && (guide.requirementsEn || []).length
+            ? guide.requirementsEn
+            : (guide.requirements || []);
+
+        const steps =
+          currentLang === "en" && (guide.stepsEn || []).length
+            ? guide.stepsEn
+            : (guide.steps || []);
+
+        const title =
+          currentLang === "en"
+            ? (guide.titleEn || guide.title || "")
+            : (guide.title || guide.titleEn || "");
+
+        const summary =
+          currentLang === "en"
+            ? (guide.summaryEn || guide.summary || "")
+            : (guide.summary || guide.summaryEn || "");
+
+        const reqHtml = requirements
+          .map(x => `<li>${escapeHtml(x)}</li>`)
+          .join("");
+
+        const stepHtml = steps
+          .map(x => `<li>${escapeHtml(x)}</li>`)
+          .join("");
+
+        const icon =
+          /magisk/i.test(title) ? "🟢" :
+          /kernelsu/i.test(title) ? "🔵" :
+          /apatch/i.test(title) ? "🟠" :
+          /mumu/i.test(title) ? "🖥️" :
+          /license/i.test(title) ? "🔐" :
+          /ไฟล์|files/i.test(title) ? "📦" :
+          "⚙";
+
+        card.innerHTML = `
+          <span class="guide-index">
+            ${icon}
+            ${tr("ขั้น","Step")} ${index + 1}
+          </span>
+
+          <h2>${escapeHtml(title)}</h2>
+          <div class="summary">${escapeHtml(summary)}</div>
+
+          <div class="install-columns">
+            <div class="install-box">
+              <h3>${tr("ก่อนทำขั้นตอนนี้","Before this step")}</h3>
+              <ul>
+                ${
+                  reqHtml ||
+                  `<li>${tr(
+                    "ตรวจสอบ Compatibility และ Root environment ให้พร้อม",
+                    "Confirm compatibility and root environment first"
+                  )}</li>`
+                }
+              </ul>
+            </div>
+
+            <div class="install-box">
+              <h3>${tr("ทำตามลำดับ","Follow these steps")}</h3>
+              <ol>
+                ${
+                  stepHtml ||
+                  `<li>${tr(
+                    "ทำตามคำแนะนำที่แอดมินระบุ",
+                    "Follow the admin's instructions"
+                  )}</li>`
+                }
+              </ol>
+            </div>
+          </div>
+        `;
+
+        grid.appendChild(card);
+        prepareCardEffects(card);
+      });
+
+      observeCards();
+    }
+
+
+    function guideTypeIcon(type) {
+      const t =
+        String(type || "").toLowerCase();
+
+      if (t === "zygisk") return "⚙";
+      if (t === "resource") return "💎";
+      return "📘";
+    }
+
 
     function buildReviewGameFilter() {
       const select = $("#reviewGameFilter");
       if (!select) return;
 
       const current = select.value;
-      select.innerHTML = '<option value="">ทุกเกม</option>';
+      select.innerHTML =
+        `<option value="">${tr("ทุกเกม","All games")}</option>`;
 
       allGames.forEach(game => {
         const option = document.createElement("option");
         option.value = game.id;
-        option.textContent = game.name;
+        option.textContent = localField(game,"name") || game.name;
         select.appendChild(option);
       });
 
@@ -2399,15 +5777,16 @@
 
         $("#reviewAverage").textContent = count ? avg.toFixed(1) : "0.0";
         $("#reviewTotal").textContent = count
-          ? `${count.toLocaleString("th-TH")} รีวิว`
-          : "ยังไม่มีรีวิว";
+          ? `${count.toLocaleString(currentLang === "en" ? "en-US" : "th-TH")} ${tr("รีวิว","reviews")}`
+          : tr("ยังไม่มีรีวิว","No reviews yet");
         $("#reviewSummaryStars").textContent = renderStarText(avg);
 
         renderReviews();
       } catch (err) {
         console.error(err);
         publicReviews = [];
-        $("#reviewList").innerHTML = '<div class="state error">โหลดรีวิวไม่สำเร็จ</div>';
+        $("#reviewList").innerHTML =
+          `<div class="state error">${tr("โหลดรีวิวไม่สำเร็จ","Could not load reviews")}</div>`;
       } finally {
         if (loading) loading.hidden = true;
       }
@@ -2431,7 +5810,8 @@
       });
 
       if (!rows.length) {
-        list.innerHTML = '<div class="state">ยังไม่มีรีวิวที่ตรงกับเงื่อนไข</div>';
+        list.innerHTML =
+          `<div class="state">${tr("ยังไม่มีรีวิวที่ตรงกับเงื่อนไข","No reviews match the current filter")}</div>`;
         return;
       }
 
@@ -2446,7 +5826,7 @@
             <div>
               <div class="reviewer">
                 ${escapeHtml(r.reviewerName || "ลูกค้าที่ซื้อแล้ว")}
-                <span class="verified">✓ ผู้ซื้อจริง</span>
+                <span class="verified">✓ ${tr("ผู้ซื้อจริง","Verified buyer")}</span>
               </div>
               <div class="review-game">${escapeHtml(r.gameName || "")}</div>
             </div>
@@ -2457,7 +5837,24 @@
 
           ${r.reviewText
             ? `<div class="review-text">${escapeHtml(r.reviewText)}</div>`
-            : '<div class="review-text" style="color:#858b9d">ให้คะแนนโดยไม่เขียนข้อความ</div>'}
+            : `<div class="review-text" style="color:#858b9d">${tr("ให้คะแนนโดยไม่เขียนข้อความ","Rating only")}</div>`}
+
+          ${(r.imageUrls || []).length
+            ? `<div class="review-images">
+                ${(r.imageUrls || [])
+                  .map(
+                    url => `
+                      <img
+                        src="${escapeAttr(url)}"
+                        alt="รูปรีวิว"
+                        loading="lazy"
+                        onclick="window.open('${escapeAttr(url)}','_blank')"
+                      >
+                    `
+                  )
+                  .join("")}
+              </div>`
+            : ""}
         `;
 
         list.appendChild(card);
@@ -2504,12 +5901,12 @@
 
       if (!list.length) {
         $("#reviewReadyBadge").hidden = true;
-        if (!silent) setReviewGateMessage("ยังไม่พบออเดอร์ที่บันทึกไว้ในอุปกรณ์นี้");
+        if (!silent) setReviewGateMessage(tr("ยังไม่พบออเดอร์ที่บันทึกไว้ในอุปกรณ์นี้","No saved order was found on this device"));
         return;
       }
 
       if (!reviewsWritingEnabled && $("#reviewsView").hidden === false) {
-        setReviewGateMessage("ขณะนี้แอดมินปิดรับการเขียนรีวิวชั่วคราว", "closed");
+        setReviewGateMessage(tr("ขณะนี้แอดมินปิดรับการเขียนรีวิวชั่วคราว","Review submissions are temporarily closed"), "closed");
         return;
       }
 
@@ -2525,12 +5922,12 @@
             eligibleReviewAccess = {...access, ...data.order};
             $("#reviewReadyBadge").hidden = false;
             setReviewGateMessage(
-              `⭐ ${data.order.gameName} พร้อมให้คุณรีวิวแล้ว`,
+              `⭐ ${data.order.gameName} ${tr("พร้อมให้คุณรีวิวแล้ว","is ready for your review")}`,
               "good"
             );
 
             if (!silent) openReviewForm(eligibleReviewAccess);
-            else showToast("คุณมีออเดอร์ที่พร้อมเขียนรีวิวแล้ว ⭐", "success", 4500);
+            else showToast(tr("คุณมีออเดอร์ที่พร้อมเขียนรีวิวแล้ว ⭐","You have an order ready for review ⭐"), "success", 4500);
 
             return;
           }
@@ -2548,8 +5945,8 @@
       if (!silent) {
         setReviewGateMessage(
           reviewUnlockRule === "paid"
-            ? "ยังไม่พบออเดอร์ที่ชำระเงินและพร้อมรีวิว"
-            : "ยังไม่มีออเดอร์ที่งานเสร็จแล้วและพร้อมรีวิว"
+            ? tr("ยังไม่พบออเดอร์ที่ชำระเงินและพร้อมรีวิว","No paid order is ready for review")
+            : tr("ยังไม่มีออเดอร์ที่งานเสร็จแล้วและพร้อมรีวิว","No completed order is ready for review")
         );
       }
     }
@@ -2559,7 +5956,7 @@
       const reviewToken = $("#manualReviewToken").value.trim();
 
       if (!orderId || !reviewToken) {
-        setReviewGateMessage("กรุณากรอก Order ID และรหัสรีวิวให้ครบ", "closed");
+        setReviewGateMessage(tr("กรุณากรอก Order ID และรหัสรีวิวให้ครบ","Enter both Order ID and review code"), "closed");
         return;
       }
 
@@ -2592,15 +5989,15 @@
         });
 
         $("#reviewReadyBadge").hidden = false;
-        setReviewGateMessage(`ตรวจสิทธิ์สำเร็จ ✓ ${data.order.gameName}`, "good");
+        setReviewGateMessage(`${tr("ตรวจสิทธิ์สำเร็จ","Eligibility verified")} ✓ ${data.order.gameName}`, "good");
         openReviewForm(eligibleReviewAccess);
       } catch (err) {
-        setReviewGateMessage("ตรวจสิทธิ์ไม่สำเร็จ: " + err.message, "closed");
+        setReviewGateMessage(tr("ตรวจสิทธิ์ไม่สำเร็จ: ","Eligibility check failed: ") + err.message, "closed");
       }
     }
 
     function reviewReasonText(reason) {
-      const map = {
+      const th = {
         REVIEWS_CLOSED:"ขณะนี้ร้านปิดรับการเขียนรีวิวชั่วคราว",
         ORDER_NOT_FOUND:"ไม่พบ Order ID นี้",
         INVALID_REVIEW_TOKEN:"รหัสรีวิวไม่ถูกต้อง",
@@ -2608,9 +6005,19 @@
         PAYMENT_REQUIRED:"ออเดอร์นี้ยังไม่ได้รับการยืนยันการชำระเงิน",
         WORK_NOT_COMPLETED:"งานนี้ยังไม่เสร็จ เมื่อแอดมินเปลี่ยนสถานะเป็น completed จึงจะรีวิวได้"
       };
-      return map[reason] || "ออเดอร์นี้ยังไม่พร้อมสำหรับการรีวิว";
-    }
 
+      const en = {
+        REVIEWS_CLOSED:"Review submissions are temporarily closed",
+        ORDER_NOT_FOUND:"Order ID not found",
+        INVALID_REVIEW_TOKEN:"Invalid review code",
+        ALREADY_REVIEWED:"This order has already been reviewed",
+        PAYMENT_REQUIRED:"Payment has not been confirmed",
+        WORK_NOT_COMPLETED:"The job is not completed yet. Reviews unlock after the admin marks it completed."
+      };
+
+      return (currentLang === "en" ? en : th)[reason]
+        || tr("ออเดอร์นี้ยังไม่พร้อมสำหรับการรีวิว","This order is not ready for review");
+    }
     function setReviewGateMessage(text, type="") {
       const box = $("#reviewEligibilityStatus");
       if (!box) return;
@@ -2622,13 +6029,21 @@
     function openReviewForm(access) {
       if (!access) return;
 
+      sendActivity(
+        "review_started",
+        `Game: ${access.gameName || ""} | Order: ${access.orderId || ""}`
+      );
+
       selectedReviewRating = 0;
       updateStarPicker();
 
-      $("#reviewFormGame").textContent = access.gameName || "ให้คะแนน";
+      $("#reviewFormGame").textContent = access.gameName || tr("ให้คะแนน","Rate this service");
       $("#reviewFormOrder").textContent = access.orderId || "";
       $("#reviewText").value = "";
       $("#reviewerName").value = "";
+      reviewImagesData = [];
+      $("#reviewImagesInput").value = "";
+      renderReviewImagePreview();
       $("#reviewSubmitMessage").hidden = true;
 
       $("#reviewGate").hidden = true;
@@ -2649,7 +6064,7 @@
     }
 
     function updateStarPicker() {
-      const captions = {
+      const th = {
         0:"กดดาวเพื่อให้คะแนน",
         1:"1 ดาว — ไม่ประทับใจ",
         2:"2 ดาว — พอใช้",
@@ -2658,24 +6073,34 @@
         5:"5 ดาว — ชอบมาก"
       };
 
+      const en = {
+        0:"Tap a star to rate",
+        1:"1 star — Not satisfied",
+        2:"2 stars — Fair",
+        3:"3 stars — Good",
+        4:"4 stars — Very good",
+        5:"5 stars — Loved it"
+      };
+
       document.querySelectorAll(".star-btn").forEach(btn => {
         const rating = Number(btn.dataset.rating);
         btn.classList.toggle("on", rating <= selectedReviewRating);
       });
 
-      $("#starCaption").textContent = captions[selectedReviewRating] || captions[0];
+      const labels = currentLang === "en" ? en : th;
+      $("#starCaption").textContent =
+        labels[selectedReviewRating] || labels[0];
     }
-
     async function submitReview(e) {
       e.preventDefault();
 
       if (!eligibleReviewAccess) {
-        showToast("ไม่พบสิทธิ์รีวิว", "error");
+        showToast(tr("ไม่พบสิทธิ์รีวิว","No review eligibility found"), "error");
         return;
       }
 
       if (!selectedReviewRating) {
-        showToast("กรุณาเลือกคะแนน 1–5 ดาว", "error");
+        showToast(tr("กรุณาเลือกคะแนน 1–5 ดาว","Please select a 1–5 star rating"), "error");
         return;
       }
 
@@ -2683,7 +6108,7 @@
       const message = $("#reviewSubmitMessage");
 
       btn.disabled = true;
-      btn.textContent = "กำลังส่ง...";
+      btn.textContent = tr("กำลังส่ง...","Submitting...");
       message.hidden = true;
 
       try {
@@ -2693,7 +6118,11 @@
           reviewToken:eligibleReviewAccess.reviewToken,
           rating:selectedReviewRating,
           reviewerName:$("#reviewerName").value.trim(),
-          reviewText:$("#reviewText").value.trim()
+          reviewText:$("#reviewText").value.trim(),
+          images:reviewImagesData.map(x => ({
+            name:x.name,
+            dataUrl:x.dataUrl
+          }))
         });
 
         if (!data.ok) throw new Error(data.error || "CREATE_REVIEW_FAILED");
@@ -2701,14 +6130,24 @@
         markReviewAccessUsed(eligibleReviewAccess.orderId);
         $("#reviewReadyBadge").hidden = true;
 
+        customerStats.reviewCount =
+          Number(customerStats.reviewCount || 0) + 1;
+        updateCustomerUI();
+
         message.className = "message success";
         message.textContent = data.review?.status === "pending"
-          ? "ส่งรีวิวสำเร็จ ✓ รีวิวกำลังรอแอดมินตรวจ"
-          : "ส่งรีวิวสำเร็จ ✓ ขอบคุณสำหรับคะแนน";
+          ? tr(
+              "ส่งรีวิวสำเร็จ ✓ รีวิวกำลังรอแอดมินตรวจ",
+              "Review submitted ✓ Waiting for admin approval"
+            )
+          : tr(
+              "ส่งรีวิวสำเร็จ ✓ ขอบคุณสำหรับคะแนน",
+              "Review submitted ✓ Thank you for your rating"
+            );
         message.hidden = false;
 
         runConfetti(42);
-        showToast("ขอบคุณสำหรับรีวิว ⭐", "success", 4500);
+        showToast(tr("ขอบคุณสำหรับรีวิว ⭐","Thank you for your review ⭐"), "success", 4500);
 
         await loadReviews($("#reviewGameFilter").value || "");
         await loadGames();
@@ -2722,9 +6161,198 @@
         message.hidden = false;
       } finally {
         btn.disabled = false;
-        btn.textContent = "ส่งรีวิว";
+        btn.textContent = tr("ส่งรีวิว","Submit review");
       }
     }
+
+    async function handleReviewImages(e) {
+      const max = Math.max(
+        0,
+        Math.min(
+          3,
+          Number(siteConfig.maxReviewImages || 3)
+        )
+      );
+
+      if (
+        siteConfig.reviewImagesEnabled === false ||
+        max === 0
+      ) {
+        reviewImagesData = [];
+        e.target.value = "";
+
+        showToast(
+          tr("ขณะนี้ร้านปิดการแนบรูปรีวิว","Review image uploads are currently disabled"),
+          "error"
+        );
+
+        renderReviewImagePreview();
+        return;
+      }
+
+      const files =
+        [...(e.target.files || [])].slice(
+          0,
+          Math.max(
+            0,
+            max - reviewImagesData.length
+          )
+        );
+
+      for (const file of files) {
+        if (
+          !/^image\/(jpeg|png|webp)$/i.test(file.type)
+        ) {
+          showToast(
+            tr("รองรับเฉพาะ JPG / PNG / WEBP","Only JPG / PNG / WEBP images are supported"),
+            "error"
+          );
+          continue;
+        }
+
+        try {
+          const dataUrl =
+            await compressReviewImage(file);
+
+          reviewImagesData.push({
+            name:file.name,
+            dataUrl:dataUrl
+          });
+        } catch (err) {
+          showToast(
+            tr("ย่อรูปไม่สำเร็จ: ","Could not process image: ") + file.name,
+            "error"
+          );
+        }
+      }
+
+      e.target.value = "";
+      renderReviewImagePreview();
+    }
+
+    function compressReviewImage(file) {
+      return new Promise(
+        (resolve, reject) => {
+          const reader = new FileReader();
+
+          reader.onerror = reject;
+
+          reader.onload = () => {
+            const img = new Image();
+
+            img.onerror = reject;
+
+            img.onload = () => {
+              const maxSide = 1280;
+
+              const scale = Math.min(
+                1,
+                maxSide /
+                  Math.max(
+                    img.width,
+                    img.height
+                  )
+              );
+
+              const width = Math.max(
+                1,
+                Math.round(img.width * scale)
+              );
+
+              const height = Math.max(
+                1,
+                Math.round(img.height * scale)
+              );
+
+              const canvas =
+                document.createElement("canvas");
+
+              canvas.width = width;
+              canvas.height = height;
+
+              const ctx =
+                canvas.getContext(
+                  "2d",
+                  {alpha:false}
+                );
+
+              ctx.drawImage(
+                img,
+                0,
+                0,
+                width,
+                height
+              );
+
+              resolve(
+                canvas.toDataURL(
+                  "image/jpeg",
+                  .78
+                )
+              );
+            };
+
+            img.src = reader.result;
+          };
+
+          reader.readAsDataURL(file);
+        }
+      );
+    }
+
+    function renderReviewImagePreview() {
+      const box =
+        $("#reviewImagePreview");
+
+      if (!box) return;
+
+      box.innerHTML = "";
+
+      reviewImagesData.forEach(
+        (item, index) => {
+          const el =
+            document.createElement("div");
+
+          el.className =
+            "review-preview-item";
+
+          el.innerHTML = `
+            <img
+              src="${escapeAttr(item.dataUrl)}"
+              alt="รูปที่จะอัปโหลด"
+            >
+
+            <button
+              class="review-preview-remove"
+              type="button"
+              aria-label="ลบรูป"
+            >×</button>
+          `;
+
+          el
+            .querySelector("button")
+            .onclick = () => {
+              reviewImagesData.splice(
+                index,
+                1
+              );
+
+              renderReviewImagePreview();
+            };
+
+          box.appendChild(el);
+        }
+      );
+
+      const picker =
+        $("#reviewImagePicker");
+
+      if (picker) {
+        picker.hidden =
+          siteConfig.reviewImagesEnabled === false;
+      }
+    }
+
 
     async function copyReviewToken() {
       const token = $("#reviewTokenText").textContent.trim();
@@ -2732,18 +6360,97 @@
 
       try {
         await navigator.clipboard.writeText(token);
-        showToast("คัดลอกรหัสรีวิวแล้ว", "success");
+        showToast(tr("คัดลอกรหัสรีวิวแล้ว","Review code copied"), "success");
       } catch (_) {
-        showToast("คัดลอกไม่สำเร็จ กรุณากดค้างเพื่อคัดลอก", "error");
+        showToast(tr("คัดลอกไม่สำเร็จ กรุณากดค้างเพื่อคัดลอก","Copy failed. Press and hold to copy."), "error");
       }
     }
 
+
+
+    function applyMaintenanceMode(site) {
+      const screen =
+        $("#maintenanceScreen");
+
+      if (!screen) return;
+
+      const active =
+        Boolean(
+          site &&
+          site.maintenanceMode
+        );
+
+      screen.hidden = !active;
+
+      if (!active) return;
+
+      $("#maintenanceTitle").textContent =
+        currentLang === "en"
+          ? (site.maintenanceTitleEn || "Temporary maintenance")
+          : (site.maintenanceTitle || "กำลังปรับปรุงระบบชั่วคราว");
+
+      $("#maintenanceMessage").textContent =
+        currentLang === "en"
+          ? (site.maintenanceMessageEn || "0xVoLKER is updating the service. Please check back again soon.")
+          : (site.maintenanceMessage || "กำลังอัปเดตระบบเพื่อให้ใช้งานได้ดีขึ้น");
+
+      const eta =
+        String(
+          site.maintenanceUntil || ""
+        ).trim();
+
+      if (eta) {
+        $("#maintenanceEta").hidden = false;
+        $("#maintenanceEta").textContent =
+          tr("คาดว่าจะกลับมาเปิด: ","Expected back: ") + eta;
+      } else {
+        $("#maintenanceEta").hidden = true;
+      }
+
+      document.body.style.overflow = "hidden";
+    }
+
+    function initV6ScrollMotion() {
+      if (REDUCED_MOTION) return;
+
+      let raf = 0;
+
+      const update = () => {
+        const y = window.scrollY || 0;
+
+        document.documentElement
+          .style.setProperty(
+            "--v6-parallax-y",
+            `${Math.min(90, y * .045)}px`
+          );
+
+        document.documentElement
+          .style.setProperty(
+            "--hero-shift",
+            `${Math.min(24, y * .018)}px`
+          );
+
+        raf = 0;
+      };
+
+      window.addEventListener(
+        "scroll",
+        () => {
+          if (raf) return;
+          raf = requestAnimationFrame(update);
+        },
+        {passive:true}
+      );
+
+      update();
+    }
 
     /* =========================================================
        V4 PREMIUM EFFECTS
        ========================================================= */
 
     function initPremiumEffects() {
+      initV6ScrollMotion();
       if (FINE_POINTER) document.body.classList.add("has-fine-pointer");
 
       const updateProgress = () => {
