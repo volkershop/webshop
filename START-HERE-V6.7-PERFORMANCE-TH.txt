@@ -1,0 +1,272 @@
+0xVoLKER Shop Service — V6.7 PERFORMANCE SAFE
+เป้าหมาย: โหลดไวขึ้น โดยไม่เปลี่ยนระบบธุรกิจที่ทำงานดีอยู่แล้ว
+
+============================================================
+หลักการของ V6.7
+============================================================
+
+V6.7 เป็น Performance Layer เท่านั้น
+
+ไม่ได้เปลี่ยน:
+- Google Sheet schema
+- Multi-service Order
+- Payment / PromptPay / PayPal / USDT
+- FX calculation
+- Customer ID / Recovery Key
+- Request
+- Review / Review image
+- Claim / Warranty
+- Telegram notification
+- Maintenance Mode
+- Theme Auto / Manual
+- Zygisk installation guide
+- Play Store auto sync
+- GameTemplates / Auto Game Bootstrap
+- LoginMethods / Compatibility
+- AdminDashboard logic
+
+จึงไม่ต้องสร้างฐานข้อมูลใหม่และไม่ต้องล้างข้อมูลเดิม
+
+
+============================================================
+สิ่งที่ V6.7 ปรับ
+============================================================
+
+1) Backend Public Cache
+
+Cache เฉพาะข้อมูล public:
+- Games
+- Guides
+- Site settings ที่เปิดเผยหน้าเว็บ
+- Theme
+- FX display data
+- Review public config
+- Payment methods public config
+
+ไม่ Cache:
+- Order status
+- Customer identity/token
+- Request
+- Claim eligibility
+- Review eligibility
+- createOrder/createRequest/createReview/submitClaim
+- ข้อมูล private
+
+TTL:
+Site = 60 วินาที
+Theme = 60 วินาที
+Games = 90 วินาที
+Pricing = 120 วินาที
+PaymentMethods = 120 วินาที
+Guides = 300 วินาที
+
+เมื่อแอดมินแก้ข้อมูล public ผ่าน Sheet
+ระบบ v6SpreadsheetEdit จะล้าง cache ให้อัตโนมัติ
+
+ถ้าข้อมูล cache ใหญ่เกิน safe limit:
+ระบบจะข้าม cache และอ่านสดตามเดิม
+ไม่ทำให้เว็บพัง
+
+
+2) โหลด Customer + Catalog พร้อมกัน
+
+รุ่นก่อน:
+Customer API
+↓ รอ
+Bootstrap API
+↓
+แสดงเว็บ
+
+V6.7:
+Customer API ─┐
+              ├─ ทำพร้อมกัน
+Bootstrap API ┘
+
+จึงลดเวลารอแบบต่อคิว
+
+
+3) งานที่ไม่จำเป็นต่อหน้าแรกถูกเลื่อนไปทีหลัง
+
+ไม่โหลด Reviews ตั้งแต่หน้าแรก
+ไม่ render:
+- Reviews
+- Claims
+- Guides
+- Zygisk Install
+
+จนกว่าลูกค้าจะเปิด Tab นั้นจริง
+
+สิทธิ์ Review ที่จำในเครื่อง:
+ตรวจตอน Browser ว่าง (idle)
+ไม่บล็อกการแสดงเกม
+
+
+4) Search Debounce
+
+ช่องค้นหาเกม/รีวิวรอประมาณ 120 ms
+ก่อน rebuild UI
+
+ลูกค้ายังรู้สึกตอบสนองทันที
+แต่ลดการ render ซ้ำทุกตัวอักษร
+
+
+5) WebP + PNG Fallback
+
+ไฟล์เดิมยังอยู่:
+banner-0xvolker.png
+volker-avatar-circle.png
+
+เพิ่ม:
+banner-0xvolker.webp
+volker-avatar-256.webp
+volker-avatar-768.webp
+
+Browser จะใช้ WebP ก่อน
+ถ้าโหลดไม่ได้จะ fallback กลับ PNG เดิม
+
+ดังนั้นไม่เสียความเข้ากันได้
+
+
+6) Preconnect / Preload
+
+หน้าเว็บเตรียม connection ล่วงหน้าสำหรับ:
+- Google Fonts
+- Apps Script
+- script.googleusercontent.com
+- Google Play image host
+
+และ preload เฉพาะ asset ด้านบนที่ต้องเห็นก่อน
+
+
+============================================================
+ผลขนาดรูปหลักจากไฟล์จริง
+============================================================
+
+ก่อน:
+banner PNG + avatar PNG ≈ 3.25 MB
+
+V6.7 primary above-fold:
+banner WebP + avatar 256 WebP ≈ 103 KB
+
+ลด transfer ของรูปหลักประมาณ 96.9%
+
+หมายเหตุ:
+นี่คือการลด "ขนาดรูปหลักที่โหลดก่อน"
+ไม่ใช่การรับประกันว่าเวลาโหลดทั้งเว็บเร็วขึ้น 96.9%
+เพราะเวลาโหลดจริงยังขึ้นกับ Network และ Apps Script
+
+
+============================================================
+ทำไมไม่มี Service Worker
+============================================================
+
+V6.7 จงใจไม่ใส่ Service Worker
+
+เพราะแม้ Service Worker ทำ cache ได้แรง
+แต่มีความเสี่ยง:
+- ลูกค้าเห็น index.html รุ่นเก่า
+- Deploy ใหม่แล้ว Browser ยังใช้ไฟล์เก่า
+- Debug ยากขึ้น
+
+ตามคำสั่ง "ห้ามกระทบระบบที่ดีอยู่แล้ว"
+จึงเลือก optimization ที่ rollback ง่ายกว่า
+
+
+============================================================
+วิธีอัปเดตแบบปลอดภัย
+============================================================
+
+สมมติ V6.6 ปัจจุบันทำงานปกติ:
+
+STEP 1 — Backend
+
+เอา:
+Code-WebShop-Backend-V6.7-Performance-Safe.gs
+
+ไปแทน Code.gs
+Save
+
+ไม่ต้องรัน setupV6System
+เพราะ V6.7 ไม่มี schema ใหม่
+
+รัน:
+testV6Setup
+
+ต้อง:
+V6.7 TEST OK
+
+
+STEP 2 — อุ่น Cache
+
+รัน:
+warmPublicCacheNow
+
+ต้อง:
+V6.7 PUBLIC CACHE WARMED
+
+
+STEP 3 — Deploy Backend
+
+Deploy
+> Manage deployments
+> Web app เดิม
+> Edit
+> New version
+> Deploy
+
+
+STEP 4 — GitHub
+
+Upload/Replace:
+index.html
+
+Upload เพิ่ม:
+banner-0xvolker.webp
+volker-avatar-256.webp
+volker-avatar-768.webp
+
+สำคัญ:
+อย่าลบไฟล์ PNG เดิม:
+banner-0xvolker.png
+volker-avatar-circle.png
+
+เพราะเป็น fallback
+
+
+STEP 5
+
+Commit Changes
+รอ GitHub Pages
+Ctrl + F5
+
+
+============================================================
+Rollback
+============================================================
+
+ถ้าต้องการย้อนกลับ:
+- Backend: Deploy เวอร์ชันก่อนหน้า
+- GitHub: Restore index.html commit ก่อน V6.7
+
+ข้อมูล Sheet ไม่ต้อง rollback
+เพราะ V6.7 ไม่แก้ schema และไม่ migrate ข้อมูล
+
+
+============================================================
+เช็กหลังอัปเดต
+============================================================
+
+1. หน้า Games แสดงปกติ
+2. เปิดรายละเอียดเกมได้
+3. Multi-service ยังเลือกได้
+4. Order สร้างได้
+5. Payment status ทำงาน
+6. Reviews เปิดได้
+7. Claims เปิดได้
+8. Zygisk Install เปิดได้
+9. TH/EN และ FX ทำงาน
+10. Theme ทำงาน
+11. Telegram แจ้งเตือนทำงาน
+12. Maintenance ทำงาน
+
+ถ้าทั้ง 12 ข้อนี้ปกติ ถือว่า V6.7 ผ่าน

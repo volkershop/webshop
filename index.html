@@ -4,10 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#090a12">
-  <title>0xVoLKER Shop Service • V6.5.3</title>
+  <title>0xVoLKER Shop Service • V6.7 Performance Safe</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://script.google.com">
+  <link rel="preconnect" href="https://script.googleusercontent.com">
+  <link rel="preconnect" href="https://play-lh.googleusercontent.com">
+  <link rel="preload" as="image" href="banner-0xvolker.webp" type="image/webp" fetchpriority="high">
+  <link rel="preload" as="image" href="volker-avatar-256.webp" type="image/webp">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <style>
@@ -2742,7 +2747,7 @@
     <div class="maintenance-wrap">
       <article class="maintenance-card">
         <div class="maintenance-mascot">
-          <img src="volker-avatar-circle.png" alt="0xVoLKER">
+          <img src="volker-avatar-768.webp" alt="0xVoLKER" width="768" height="768" decoding="async" onerror="this.onerror=null;this.src='volker-avatar-circle.png'">
           <div class="maintenance-megaphone">📣</div>
         </div>
         <div class="maintenance-copy">
@@ -2758,7 +2763,7 @@
   <header class="topbar">
     <div class="shell topbar-inner">
       <div class="brand">
-        <div class="brand-icon brand-mascot-icon" aria-hidden="true"><img src="volker-avatar-circle.png" alt=""></div>
+        <div class="brand-icon brand-mascot-icon" aria-hidden="true"><img src="volker-avatar-256.webp" alt="" width="256" height="256" decoding="async" fetchpriority="high" onerror="this.onerror=null;this.src='volker-avatar-circle.png'"></div>
         <div>
           <strong>0xVoLKER Shop Service</strong>
           <small><span class="lang-th">Premium WebShop • เลือกเกม • ชำระเงิน • ส่งคำขอ</span><span class="lang-en">Premium WebShop • Choose a game • Pay • Submit request</span></small>
@@ -2782,7 +2787,7 @@
 
     <section class="hero-banner" aria-label="0xVoLKER banner">
       <div class="hero-banner-card">
-        <img src="banner-0xvolker.png" alt="0xVoLKER Shop Service banner">
+        <img src="banner-0xvolker.webp" alt="0xVoLKER Shop Service banner" width="2508" height="627" decoding="async" fetchpriority="high" onerror="this.onerror=null;this.src='banner-0xvolker.png'">
         <div class="hero-banner-note">
           <strong>0xVoLKER Shop Service</strong>
           <span><span class="lang-th">Game Service • Zygisk Mod Menu • Verified Reviews</span><span class="lang-en">Game Service • Zygisk Mod Menu • Verified Reviews</span></span>
@@ -3165,7 +3170,7 @@
         </div>
 
         <div class="content-panel">
-          <div class="about-mascot"><img src="banner-0xvolker.png" alt="0xVoLKER"></div>
+          <div class="about-mascot"><img src="volker-avatar-768.webp" alt="0xVoLKER" width="768" height="768" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='volker-avatar-circle.png'"></div>
           <div class="customer-card">
             <div class="customer-stat">
               <span class="lang-th">หมายเลขลูกค้าของคุณ</span><span class="lang-en">Your customer ID</span>
@@ -3553,7 +3558,7 @@
     const grid = $("#gameGrid");
 
     document.addEventListener("DOMContentLoaded", () => {
-      $("#searchInput").addEventListener("input", applyFilters);
+      $("#searchInput").addEventListener("input", debounce(applyFilters, 120));
       $("#sortSelect").addEventListener("change", applyFilters);
       $("#createOrderBtn").addEventListener("click", createOrder);
       $("#checkPaymentBtn").addEventListener("click", () => checkPaymentStatus(true));
@@ -3578,7 +3583,7 @@
       $("#submitClaimBtn").addEventListener("click", submitClaim);
       $("#cancelClaimBtn").addEventListener("click", closeClaimForm);
 
-      $("#reviewSearch").addEventListener("input", renderReviews);
+      $("#reviewSearch").addEventListener("input", debounce(renderReviews, 120));
       $("#reviewGameFilter").addEventListener("change", () => loadReviews($("#reviewGameFilter").value));
       $("#checkMyReviewBtn").addEventListener("click", () => checkSavedReviewAccess(false));
       $("#manualReviewCheckBtn").addEventListener("click", checkManualReviewAccess);
@@ -3609,16 +3614,74 @@
       bootApp();
     });
 
+    function debounce(fn, wait=120) {
+      let timer = 0;
+
+      return function(...args) {
+        clearTimeout(timer);
+        timer = setTimeout(
+          () => fn.apply(this, args),
+          wait
+        );
+      };
+    }
+
+    function runWhenIdle(fn, timeout=1800) {
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(
+          () => fn(),
+          {timeout}
+        );
+      } else {
+        setTimeout(fn, Math.min(timeout, 900));
+      }
+    }
+
+    function scheduleNonCriticalStartup() {
+      runWhenIdle(() => {
+        try {
+          const saved = getSavedReviewAccess();
+
+          if (
+            Array.isArray(saved) &&
+            saved.some(x => !x.reviewed)
+          ) {
+            checkSavedReviewAccess(true);
+          }
+        } catch (_) {}
+      }, 1800);
+    }
+
     async function bootApp() {
-      try {
-        await initCustomer();
-      } catch (err) {
-        console.error(err);
-        showToast(tr("สร้างหมายเลขลูกค้าไม่สำเร็จ", "Could not initialize customer ID"), "error");
+      const customerTask = initCustomer();
+      const catalogTask = loadGames();
+
+      const [customerResult] = await Promise.allSettled([
+        customerTask,
+        catalogTask
+      ]);
+
+      if (customerResult.status === "rejected") {
+        console.error(customerResult.reason);
+
+        showToast(
+          tr(
+            "สร้างหมายเลขลูกค้าไม่สำเร็จ",
+            "Could not initialize customer ID"
+          ),
+          "error"
+        );
       }
 
-      await loadGames();
-      startPresenceHeartbeat();
+      // Presence/รีวิวเป็นงานรอง ไม่บล็อกการเห็นเกมและหน้าเว็บ
+      if (customerToken) {
+        setTimeout(
+          () => startPresenceHeartbeat(),
+          350
+        );
+      }
+
+      scheduleNonCriticalStartup();
     }
 
     async function apiGet(params) {
@@ -3786,11 +3849,23 @@
       updateCustomerUI();
       renderPaymentMethods();
       applyFilters();
-      renderGuides();
-      renderZygiskInstall();
-      renderReviews();
-      renderClaimEligibility();
-      renderClaimHistory();
+
+      if (!$("#guidesView").hidden) {
+        renderGuides();
+      }
+
+      if (!$("#zygiskInstallView").hidden) {
+        renderZygiskInstall();
+      }
+
+      if (!$("#reviewsView").hidden) {
+        renderReviews();
+      }
+
+      if (!$("#claimsView").hidden) {
+        renderClaimEligibility();
+        renderClaimHistory();
+      }
     }
     function applyTheme(theme) {
       const body = document.body;
@@ -4247,17 +4322,9 @@
         $("#apiIndicator").className = "badge green";
         $("#apiIndicator").textContent = tr("ระบบออนไลน์", "Online");
 
-        buildCategories();
-        buildReviewGameFilter();
-        renderGuides();
-        renderZygiskInstall();
-        applyFilters();
-        renderPaymentMethods();
+        // applyLanguage จะ render catalog ที่มองเห็นอยู่
+        // ส่วน Reviews/Guides/Install/Claims จะ render เมื่อผู้ใช้เปิดแท็บนั้น
         applyLanguage();
-
-        loadReviews("");
-        checkSavedReviewAccess(true);
-        presencePing();
       } catch (err) {
         console.error(err);
 
@@ -4469,6 +4536,7 @@
                 src="${escapeAttr(icon)}"
                 alt="${escapeAttr(displayName)}"
                 loading="lazy"
+                decoding="async"
               >
 
               <span class="corner left">
@@ -5947,8 +6015,8 @@
         grid.innerHTML =
           `<div class="state" style="grid-column:1/-1">
             ${tr(
-              "ยังไม่มีข้อมูลคู่มือติดตั้ง ให้แอดมินรัน setupV6System ของ V6.5 อีกครั้ง",
-              "Installation guides are not available yet. The admin should run the V6.5 setupV6System once."
+              "ยังไม่มีข้อมูลคู่มือติดตั้ง ให้แอดมินรัน setupV6System ของ V6.7 อีกครั้ง",
+              "Installation guides are not available yet. The admin should run the V6.7 setupV6System once."
             )}
           </div>`;
         return;

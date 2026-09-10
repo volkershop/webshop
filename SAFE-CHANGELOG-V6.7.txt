@@ -1,0 +1,32 @@
+V6.7 SAFE CHANGELOG
+
+PERFORMANCE ONLY:
++ Public Cache สำหรับ read-only catalog/config
++ Automatic cache invalidation
++ warmPublicCacheNow
++ Customer + Bootstrap API ทำพร้อมกัน
++ Lazy hidden-tab rendering
++ Defer review eligibility check
++ Debounce search
++ WebP optimized assets with PNG fallback
++ API/image preconnect
++ Above-fold image preload
++ async image decoding
+
+UNCHANGED:
+= Orders
+= Payments
+= PayPal/USDT formula
+= Customer ID
+= Reviews
+= Claims
+= Telegram
+= Themes
+= Maintenance
+= Play Store sync
+= Game auto bootstrap
+= Google Sheet schema
+
+NO SERVICE WORKER
+NO DATABASE MIGRATION
+NO DESTRUCTIVE CHANGE
