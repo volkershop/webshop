@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#090a12">
-  <title>GAME SERVICE V4 • Premium UI</title>
+  <title>0xVoLKER Shop Service • Reviews</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -333,6 +333,408 @@
       .order-summary{grid-template-columns:1fr}
       .bottom-action{align-items:stretch}
       .bottom-action .primary{flex:1}
+    }
+
+
+    /* =========================================================
+       V5 REVIEW SYSTEM
+       ========================================================= */
+
+    function switchPage(page) {
+      const isReviews = page === "reviews";
+
+      $("#catalogView").hidden = isReviews;
+      $("#reviewsView").hidden = !isReviews;
+
+      $("#catalogTab").classList.toggle("active", !isReviews);
+      $("#reviewsTab").classList.toggle("active", isReviews);
+
+      if (isReviews) {
+        loadReviews($("#reviewGameFilter").value || "");
+        checkSavedReviewAccess(true);
+      }
+
+      window.scrollTo({ top:0, behavior:REDUCED_MOTION ? "auto" : "smooth" });
+    }
+
+    function buildReviewGameFilter() {
+      const select = $("#reviewGameFilter");
+      if (!select) return;
+
+      const current = select.value;
+      select.innerHTML = '<option value="">ทุกเกม</option>';
+
+      allGames.forEach(game => {
+        const option = document.createElement("option");
+        option.value = game.id;
+        option.textContent = game.name;
+        select.appendChild(option);
+      });
+
+      select.value = current;
+    }
+
+    async function loadReviews(gameId="") {
+      const loading = $("#reviewsLoading");
+      if (loading) loading.hidden = false;
+
+      try {
+        const data = await apiGet({
+          action:"reviews",
+          gameId:gameId || "",
+          limit:80
+        });
+
+        if (!data.ok) throw new Error(data.error || "REVIEWS_LOAD_FAILED");
+
+        publicReviews = Array.isArray(data.reviews) ? data.reviews : [];
+        reviewsWritingEnabled = Boolean(data.writingEnabled);
+        reviewUnlockRule = data.unlockRule || "completed";
+
+        $("#reviewsClosedBanner").classList.toggle("show", !reviewsWritingEnabled);
+
+        const avg = Number(data.summary?.average || 0);
+        const count = Number(data.summary?.count || 0);
+
+        $("#reviewAverage").textContent = count ? avg.toFixed(1) : "0.0";
+        $("#reviewTotal").textContent = count
+          ? `${count.toLocaleString("th-TH")} รีวิว`
+          : "ยังไม่มีรีวิว";
+        $("#reviewSummaryStars").textContent = renderStarText(avg);
+
+        renderReviews();
+      } catch (err) {
+        console.error(err);
+        publicReviews = [];
+        $("#reviewList").innerHTML = '<div class="state error">โหลดรีวิวไม่สำเร็จ</div>';
+      } finally {
+        if (loading) loading.hidden = true;
+      }
+    }
+
+    function renderReviews() {
+      const list = $("#reviewList");
+      if (!list) return;
+
+      const q = ($("#reviewSearch")?.value || "").trim().toLowerCase();
+
+      const rows = publicReviews.filter(r => {
+        const text = [
+          r.gameName,
+          r.reviewerName,
+          r.reviewText,
+          r.rating
+        ].join(" ").toLowerCase();
+
+        return text.includes(q);
+      });
+
+      if (!rows.length) {
+        list.innerHTML = '<div class="state">ยังไม่มีรีวิวที่ตรงกับเงื่อนไข</div>';
+        return;
+      }
+
+      list.innerHTML = "";
+
+      rows.forEach(r => {
+        const card = document.createElement("article");
+        card.className = "review-card";
+
+        card.innerHTML = `
+          <div class="review-card-top">
+            <div>
+              <div class="reviewer">
+                ${escapeHtml(r.reviewerName || "ลูกค้าที่ซื้อแล้ว")}
+                <span class="verified">✓ ผู้ซื้อจริง</span>
+              </div>
+              <div class="review-game">${escapeHtml(r.gameName || "")}</div>
+            </div>
+            <div class="review-date">${escapeHtml(r.createdAt || "")}</div>
+          </div>
+
+          <div class="review-rating">${"★".repeat(Math.max(0, Math.min(5, Number(r.rating) || 0)))}${"☆".repeat(Math.max(0, 5 - (Number(r.rating) || 0)))}</div>
+
+          ${r.reviewText
+            ? `<div class="review-text">${escapeHtml(r.reviewText)}</div>`
+            : '<div class="review-text" style="color:#858b9d">ให้คะแนนโดยไม่เขียนข้อความ</div>'}
+        `;
+
+        list.appendChild(card);
+      });
+    }
+
+    function renderStarText(avg) {
+      const rounded = Math.max(0, Math.min(5, Math.round(Number(avg) || 0)));
+      return "★".repeat(rounded) + "☆".repeat(5 - rounded);
+    }
+
+    function saveReviewAccess(access) {
+      try {
+        const list = getSavedReviewAccess();
+        const filtered = list.filter(x => x.orderId !== access.orderId);
+        filtered.unshift(access);
+        localStorage.setItem(REVIEW_STORAGE_KEY, JSON.stringify(filtered.slice(0,20)));
+      } catch (err) {
+        console.warn("Cannot save review access", err);
+      }
+    }
+
+    function getSavedReviewAccess() {
+      try {
+        const raw = localStorage.getItem(REVIEW_STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (_) {
+        return [];
+      }
+    }
+
+    function markReviewAccessUsed(orderId) {
+      try {
+        const list = getSavedReviewAccess().map(x =>
+          x.orderId === orderId ? {...x, reviewed:true} : x
+        );
+        localStorage.setItem(REVIEW_STORAGE_KEY, JSON.stringify(list));
+      } catch (_) {}
+    }
+
+    async function checkSavedReviewAccess(silent=false) {
+      const list = getSavedReviewAccess().filter(x => !x.reviewed);
+
+      if (!list.length) {
+        $("#reviewReadyBadge").hidden = true;
+        if (!silent) setReviewGateMessage("ยังไม่พบออเดอร์ที่บันทึกไว้ในอุปกรณ์นี้");
+        return;
+      }
+
+      if (!reviewsWritingEnabled && $("#reviewsView").hidden === false) {
+        setReviewGateMessage("ขณะนี้แอดมินปิดรับการเขียนรีวิวชั่วคราว", "closed");
+        return;
+      }
+
+      for (const access of list.slice(0,10)) {
+        try {
+          const data = await apiGet({
+            action:"reviewEligibility",
+            orderId:access.orderId,
+            reviewToken:access.reviewToken
+          });
+
+          if (data.ok && data.eligible) {
+            eligibleReviewAccess = {...access, ...data.order};
+            $("#reviewReadyBadge").hidden = false;
+            setReviewGateMessage(
+              `⭐ ${data.order.gameName} พร้อมให้คุณรีวิวแล้ว`,
+              "good"
+            );
+
+            if (!silent) openReviewForm(eligibleReviewAccess);
+            else showToast("คุณมีออเดอร์ที่พร้อมเขียนรีวิวแล้ว ⭐", "success", 4500);
+
+            return;
+          }
+
+          if (data.reason === "ALREADY_REVIEWED") {
+            markReviewAccessUsed(access.orderId);
+          }
+        } catch (err) {
+          console.warn(err);
+        }
+      }
+
+      $("#reviewReadyBadge").hidden = true;
+
+      if (!silent) {
+        setReviewGateMessage(
+          reviewUnlockRule === "paid"
+            ? "ยังไม่พบออเดอร์ที่ชำระเงินและพร้อมรีวิว"
+            : "ยังไม่มีออเดอร์ที่งานเสร็จแล้วและพร้อมรีวิว"
+        );
+      }
+    }
+
+    async function checkManualReviewAccess() {
+      const orderId = $("#manualReviewOrderId").value.trim();
+      const reviewToken = $("#manualReviewToken").value.trim();
+
+      if (!orderId || !reviewToken) {
+        setReviewGateMessage("กรุณากรอก Order ID และรหัสรีวิวให้ครบ", "closed");
+        return;
+      }
+
+      try {
+        const data = await apiGet({
+          action:"reviewEligibility",
+          orderId:orderId,
+          reviewToken:reviewToken
+        });
+
+        if (!data.ok) throw new Error(data.error || "CHECK_FAILED");
+
+        if (!data.eligible) {
+          setReviewGateMessage(reviewReasonText(data.reason), "closed");
+          return;
+        }
+
+        eligibleReviewAccess = {
+          ...data.order,
+          reviewToken:reviewToken
+        };
+
+        saveReviewAccess({
+          orderId:data.order.orderId,
+          reviewToken:reviewToken,
+          gameId:data.order.gameId,
+          gameName:data.order.gameName,
+          serviceName:data.order.serviceName,
+          createdAt:Date.now()
+        });
+
+        $("#reviewReadyBadge").hidden = false;
+        setReviewGateMessage(`ตรวจสิทธิ์สำเร็จ ✓ ${data.order.gameName}`, "good");
+        openReviewForm(eligibleReviewAccess);
+      } catch (err) {
+        setReviewGateMessage("ตรวจสิทธิ์ไม่สำเร็จ: " + err.message, "closed");
+      }
+    }
+
+    function reviewReasonText(reason) {
+      const map = {
+        REVIEWS_CLOSED:"ขณะนี้ร้านปิดรับการเขียนรีวิวชั่วคราว",
+        ORDER_NOT_FOUND:"ไม่พบ Order ID นี้",
+        INVALID_REVIEW_TOKEN:"รหัสรีวิวไม่ถูกต้อง",
+        ALREADY_REVIEWED:"ออเดอร์นี้ส่งรีวิวไปแล้ว",
+        PAYMENT_REQUIRED:"ออเดอร์นี้ยังไม่ได้รับการยืนยันการชำระเงิน",
+        WORK_NOT_COMPLETED:"งานนี้ยังไม่เสร็จ เมื่อแอดมินเปลี่ยนสถานะเป็น completed จึงจะรีวิวได้"
+      };
+      return map[reason] || "ออเดอร์นี้ยังไม่พร้อมสำหรับการรีวิว";
+    }
+
+    function setReviewGateMessage(text, type="") {
+      const box = $("#reviewEligibilityStatus");
+      if (!box) return;
+
+      box.className = "review-status-box" + (type ? " " + type : "");
+      box.textContent = text;
+    }
+
+    function openReviewForm(access) {
+      if (!access) return;
+
+      selectedReviewRating = 0;
+      updateStarPicker();
+
+      $("#reviewFormGame").textContent = access.gameName || "ให้คะแนน";
+      $("#reviewFormOrder").textContent = access.orderId || "";
+      $("#reviewText").value = "";
+      $("#reviewerName").value = "";
+      $("#reviewSubmitMessage").hidden = true;
+
+      $("#reviewGate").hidden = true;
+      $("#reviewForm").hidden = false;
+    }
+
+    function closeReviewForm() {
+      $("#reviewForm").hidden = true;
+      $("#reviewGate").hidden = false;
+      eligibleReviewAccess = null;
+      selectedReviewRating = 0;
+      updateStarPicker();
+    }
+
+    function selectReviewRating(rating) {
+      selectedReviewRating = Math.max(1, Math.min(5, Number(rating) || 0));
+      updateStarPicker();
+    }
+
+    function updateStarPicker() {
+      const captions = {
+        0:"กดดาวเพื่อให้คะแนน",
+        1:"1 ดาว — ไม่ประทับใจ",
+        2:"2 ดาว — พอใช้",
+        3:"3 ดาว — ดี",
+        4:"4 ดาว — ดีมาก",
+        5:"5 ดาว — ชอบมาก"
+      };
+
+      document.querySelectorAll(".star-btn").forEach(btn => {
+        const rating = Number(btn.dataset.rating);
+        btn.classList.toggle("on", rating <= selectedReviewRating);
+      });
+
+      $("#starCaption").textContent = captions[selectedReviewRating] || captions[0];
+    }
+
+    async function submitReview(e) {
+      e.preventDefault();
+
+      if (!eligibleReviewAccess) {
+        showToast("ไม่พบสิทธิ์รีวิว", "error");
+        return;
+      }
+
+      if (!selectedReviewRating) {
+        showToast("กรุณาเลือกคะแนน 1–5 ดาว", "error");
+        return;
+      }
+
+      const btn = $("#submitReviewBtn");
+      const message = $("#reviewSubmitMessage");
+
+      btn.disabled = true;
+      btn.textContent = "กำลังส่ง...";
+      message.hidden = true;
+
+      try {
+        const data = await apiPost({
+          action:"createReview",
+          orderId:eligibleReviewAccess.orderId,
+          reviewToken:eligibleReviewAccess.reviewToken,
+          rating:selectedReviewRating,
+          reviewerName:$("#reviewerName").value.trim(),
+          reviewText:$("#reviewText").value.trim()
+        });
+
+        if (!data.ok) throw new Error(data.error || "CREATE_REVIEW_FAILED");
+
+        markReviewAccessUsed(eligibleReviewAccess.orderId);
+        $("#reviewReadyBadge").hidden = true;
+
+        message.className = "message success";
+        message.textContent = data.review?.status === "pending"
+          ? "ส่งรีวิวสำเร็จ ✓ รีวิวกำลังรอแอดมินตรวจ"
+          : "ส่งรีวิวสำเร็จ ✓ ขอบคุณสำหรับคะแนน";
+        message.hidden = false;
+
+        runConfetti(42);
+        showToast("ขอบคุณสำหรับรีวิว ⭐", "success", 4500);
+
+        await loadReviews($("#reviewGameFilter").value || "");
+        await loadGames();
+
+        setTimeout(() => {
+          closeReviewForm();
+        }, 1800);
+      } catch (err) {
+        message.className = "message error";
+        message.textContent = reviewReasonText(err.message);
+        message.hidden = false;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "ส่งรีวิว";
+      }
+    }
+
+    async function copyReviewToken() {
+      const token = $("#reviewTokenText").textContent.trim();
+      if (!token || token === "-") return;
+
+      try {
+        await navigator.clipboard.writeText(token);
+        showToast("คัดลอกรหัสรีวิวแล้ว", "success");
+      } catch (_) {
+        showToast("คัดลอกไม่สำเร็จ กรุณากดค้างเพื่อคัดลอก", "error");
+      }
     }
 
     /* =========================================================
@@ -915,6 +1317,433 @@
       .card{transform:none !important}
     }
 
+
+    /* Responsive brand banner */
+    .hero-banner{
+      margin: 4px 0 18px;
+    }
+    .hero-banner-card{
+      position:relative;
+      overflow:hidden;
+      border:1px solid #23283a;
+      border-radius:24px;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,125,29,.18), transparent 35%),
+        radial-gradient(circle at 80% 50%, rgba(107,88,255,.12), transparent 32%),
+        linear-gradient(180deg, rgba(20,22,34,.96), rgba(13,15,25,.98));
+      box-shadow:
+        0 18px 60px rgba(0,0,0,.28),
+        inset 0 1px rgba(255,255,255,.05);
+      padding: clamp(10px, 1.6vw, 18px);
+    }
+    .hero-banner-card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.04), transparent 22%, transparent 78%, rgba(255,255,255,.03)),
+        linear-gradient(180deg, transparent, rgba(255,255,255,.02));
+      border-radius:inherit;
+    }
+    .hero-banner-card img{
+      display:block;
+      width:100%;
+      height:auto;
+      border-radius:18px;
+      object-fit:contain;
+      filter: drop-shadow(0 12px 24px rgba(0,0,0,.18));
+    }
+    .hero-banner-note{
+      margin-top:10px;
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      color:#a7adc2;
+      font-size:10px;
+      flex-wrap:wrap;
+    }
+    .hero-banner-note strong{
+      color:#fff;
+      font-size:11px;
+    }
+
+    @media(max-width:720px){
+      .hero-banner{
+        margin: 2px 0 14px;
+      }
+      .hero-banner-card{
+        border-radius:18px;
+        padding:8px;
+      }
+      .hero-banner-card img{
+        border-radius:14px;
+      }
+      .hero-banner-note{
+        font-size:9px;
+      }
+      .hero-banner-note strong{
+        font-size:10px;
+      }
+    }
+
+
+    /* =========================================================
+       V5 REVIEWS
+       ========================================================= */
+    .page-tabs{
+      display:flex;
+      gap:8px;
+      margin:0 0 18px;
+      padding:6px;
+      border:1px solid #262b3d;
+      border-radius:17px;
+      background:rgba(17,19,29,.72);
+      width:max-content;
+      max-width:100%;
+    }
+    .page-tab{
+      position:relative;
+      min-height:42px;
+      border:0;
+      border-radius:12px;
+      padding:0 16px;
+      background:transparent;
+      color:#9ea4b5;
+      font-size:11px;
+      font-weight:800;
+      cursor:pointer;
+      transition:.2s ease;
+    }
+    .page-tab:hover{color:#fff;background:#1c2030}
+    .page-tab.active{
+      color:#fff;
+      background:linear-gradient(180deg,#2a2f43,#202436);
+      box-shadow:inset 0 1px rgba(255,255,255,.06),0 8px 22px rgba(0,0,0,.18);
+    }
+    .tab-dot{
+      display:inline-grid;
+      place-items:center;
+      min-width:18px;height:18px;
+      margin-left:5px;
+      padding:0 5px;
+      border-radius:999px;
+      background:var(--red);
+      color:#fff;
+      font-size:8px;
+    }
+
+    .rating-line{
+      margin-top:7px;
+      display:flex;align-items:center;gap:6px;
+      color:#ffd75a;
+      font-size:10px;
+      font-weight:800;
+    }
+    .rating-line .rating-count{
+      color:#9fa4b4;
+      font-weight:600;
+      font-size:8px;
+    }
+
+    #reviewsView[hidden],#catalogView[hidden]{display:none}
+
+    .reviews-hero{
+      display:flex;justify-content:space-between;align-items:end;gap:16px;
+      margin:4px 0 14px;
+    }
+    .reviews-hero h1{margin:0;font-size:24px}
+    .reviews-hero p{margin:4px 0 0;color:var(--muted);font-size:10px;line-height:1.55}
+
+    .review-layout{
+      display:grid;
+      grid-template-columns:minmax(0,1.55fr) minmax(290px,.8fr);
+      gap:14px;
+      align-items:start;
+    }
+    .review-panel{
+      border:1px solid #292e43;
+      border-radius:20px;
+      background:linear-gradient(180deg,#141724,#10121b);
+      padding:15px;
+      box-shadow:0 14px 45px rgba(0,0,0,.16);
+    }
+    .review-panel.sticky{
+      position:sticky;
+      top:98px;
+    }
+
+    .review-summary{
+      display:grid;
+      grid-template-columns:auto 1fr;
+      gap:13px;
+      align-items:center;
+      margin-bottom:13px;
+      padding:14px;
+      border:1px solid #2d3247;
+      border-radius:16px;
+      background:#171a28;
+    }
+    .review-score{
+      min-width:78px;
+      text-align:center;
+    }
+    .review-score strong{
+      display:block;
+      font-size:31px;
+      line-height:1;
+      color:#ffd449;
+    }
+    .review-score span{
+      display:block;
+      margin-top:5px;
+      color:#9298a9;
+      font-size:8px;
+    }
+    .review-stars-readonly{
+      color:#ffd449;
+      letter-spacing:2px;
+      font-size:15px;
+    }
+
+    .review-toolbar{
+      display:grid;
+      grid-template-columns:1fr 190px;
+      gap:9px;
+      margin-bottom:12px;
+    }
+    .review-list{display:grid;gap:9px}
+    .review-card{
+      border:1px solid #2a2f44;
+      border-radius:16px;
+      background:#171a27;
+      padding:13px;
+      transition:.2s ease;
+    }
+    .review-card:hover{
+      transform:translateY(-2px);
+      border-color:#3c435d;
+    }
+    .review-card-top{
+      display:flex;
+      justify-content:space-between;
+      align-items:start;
+      gap:10px;
+    }
+    .reviewer{
+      font-size:11px;
+      font-weight:800;
+    }
+    .verified{
+      margin-left:6px;
+      display:inline-flex;
+      align-items:center;
+      padding:3px 6px;
+      border-radius:999px;
+      background:rgba(24,189,134,.12);
+      border:1px solid rgba(24,189,134,.26);
+      color:#78e4c0;
+      font-size:7px;
+      font-weight:800;
+      vertical-align:middle;
+    }
+    .review-date{
+      color:#7f8597;
+      font-size:8px;
+      white-space:nowrap;
+    }
+    .review-game{
+      margin-top:3px;
+      color:#a9aec0;
+      font-size:8px;
+    }
+    .review-rating{
+      margin-top:7px;
+      color:#ffd449;
+      letter-spacing:1px;
+      font-size:13px;
+    }
+    .review-text{
+      margin-top:7px;
+      color:#d4d7e0;
+      font-size:10px;
+      line-height:1.65;
+      white-space:pre-wrap;
+      overflow-wrap:anywhere;
+    }
+
+    .review-gate{
+      text-align:center;
+      padding:8px 3px 3px;
+    }
+    .review-lock-icon{
+      width:58px;height:58px;
+      display:grid;place-items:center;
+      margin:0 auto 10px;
+      border-radius:18px;
+      background:linear-gradient(145deg,#24283a,#171a27);
+      border:1px solid #343a51;
+      font-size:24px;
+    }
+    .review-gate h2{font-size:16px;margin:0}
+    .review-gate p{
+      margin:6px auto 12px;
+      max-width:330px;
+      color:#969cad;
+      font-size:9px;
+      line-height:1.6;
+    }
+    .review-status-box{
+      border:1px solid #2f3449;
+      border-radius:14px;
+      background:#141722;
+      padding:11px;
+      margin-top:10px;
+      text-align:left;
+      font-size:9px;
+      line-height:1.55;
+      color:#b8bdca;
+    }
+    .review-status-box.good{
+      border-color:rgba(24,189,134,.3);
+      background:rgba(24,189,134,.07);
+      color:#9cebd2;
+    }
+    .review-status-box.closed{
+      border-color:rgba(239,47,54,.28);
+      background:rgba(239,47,54,.06);
+      color:#ffadb2;
+    }
+
+    .manual-access{
+      margin-top:12px;
+      border-top:1px solid #292e42;
+      padding-top:12px;
+    }
+    .manual-access summary{
+      cursor:pointer;
+      font-size:9px;
+      font-weight:800;
+      color:#bfc3d0;
+    }
+
+    .review-form[hidden]{display:none}
+    .review-form-head{
+      display:flex;justify-content:space-between;gap:10px;align-items:start;
+      margin-bottom:10px;
+    }
+    .review-form-head h2{margin:0;font-size:15px}
+    .review-order-chip{
+      border:1px solid #32384d;
+      background:#171a27;
+      border-radius:10px;
+      padding:6px 8px;
+      color:#9da3b6;
+      font-size:7px;
+      max-width:145px;
+      overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    }
+
+    .star-picker{
+      display:flex;
+      justify-content:center;
+      gap:5px;
+      padding:12px 0 6px;
+    }
+    .star-btn{
+      border:0;
+      background:transparent;
+      color:#44495a;
+      font-size:34px;
+      line-height:1;
+      cursor:pointer;
+      padding:3px;
+      transition:transform .16s ease,color .16s ease,filter .16s ease;
+    }
+    .star-btn:hover{transform:translateY(-3px) scale(1.08)}
+    .star-btn.on{
+      color:#ffd33d;
+      filter:drop-shadow(0 0 9px rgba(255,211,61,.22));
+    }
+    .star-caption{
+      text-align:center;
+      color:#a0a6b7;
+      font-size:9px;
+      min-height:18px;
+      margin-bottom:4px;
+    }
+
+    .review-closed-banner{
+      display:none;
+      margin-bottom:12px;
+      padding:11px 13px;
+      border:1px solid rgba(239,47,54,.28);
+      background:rgba(239,47,54,.07);
+      border-radius:14px;
+      color:#ffb1b6;
+      font-size:9px;
+      line-height:1.55;
+    }
+    .review-closed-banner.show{display:block}
+
+    .review-code-box{
+      margin-top:10px;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      border:1px solid #30364a;
+      border-radius:13px;
+      background:#141722;
+      padding:10px 11px;
+    }
+    .review-code-box div{min-width:0}
+    .review-code-box span{
+      display:block;color:#8e94a6;font-size:7px;
+    }
+    .review-code-box strong{
+      display:block;margin-top:2px;
+      font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+      font-size:8px;
+      color:#cfd3df;
+      overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+      max-width:260px;
+    }
+    .copy-mini{
+      flex:0 0 auto;
+      border:1px solid #363c51;
+      background:#1e2232;color:#fff;
+      border-radius:10px;
+      min-height:34px;
+      padding:0 9px;
+      font-size:8px;
+      font-weight:800;
+      cursor:pointer;
+    }
+
+    .review-help{
+      margin-top:12px;
+      padding:11px;
+      border-radius:13px;
+      background:#131621;
+      border:1px solid #2b3044;
+      color:#8f95a7;
+      font-size:8px;
+      line-height:1.6;
+    }
+
+    @media(max-width:880px){
+      .review-layout{grid-template-columns:1fr}
+      .review-panel.sticky{position:static}
+    }
+    @media(max-width:620px){
+      .page-tabs{width:100%}
+      .page-tab{flex:1;padding:0 10px}
+      .review-toolbar{grid-template-columns:1fr}
+      .review-summary{grid-template-columns:1fr;text-align:center}
+      .reviews-hero{align-items:start}
+      .reviews-hero h1{font-size:20px}
+      .star-btn{font-size:31px}
+    }
+
   </style>
 </head>
 <body>
@@ -932,7 +1761,7 @@
       <div class="brand">
         <div class="brand-icon">🎮</div>
         <div>
-          <strong>GAME SERVICE</strong>
+          <strong>0xVoLKER Shop Service</strong>
           <small>Premium WebShop • เลือกเกม • ชำระเงิน • ส่งคำขอ</small>
         </div>
       </div>
@@ -941,6 +1770,24 @@
   </header>
 
   <main class="shell main">
+
+    <section class="hero-banner" aria-label="0xVoLKER banner">
+      <div class="hero-banner-card">
+        <img src="banner-0xvolker.png" alt="0xVoLKER Shop Service banner">
+        <div class="hero-banner-note">
+          <strong>0xVoLKER Shop Service</strong>
+          <span>แบนเนอร์นี้แสดงผลแบบ responsive รองรับคอม มือถือ และแท็บเล็ต</span>
+        </div>
+      </div>
+    </section>
+
+    <nav class="page-tabs" aria-label="เมนูหน้าเว็บ">
+      <button id="catalogTab" class="page-tab active" type="button">🎮 เกม</button>
+      <button id="reviewsTab" class="page-tab" type="button">⭐ รีวิว <span id="reviewReadyBadge" class="tab-dot" hidden>1</span></button>
+    </nav>
+
+    <section id="catalogView">
+
     <div class="toolbar">
       <div class="control">
         <span class="ico">⌕</span>
@@ -975,6 +1822,134 @@
     </div>
     <div id="errorBox" class="state error" hidden></div>
     <section id="gameGrid" class="grid"></section>
+    </section>
+
+    <section id="reviewsView" hidden>
+      <div class="reviews-hero">
+        <div>
+          <h1>รีวิวจากลูกค้าที่ซื้อจริง</h1>
+          <p>ทุกคะแนนมาจากออเดอร์ที่ผ่านการตรวจสิทธิ์ ระบบไม่อนุญาตให้ผู้ที่ไม่ได้ซื้อเขียนรีวิว</p>
+        </div>
+      </div>
+
+      <div id="reviewsClosedBanner" class="review-closed-banner">
+        🔒 ขณะนี้ร้านปิดรับการเขียนรีวิวชั่วคราว แต่ยังสามารถอ่านรีวิวเดิมได้ตามปกติ
+      </div>
+
+      <div class="review-layout">
+        <section class="review-panel">
+          <div class="review-summary">
+            <div class="review-score">
+              <strong id="reviewAverage">0.0</strong>
+              <span id="reviewTotal">ยังไม่มีรีวิว</span>
+            </div>
+            <div>
+              <div id="reviewSummaryStars" class="review-stars-readonly">☆☆☆☆☆</div>
+              <div style="margin-top:5px;color:#9aa0b1;font-size:9px;line-height:1.55">
+                คะแนนเฉลี่ยจากรีวิวที่เผยแพร่บนหน้าเว็บเท่านั้น
+              </div>
+            </div>
+          </div>
+
+          <div class="review-toolbar">
+            <div class="control">
+              <span class="ico">⌕</span>
+              <input id="reviewSearch" type="search" placeholder="ค้นหาในรีวิว...">
+            </div>
+            <div class="control">
+              <select id="reviewGameFilter" aria-label="กรองรีวิวตามเกม">
+                <option value="">ทุกเกม</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="reviewsLoading" class="state" hidden>กำลังโหลดรีวิว...</div>
+          <div id="reviewList" class="review-list"></div>
+        </section>
+
+        <aside class="review-panel sticky">
+          <div id="reviewGate" class="review-gate">
+            <div class="review-lock-icon">🔐</div>
+            <h2>เขียนรีวิวสำหรับผู้ซื้อเท่านั้น</h2>
+            <p>
+              ระบบจะตรวจ Order ID + รหัสรีวิว และสถานะออเดอร์จาก Backend
+              ก่อนเปิดฟอร์มให้คะแนน
+            </p>
+
+            <button id="checkMyReviewBtn" class="primary" type="button" style="width:100%">
+              ตรวจสิทธิ์จากออเดอร์ของฉัน
+            </button>
+
+            <div id="reviewEligibilityStatus" class="review-status-box">
+              หากซื้อผ่านอุปกรณ์นี้ ระบบจะจำสิทธิ์รีวิวไว้ให้
+            </div>
+
+            <details class="manual-access">
+              <summary>ซื้อจากอุปกรณ์อื่น / มี Order ID และรหัสรีวิว</summary>
+
+              <div class="field">
+                <label for="manualReviewOrderId">Order ID</label>
+                <input id="manualReviewOrderId" placeholder="ORD-...">
+              </div>
+
+              <div class="field">
+                <label for="manualReviewToken">รหัสรีวิว</label>
+                <input id="manualReviewToken" placeholder="รหัสรีวิวจากหน้าออเดอร์">
+              </div>
+
+              <button id="manualReviewCheckBtn" class="secondary" type="button" style="width:100%;margin-top:10px">
+                ตรวจสิทธิ์
+              </button>
+            </details>
+
+            <div class="review-help">
+              แนะนำให้รีวิวหลังร้านทำงานเสร็จแล้ว เพื่อให้คะแนนสะท้อนประสบการณ์จริง
+              โดยค่าเริ่มต้นระบบจะปลดล็อกเมื่อ Request เป็น <b>completed</b>
+            </div>
+          </div>
+
+          <form id="reviewForm" class="review-form" hidden>
+            <div class="review-form-head">
+              <div>
+                <div class="eyebrow">VERIFIED REVIEW</div>
+                <h2 id="reviewFormGame">ให้คะแนน</h2>
+              </div>
+              <div id="reviewFormOrder" class="review-order-chip"></div>
+            </div>
+
+            <div class="star-picker" aria-label="ให้คะแนน 1 ถึง 5 ดาว">
+              <button class="star-btn" type="button" data-rating="1" aria-label="1 ดาว">★</button>
+              <button class="star-btn" type="button" data-rating="2" aria-label="2 ดาว">★</button>
+              <button class="star-btn" type="button" data-rating="3" aria-label="3 ดาว">★</button>
+              <button class="star-btn" type="button" data-rating="4" aria-label="4 ดาว">★</button>
+              <button class="star-btn" type="button" data-rating="5" aria-label="5 ดาว">★</button>
+            </div>
+            <div id="starCaption" class="star-caption">กดดาวเพื่อให้คะแนน</div>
+
+            <div class="field">
+              <label for="reviewerName">ชื่อที่แสดงในรีวิว (ไม่บังคับ)</label>
+              <input id="reviewerName" maxlength="50" placeholder="เช่น Ton">
+            </div>
+
+            <div class="field">
+              <label for="reviewText">เขียนรีวิว (ไม่บังคับ)</label>
+              <textarea id="reviewText" maxlength="700" placeholder="ประสบการณ์ใช้งานเป็นอย่างไร..."></textarea>
+              <div class="hint">ดาว 1–5 ดาวเป็นข้อมูลที่จำเป็น ส่วนข้อความรีวิวจะเว้นว่างก็ได้</div>
+            </div>
+
+            <div id="reviewSubmitMessage" class="message" hidden></div>
+
+            <button id="submitReviewBtn" class="primary" type="submit" style="width:100%;margin-top:12px">
+              ส่งรีวิว
+            </button>
+
+            <button id="cancelReviewBtn" class="secondary" type="button" style="width:100%;margin-top:8px">
+              กลับ
+            </button>
+          </form>
+        </aside>
+      </div>
+    </section>
   </main>
 
   <!-- Detail -->
@@ -1039,6 +2014,14 @@
         </div>
       </div>
 
+      <div id="reviewCodeBox" class="review-code-box" hidden>
+        <div>
+          <span>รหัสรีวิว — เก็บไว้หากต้องการรีวิวจากอุปกรณ์อื่น</span>
+          <strong id="reviewTokenText">-</strong>
+        </div>
+        <button id="copyReviewTokenBtn" class="copy-mini" type="button">คัดลอก</button>
+      </div>
+
       <div class="payment-box">
         <div class="eyebrow">ยอดชำระ</div>
         <div id="orderAmount" class="payment-amount">0 ฿</div>
@@ -1100,7 +2083,7 @@
   <button id="scrollTopBtn" class="scroll-top" type="button" aria-label="กลับขึ้นด้านบน">↑</button>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbzG4srZ2mmottO1zsTyTWB2EYOlvKQwaDXHY6sZJfsXY2JmEeuRYf9KQ_LrzETErLI3/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxK13uCl010lCRCMreUQ8G2XDZtKQ_BKge-_EpS85Vc7EHFzsO5Lq2WzsdbhozJ7tZ8/exec";
     const POLL_MS = 5000;
 
     let allGames = [];
@@ -1112,6 +2095,14 @@
     let pollTimer = null;
     let lastPaymentStatus = "";
     let revealObserver = null;
+
+    let publicReviews = [];
+    let reviewsWritingEnabled = false;
+    let reviewUnlockRule = "completed";
+    let eligibleReviewAccess = null;
+    let selectedReviewRating = 0;
+
+    const REVIEW_STORAGE_KEY = "volker_review_access_v1";
 
     const REDUCED_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const FINE_POINTER = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
@@ -1126,6 +2117,20 @@
       $("#checkPaymentBtn").addEventListener("click", () => checkPaymentStatus(true));
       $("#requestForm").addEventListener("submit", submitRequest);
       $("#loginMethodSelect").addEventListener("change", updateAccountField);
+
+      $("#catalogTab").addEventListener("click", () => switchPage("catalog"));
+      $("#reviewsTab").addEventListener("click", () => switchPage("reviews"));
+      $("#reviewSearch").addEventListener("input", renderReviews);
+      $("#reviewGameFilter").addEventListener("change", () => loadReviews($("#reviewGameFilter").value));
+      $("#checkMyReviewBtn").addEventListener("click", () => checkSavedReviewAccess(false));
+      $("#manualReviewCheckBtn").addEventListener("click", checkManualReviewAccess);
+      $("#reviewForm").addEventListener("submit", submitReview);
+      $("#cancelReviewBtn").addEventListener("click", closeReviewForm);
+      $("#copyReviewTokenBtn").addEventListener("click", copyReviewToken);
+
+      document.querySelectorAll(".star-btn").forEach(btn => {
+        btn.addEventListener("click", () => selectReviewRating(Number(btn.dataset.rating)));
+      });
 
       initPremiumEffects();
 
@@ -1172,7 +2177,10 @@
         $("#apiIndicator").className = "badge green";
         $("#apiIndicator").textContent = "ระบบออนไลน์";
         buildCategories();
+        buildReviewGameFilter();
         applyFilters();
+        loadReviews("");
+        checkSavedReviewAccess(true);
       } catch (err) {
         console.error(err);
         $("#apiIndicator").className = "badge gray";
@@ -1269,6 +2277,11 @@
               <div class="game-title">${escapeHtml(game.name || "Unnamed Game")}</div>
               <div class="game-desc">${escapeHtml(game.description || "")}</div>
               <div class="sold-count">🛒 มีคนซื้อแล้ว <span class="sold-number" data-target="${num(game.soldCount)}">0</span> ครั้ง</div>
+              <div class="rating-line">
+                ${game.ratingCount > 0
+                  ? `⭐ ${Number(game.ratingAverage).toFixed(1)} <span class="rating-count">(${num(game.ratingCount)} รีวิว)</span>`
+                  : `☆ <span class="rating-count">ยังไม่มีรีวิว</span>`}
+              </div>
               <div class="badges">
                 ${zygisk}${mod}${loginBadges}
               </div>
@@ -1313,6 +2326,14 @@
       badges.appendChild(badge(game.zygisk ? "✓ รองรับ Zygisk" : "ไม่รองรับ Zygisk", game.zygisk ? "green" : "gray"));
       badges.appendChild(badge(game.modMenu ? "⚙ มี Mod Menu" : "ไม่มี Mod Menu", game.modMenu ? "orange" : "gray"));
       badges.appendChild(badge(`🛒 ซื้อแล้ว ${num(game.soldCount).toLocaleString("th-TH")} ครั้ง`, "blue"));
+      badges.appendChild(
+        badge(
+          game.ratingCount > 0
+            ? `⭐ ${Number(game.ratingAverage).toFixed(1)} (${num(game.ratingCount)} รีวิว)`
+            : "☆ ยังไม่มีรีวิว",
+          "blue"
+        )
+      );
 
       const canOrder = String(game.status || "active").toLowerCase() === "active";
 
@@ -1416,6 +2437,18 @@
         if (!data.ok) throw new Error(data.error || "CREATE_ORDER_FAILED");
 
         currentOrder = data.order;
+
+        if (currentOrder.reviewToken) {
+          saveReviewAccess({
+            orderId: currentOrder.orderId,
+            reviewToken: currentOrder.reviewToken,
+            gameId: currentOrder.gameId,
+            gameName: currentOrder.gameName,
+            serviceName: currentOrder.serviceName,
+            createdAt: Date.now()
+          });
+        }
+
         showToast(`สร้างออเดอร์ ${currentOrder.orderId} แล้ว`, "success");
         closeDetail();
         showOrder(currentOrder);
@@ -1435,6 +2468,14 @@
       $("#orderIdText").textContent = order.orderId || "-";
       $("#orderServiceText").textContent = order.serviceName || "-";
       $("#orderAmount").textContent = money(order.amount);
+
+      if (order.reviewToken) {
+        $("#reviewTokenText").textContent = order.reviewToken;
+        $("#reviewCodeBox").hidden = false;
+      } else {
+        $("#reviewCodeBox").hidden = true;
+      }
+
       $("#requestPanel").hidden = true;
       lastPaymentStatus = String(order.paymentStatus || "waiting_payment").toLowerCase();
       setPaymentStatus(order.paymentStatus || "waiting_payment");
@@ -1594,6 +2635,9 @@
         btn.disabled = true;
         stopPolling();
         showToast(`ส่งคำขอสำเร็จ ${data.request?.requestId || ""}`, "success", 5000);
+        setTimeout(() => {
+          showToast("เมื่อแอดมินทำงานเป็น completed ระบบจะปลดล็อกรีวิวให้อัตโนมัติ ⭐", "info", 6000);
+        }, 700);
         runConfetti(44);
       } catch (err) {
         console.error(err);
