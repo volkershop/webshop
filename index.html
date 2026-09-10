@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#090a12">
-  <title>0xVoLKER Shop Service • Reviews</title>
+  <title>0xVoLKER Shop Service • Reviews V5.1</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -335,407 +335,6 @@
       .bottom-action .primary{flex:1}
     }
 
-
-    /* =========================================================
-       V5 REVIEW SYSTEM
-       ========================================================= */
-
-    function switchPage(page) {
-      const isReviews = page === "reviews";
-
-      $("#catalogView").hidden = isReviews;
-      $("#reviewsView").hidden = !isReviews;
-
-      $("#catalogTab").classList.toggle("active", !isReviews);
-      $("#reviewsTab").classList.toggle("active", isReviews);
-
-      if (isReviews) {
-        loadReviews($("#reviewGameFilter").value || "");
-        checkSavedReviewAccess(true);
-      }
-
-      window.scrollTo({ top:0, behavior:REDUCED_MOTION ? "auto" : "smooth" });
-    }
-
-    function buildReviewGameFilter() {
-      const select = $("#reviewGameFilter");
-      if (!select) return;
-
-      const current = select.value;
-      select.innerHTML = '<option value="">ทุกเกม</option>';
-
-      allGames.forEach(game => {
-        const option = document.createElement("option");
-        option.value = game.id;
-        option.textContent = game.name;
-        select.appendChild(option);
-      });
-
-      select.value = current;
-    }
-
-    async function loadReviews(gameId="") {
-      const loading = $("#reviewsLoading");
-      if (loading) loading.hidden = false;
-
-      try {
-        const data = await apiGet({
-          action:"reviews",
-          gameId:gameId || "",
-          limit:80
-        });
-
-        if (!data.ok) throw new Error(data.error || "REVIEWS_LOAD_FAILED");
-
-        publicReviews = Array.isArray(data.reviews) ? data.reviews : [];
-        reviewsWritingEnabled = Boolean(data.writingEnabled);
-        reviewUnlockRule = data.unlockRule || "completed";
-
-        $("#reviewsClosedBanner").classList.toggle("show", !reviewsWritingEnabled);
-
-        const avg = Number(data.summary?.average || 0);
-        const count = Number(data.summary?.count || 0);
-
-        $("#reviewAverage").textContent = count ? avg.toFixed(1) : "0.0";
-        $("#reviewTotal").textContent = count
-          ? `${count.toLocaleString("th-TH")} รีวิว`
-          : "ยังไม่มีรีวิว";
-        $("#reviewSummaryStars").textContent = renderStarText(avg);
-
-        renderReviews();
-      } catch (err) {
-        console.error(err);
-        publicReviews = [];
-        $("#reviewList").innerHTML = '<div class="state error">โหลดรีวิวไม่สำเร็จ</div>';
-      } finally {
-        if (loading) loading.hidden = true;
-      }
-    }
-
-    function renderReviews() {
-      const list = $("#reviewList");
-      if (!list) return;
-
-      const q = ($("#reviewSearch")?.value || "").trim().toLowerCase();
-
-      const rows = publicReviews.filter(r => {
-        const text = [
-          r.gameName,
-          r.reviewerName,
-          r.reviewText,
-          r.rating
-        ].join(" ").toLowerCase();
-
-        return text.includes(q);
-      });
-
-      if (!rows.length) {
-        list.innerHTML = '<div class="state">ยังไม่มีรีวิวที่ตรงกับเงื่อนไข</div>';
-        return;
-      }
-
-      list.innerHTML = "";
-
-      rows.forEach(r => {
-        const card = document.createElement("article");
-        card.className = "review-card";
-
-        card.innerHTML = `
-          <div class="review-card-top">
-            <div>
-              <div class="reviewer">
-                ${escapeHtml(r.reviewerName || "ลูกค้าที่ซื้อแล้ว")}
-                <span class="verified">✓ ผู้ซื้อจริง</span>
-              </div>
-              <div class="review-game">${escapeHtml(r.gameName || "")}</div>
-            </div>
-            <div class="review-date">${escapeHtml(r.createdAt || "")}</div>
-          </div>
-
-          <div class="review-rating">${"★".repeat(Math.max(0, Math.min(5, Number(r.rating) || 0)))}${"☆".repeat(Math.max(0, 5 - (Number(r.rating) || 0)))}</div>
-
-          ${r.reviewText
-            ? `<div class="review-text">${escapeHtml(r.reviewText)}</div>`
-            : '<div class="review-text" style="color:#858b9d">ให้คะแนนโดยไม่เขียนข้อความ</div>'}
-        `;
-
-        list.appendChild(card);
-      });
-    }
-
-    function renderStarText(avg) {
-      const rounded = Math.max(0, Math.min(5, Math.round(Number(avg) || 0)));
-      return "★".repeat(rounded) + "☆".repeat(5 - rounded);
-    }
-
-    function saveReviewAccess(access) {
-      try {
-        const list = getSavedReviewAccess();
-        const filtered = list.filter(x => x.orderId !== access.orderId);
-        filtered.unshift(access);
-        localStorage.setItem(REVIEW_STORAGE_KEY, JSON.stringify(filtered.slice(0,20)));
-      } catch (err) {
-        console.warn("Cannot save review access", err);
-      }
-    }
-
-    function getSavedReviewAccess() {
-      try {
-        const raw = localStorage.getItem(REVIEW_STORAGE_KEY);
-        const parsed = raw ? JSON.parse(raw) : [];
-        return Array.isArray(parsed) ? parsed : [];
-      } catch (_) {
-        return [];
-      }
-    }
-
-    function markReviewAccessUsed(orderId) {
-      try {
-        const list = getSavedReviewAccess().map(x =>
-          x.orderId === orderId ? {...x, reviewed:true} : x
-        );
-        localStorage.setItem(REVIEW_STORAGE_KEY, JSON.stringify(list));
-      } catch (_) {}
-    }
-
-    async function checkSavedReviewAccess(silent=false) {
-      const list = getSavedReviewAccess().filter(x => !x.reviewed);
-
-      if (!list.length) {
-        $("#reviewReadyBadge").hidden = true;
-        if (!silent) setReviewGateMessage("ยังไม่พบออเดอร์ที่บันทึกไว้ในอุปกรณ์นี้");
-        return;
-      }
-
-      if (!reviewsWritingEnabled && $("#reviewsView").hidden === false) {
-        setReviewGateMessage("ขณะนี้แอดมินปิดรับการเขียนรีวิวชั่วคราว", "closed");
-        return;
-      }
-
-      for (const access of list.slice(0,10)) {
-        try {
-          const data = await apiGet({
-            action:"reviewEligibility",
-            orderId:access.orderId,
-            reviewToken:access.reviewToken
-          });
-
-          if (data.ok && data.eligible) {
-            eligibleReviewAccess = {...access, ...data.order};
-            $("#reviewReadyBadge").hidden = false;
-            setReviewGateMessage(
-              `⭐ ${data.order.gameName} พร้อมให้คุณรีวิวแล้ว`,
-              "good"
-            );
-
-            if (!silent) openReviewForm(eligibleReviewAccess);
-            else showToast("คุณมีออเดอร์ที่พร้อมเขียนรีวิวแล้ว ⭐", "success", 4500);
-
-            return;
-          }
-
-          if (data.reason === "ALREADY_REVIEWED") {
-            markReviewAccessUsed(access.orderId);
-          }
-        } catch (err) {
-          console.warn(err);
-        }
-      }
-
-      $("#reviewReadyBadge").hidden = true;
-
-      if (!silent) {
-        setReviewGateMessage(
-          reviewUnlockRule === "paid"
-            ? "ยังไม่พบออเดอร์ที่ชำระเงินและพร้อมรีวิว"
-            : "ยังไม่มีออเดอร์ที่งานเสร็จแล้วและพร้อมรีวิว"
-        );
-      }
-    }
-
-    async function checkManualReviewAccess() {
-      const orderId = $("#manualReviewOrderId").value.trim();
-      const reviewToken = $("#manualReviewToken").value.trim();
-
-      if (!orderId || !reviewToken) {
-        setReviewGateMessage("กรุณากรอก Order ID และรหัสรีวิวให้ครบ", "closed");
-        return;
-      }
-
-      try {
-        const data = await apiGet({
-          action:"reviewEligibility",
-          orderId:orderId,
-          reviewToken:reviewToken
-        });
-
-        if (!data.ok) throw new Error(data.error || "CHECK_FAILED");
-
-        if (!data.eligible) {
-          setReviewGateMessage(reviewReasonText(data.reason), "closed");
-          return;
-        }
-
-        eligibleReviewAccess = {
-          ...data.order,
-          reviewToken:reviewToken
-        };
-
-        saveReviewAccess({
-          orderId:data.order.orderId,
-          reviewToken:reviewToken,
-          gameId:data.order.gameId,
-          gameName:data.order.gameName,
-          serviceName:data.order.serviceName,
-          createdAt:Date.now()
-        });
-
-        $("#reviewReadyBadge").hidden = false;
-        setReviewGateMessage(`ตรวจสิทธิ์สำเร็จ ✓ ${data.order.gameName}`, "good");
-        openReviewForm(eligibleReviewAccess);
-      } catch (err) {
-        setReviewGateMessage("ตรวจสิทธิ์ไม่สำเร็จ: " + err.message, "closed");
-      }
-    }
-
-    function reviewReasonText(reason) {
-      const map = {
-        REVIEWS_CLOSED:"ขณะนี้ร้านปิดรับการเขียนรีวิวชั่วคราว",
-        ORDER_NOT_FOUND:"ไม่พบ Order ID นี้",
-        INVALID_REVIEW_TOKEN:"รหัสรีวิวไม่ถูกต้อง",
-        ALREADY_REVIEWED:"ออเดอร์นี้ส่งรีวิวไปแล้ว",
-        PAYMENT_REQUIRED:"ออเดอร์นี้ยังไม่ได้รับการยืนยันการชำระเงิน",
-        WORK_NOT_COMPLETED:"งานนี้ยังไม่เสร็จ เมื่อแอดมินเปลี่ยนสถานะเป็น completed จึงจะรีวิวได้"
-      };
-      return map[reason] || "ออเดอร์นี้ยังไม่พร้อมสำหรับการรีวิว";
-    }
-
-    function setReviewGateMessage(text, type="") {
-      const box = $("#reviewEligibilityStatus");
-      if (!box) return;
-
-      box.className = "review-status-box" + (type ? " " + type : "");
-      box.textContent = text;
-    }
-
-    function openReviewForm(access) {
-      if (!access) return;
-
-      selectedReviewRating = 0;
-      updateStarPicker();
-
-      $("#reviewFormGame").textContent = access.gameName || "ให้คะแนน";
-      $("#reviewFormOrder").textContent = access.orderId || "";
-      $("#reviewText").value = "";
-      $("#reviewerName").value = "";
-      $("#reviewSubmitMessage").hidden = true;
-
-      $("#reviewGate").hidden = true;
-      $("#reviewForm").hidden = false;
-    }
-
-    function closeReviewForm() {
-      $("#reviewForm").hidden = true;
-      $("#reviewGate").hidden = false;
-      eligibleReviewAccess = null;
-      selectedReviewRating = 0;
-      updateStarPicker();
-    }
-
-    function selectReviewRating(rating) {
-      selectedReviewRating = Math.max(1, Math.min(5, Number(rating) || 0));
-      updateStarPicker();
-    }
-
-    function updateStarPicker() {
-      const captions = {
-        0:"กดดาวเพื่อให้คะแนน",
-        1:"1 ดาว — ไม่ประทับใจ",
-        2:"2 ดาว — พอใช้",
-        3:"3 ดาว — ดี",
-        4:"4 ดาว — ดีมาก",
-        5:"5 ดาว — ชอบมาก"
-      };
-
-      document.querySelectorAll(".star-btn").forEach(btn => {
-        const rating = Number(btn.dataset.rating);
-        btn.classList.toggle("on", rating <= selectedReviewRating);
-      });
-
-      $("#starCaption").textContent = captions[selectedReviewRating] || captions[0];
-    }
-
-    async function submitReview(e) {
-      e.preventDefault();
-
-      if (!eligibleReviewAccess) {
-        showToast("ไม่พบสิทธิ์รีวิว", "error");
-        return;
-      }
-
-      if (!selectedReviewRating) {
-        showToast("กรุณาเลือกคะแนน 1–5 ดาว", "error");
-        return;
-      }
-
-      const btn = $("#submitReviewBtn");
-      const message = $("#reviewSubmitMessage");
-
-      btn.disabled = true;
-      btn.textContent = "กำลังส่ง...";
-      message.hidden = true;
-
-      try {
-        const data = await apiPost({
-          action:"createReview",
-          orderId:eligibleReviewAccess.orderId,
-          reviewToken:eligibleReviewAccess.reviewToken,
-          rating:selectedReviewRating,
-          reviewerName:$("#reviewerName").value.trim(),
-          reviewText:$("#reviewText").value.trim()
-        });
-
-        if (!data.ok) throw new Error(data.error || "CREATE_REVIEW_FAILED");
-
-        markReviewAccessUsed(eligibleReviewAccess.orderId);
-        $("#reviewReadyBadge").hidden = true;
-
-        message.className = "message success";
-        message.textContent = data.review?.status === "pending"
-          ? "ส่งรีวิวสำเร็จ ✓ รีวิวกำลังรอแอดมินตรวจ"
-          : "ส่งรีวิวสำเร็จ ✓ ขอบคุณสำหรับคะแนน";
-        message.hidden = false;
-
-        runConfetti(42);
-        showToast("ขอบคุณสำหรับรีวิว ⭐", "success", 4500);
-
-        await loadReviews($("#reviewGameFilter").value || "");
-        await loadGames();
-
-        setTimeout(() => {
-          closeReviewForm();
-        }, 1800);
-      } catch (err) {
-        message.className = "message error";
-        message.textContent = reviewReasonText(err.message);
-        message.hidden = false;
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "ส่งรีวิว";
-      }
-    }
-
-    async function copyReviewToken() {
-      const token = $("#reviewTokenText").textContent.trim();
-      if (!token || token === "-") return;
-
-      try {
-        await navigator.clipboard.writeText(token);
-        showToast("คัดลอกรหัสรีวิวแล้ว", "success");
-      } catch (_) {
-        showToast("คัดลอกไม่สำเร็จ กรุณากดค้างเพื่อคัดลอก", "error");
-      }
-    }
 
     /* =========================================================
        V4 PREMIUM EFFECTS — no external JS library
@@ -2735,6 +2334,408 @@
       return String(s ?? "").replace(/[&<>"']/g, c => ({
         "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
       }[c]));
+    }
+
+
+    /* =========================================================
+       V5 REVIEW SYSTEM
+       ========================================================= */
+
+    function switchPage(page) {
+      const isReviews = page === "reviews";
+
+      $("#catalogView").hidden = isReviews;
+      $("#reviewsView").hidden = !isReviews;
+
+      $("#catalogTab").classList.toggle("active", !isReviews);
+      $("#reviewsTab").classList.toggle("active", isReviews);
+
+      if (isReviews) {
+        loadReviews($("#reviewGameFilter").value || "");
+        checkSavedReviewAccess(true);
+      }
+
+      window.scrollTo({ top:0, behavior:REDUCED_MOTION ? "auto" : "smooth" });
+    }
+
+    function buildReviewGameFilter() {
+      const select = $("#reviewGameFilter");
+      if (!select) return;
+
+      const current = select.value;
+      select.innerHTML = '<option value="">ทุกเกม</option>';
+
+      allGames.forEach(game => {
+        const option = document.createElement("option");
+        option.value = game.id;
+        option.textContent = game.name;
+        select.appendChild(option);
+      });
+
+      select.value = current;
+    }
+
+    async function loadReviews(gameId="") {
+      const loading = $("#reviewsLoading");
+      if (loading) loading.hidden = false;
+
+      try {
+        const data = await apiGet({
+          action:"reviews",
+          gameId:gameId || "",
+          limit:80
+        });
+
+        if (!data.ok) throw new Error(data.error || "REVIEWS_LOAD_FAILED");
+
+        publicReviews = Array.isArray(data.reviews) ? data.reviews : [];
+        reviewsWritingEnabled = Boolean(data.writingEnabled);
+        reviewUnlockRule = data.unlockRule || "completed";
+
+        $("#reviewsClosedBanner").classList.toggle("show", !reviewsWritingEnabled);
+
+        const avg = Number(data.summary?.average || 0);
+        const count = Number(data.summary?.count || 0);
+
+        $("#reviewAverage").textContent = count ? avg.toFixed(1) : "0.0";
+        $("#reviewTotal").textContent = count
+          ? `${count.toLocaleString("th-TH")} รีวิว`
+          : "ยังไม่มีรีวิว";
+        $("#reviewSummaryStars").textContent = renderStarText(avg);
+
+        renderReviews();
+      } catch (err) {
+        console.error(err);
+        publicReviews = [];
+        $("#reviewList").innerHTML = '<div class="state error">โหลดรีวิวไม่สำเร็จ</div>';
+      } finally {
+        if (loading) loading.hidden = true;
+      }
+    }
+
+    function renderReviews() {
+      const list = $("#reviewList");
+      if (!list) return;
+
+      const q = ($("#reviewSearch")?.value || "").trim().toLowerCase();
+
+      const rows = publicReviews.filter(r => {
+        const text = [
+          r.gameName,
+          r.reviewerName,
+          r.reviewText,
+          r.rating
+        ].join(" ").toLowerCase();
+
+        return text.includes(q);
+      });
+
+      if (!rows.length) {
+        list.innerHTML = '<div class="state">ยังไม่มีรีวิวที่ตรงกับเงื่อนไข</div>';
+        return;
+      }
+
+      list.innerHTML = "";
+
+      rows.forEach(r => {
+        const card = document.createElement("article");
+        card.className = "review-card";
+
+        card.innerHTML = `
+          <div class="review-card-top">
+            <div>
+              <div class="reviewer">
+                ${escapeHtml(r.reviewerName || "ลูกค้าที่ซื้อแล้ว")}
+                <span class="verified">✓ ผู้ซื้อจริง</span>
+              </div>
+              <div class="review-game">${escapeHtml(r.gameName || "")}</div>
+            </div>
+            <div class="review-date">${escapeHtml(r.createdAt || "")}</div>
+          </div>
+
+          <div class="review-rating">${"★".repeat(Math.max(0, Math.min(5, Number(r.rating) || 0)))}${"☆".repeat(Math.max(0, 5 - (Number(r.rating) || 0)))}</div>
+
+          ${r.reviewText
+            ? `<div class="review-text">${escapeHtml(r.reviewText)}</div>`
+            : '<div class="review-text" style="color:#858b9d">ให้คะแนนโดยไม่เขียนข้อความ</div>'}
+        `;
+
+        list.appendChild(card);
+      });
+    }
+
+    function renderStarText(avg) {
+      const rounded = Math.max(0, Math.min(5, Math.round(Number(avg) || 0)));
+      return "★".repeat(rounded) + "☆".repeat(5 - rounded);
+    }
+
+    function saveReviewAccess(access) {
+      try {
+        const list = getSavedReviewAccess();
+        const filtered = list.filter(x => x.orderId !== access.orderId);
+        filtered.unshift(access);
+        localStorage.setItem(REVIEW_STORAGE_KEY, JSON.stringify(filtered.slice(0,20)));
+      } catch (err) {
+        console.warn("Cannot save review access", err);
+      }
+    }
+
+    function getSavedReviewAccess() {
+      try {
+        const raw = localStorage.getItem(REVIEW_STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (_) {
+        return [];
+      }
+    }
+
+    function markReviewAccessUsed(orderId) {
+      try {
+        const list = getSavedReviewAccess().map(x =>
+          x.orderId === orderId ? {...x, reviewed:true} : x
+        );
+        localStorage.setItem(REVIEW_STORAGE_KEY, JSON.stringify(list));
+      } catch (_) {}
+    }
+
+    async function checkSavedReviewAccess(silent=false) {
+      const list = getSavedReviewAccess().filter(x => !x.reviewed);
+
+      if (!list.length) {
+        $("#reviewReadyBadge").hidden = true;
+        if (!silent) setReviewGateMessage("ยังไม่พบออเดอร์ที่บันทึกไว้ในอุปกรณ์นี้");
+        return;
+      }
+
+      if (!reviewsWritingEnabled && $("#reviewsView").hidden === false) {
+        setReviewGateMessage("ขณะนี้แอดมินปิดรับการเขียนรีวิวชั่วคราว", "closed");
+        return;
+      }
+
+      for (const access of list.slice(0,10)) {
+        try {
+          const data = await apiGet({
+            action:"reviewEligibility",
+            orderId:access.orderId,
+            reviewToken:access.reviewToken
+          });
+
+          if (data.ok && data.eligible) {
+            eligibleReviewAccess = {...access, ...data.order};
+            $("#reviewReadyBadge").hidden = false;
+            setReviewGateMessage(
+              `⭐ ${data.order.gameName} พร้อมให้คุณรีวิวแล้ว`,
+              "good"
+            );
+
+            if (!silent) openReviewForm(eligibleReviewAccess);
+            else showToast("คุณมีออเดอร์ที่พร้อมเขียนรีวิวแล้ว ⭐", "success", 4500);
+
+            return;
+          }
+
+          if (data.reason === "ALREADY_REVIEWED") {
+            markReviewAccessUsed(access.orderId);
+          }
+        } catch (err) {
+          console.warn(err);
+        }
+      }
+
+      $("#reviewReadyBadge").hidden = true;
+
+      if (!silent) {
+        setReviewGateMessage(
+          reviewUnlockRule === "paid"
+            ? "ยังไม่พบออเดอร์ที่ชำระเงินและพร้อมรีวิว"
+            : "ยังไม่มีออเดอร์ที่งานเสร็จแล้วและพร้อมรีวิว"
+        );
+      }
+    }
+
+    async function checkManualReviewAccess() {
+      const orderId = $("#manualReviewOrderId").value.trim();
+      const reviewToken = $("#manualReviewToken").value.trim();
+
+      if (!orderId || !reviewToken) {
+        setReviewGateMessage("กรุณากรอก Order ID และรหัสรีวิวให้ครบ", "closed");
+        return;
+      }
+
+      try {
+        const data = await apiGet({
+          action:"reviewEligibility",
+          orderId:orderId,
+          reviewToken:reviewToken
+        });
+
+        if (!data.ok) throw new Error(data.error || "CHECK_FAILED");
+
+        if (!data.eligible) {
+          setReviewGateMessage(reviewReasonText(data.reason), "closed");
+          return;
+        }
+
+        eligibleReviewAccess = {
+          ...data.order,
+          reviewToken:reviewToken
+        };
+
+        saveReviewAccess({
+          orderId:data.order.orderId,
+          reviewToken:reviewToken,
+          gameId:data.order.gameId,
+          gameName:data.order.gameName,
+          serviceName:data.order.serviceName,
+          createdAt:Date.now()
+        });
+
+        $("#reviewReadyBadge").hidden = false;
+        setReviewGateMessage(`ตรวจสิทธิ์สำเร็จ ✓ ${data.order.gameName}`, "good");
+        openReviewForm(eligibleReviewAccess);
+      } catch (err) {
+        setReviewGateMessage("ตรวจสิทธิ์ไม่สำเร็จ: " + err.message, "closed");
+      }
+    }
+
+    function reviewReasonText(reason) {
+      const map = {
+        REVIEWS_CLOSED:"ขณะนี้ร้านปิดรับการเขียนรีวิวชั่วคราว",
+        ORDER_NOT_FOUND:"ไม่พบ Order ID นี้",
+        INVALID_REVIEW_TOKEN:"รหัสรีวิวไม่ถูกต้อง",
+        ALREADY_REVIEWED:"ออเดอร์นี้ส่งรีวิวไปแล้ว",
+        PAYMENT_REQUIRED:"ออเดอร์นี้ยังไม่ได้รับการยืนยันการชำระเงิน",
+        WORK_NOT_COMPLETED:"งานนี้ยังไม่เสร็จ เมื่อแอดมินเปลี่ยนสถานะเป็น completed จึงจะรีวิวได้"
+      };
+      return map[reason] || "ออเดอร์นี้ยังไม่พร้อมสำหรับการรีวิว";
+    }
+
+    function setReviewGateMessage(text, type="") {
+      const box = $("#reviewEligibilityStatus");
+      if (!box) return;
+
+      box.className = "review-status-box" + (type ? " " + type : "");
+      box.textContent = text;
+    }
+
+    function openReviewForm(access) {
+      if (!access) return;
+
+      selectedReviewRating = 0;
+      updateStarPicker();
+
+      $("#reviewFormGame").textContent = access.gameName || "ให้คะแนน";
+      $("#reviewFormOrder").textContent = access.orderId || "";
+      $("#reviewText").value = "";
+      $("#reviewerName").value = "";
+      $("#reviewSubmitMessage").hidden = true;
+
+      $("#reviewGate").hidden = true;
+      $("#reviewForm").hidden = false;
+    }
+
+    function closeReviewForm() {
+      $("#reviewForm").hidden = true;
+      $("#reviewGate").hidden = false;
+      eligibleReviewAccess = null;
+      selectedReviewRating = 0;
+      updateStarPicker();
+    }
+
+    function selectReviewRating(rating) {
+      selectedReviewRating = Math.max(1, Math.min(5, Number(rating) || 0));
+      updateStarPicker();
+    }
+
+    function updateStarPicker() {
+      const captions = {
+        0:"กดดาวเพื่อให้คะแนน",
+        1:"1 ดาว — ไม่ประทับใจ",
+        2:"2 ดาว — พอใช้",
+        3:"3 ดาว — ดี",
+        4:"4 ดาว — ดีมาก",
+        5:"5 ดาว — ชอบมาก"
+      };
+
+      document.querySelectorAll(".star-btn").forEach(btn => {
+        const rating = Number(btn.dataset.rating);
+        btn.classList.toggle("on", rating <= selectedReviewRating);
+      });
+
+      $("#starCaption").textContent = captions[selectedReviewRating] || captions[0];
+    }
+
+    async function submitReview(e) {
+      e.preventDefault();
+
+      if (!eligibleReviewAccess) {
+        showToast("ไม่พบสิทธิ์รีวิว", "error");
+        return;
+      }
+
+      if (!selectedReviewRating) {
+        showToast("กรุณาเลือกคะแนน 1–5 ดาว", "error");
+        return;
+      }
+
+      const btn = $("#submitReviewBtn");
+      const message = $("#reviewSubmitMessage");
+
+      btn.disabled = true;
+      btn.textContent = "กำลังส่ง...";
+      message.hidden = true;
+
+      try {
+        const data = await apiPost({
+          action:"createReview",
+          orderId:eligibleReviewAccess.orderId,
+          reviewToken:eligibleReviewAccess.reviewToken,
+          rating:selectedReviewRating,
+          reviewerName:$("#reviewerName").value.trim(),
+          reviewText:$("#reviewText").value.trim()
+        });
+
+        if (!data.ok) throw new Error(data.error || "CREATE_REVIEW_FAILED");
+
+        markReviewAccessUsed(eligibleReviewAccess.orderId);
+        $("#reviewReadyBadge").hidden = true;
+
+        message.className = "message success";
+        message.textContent = data.review?.status === "pending"
+          ? "ส่งรีวิวสำเร็จ ✓ รีวิวกำลังรอแอดมินตรวจ"
+          : "ส่งรีวิวสำเร็จ ✓ ขอบคุณสำหรับคะแนน";
+        message.hidden = false;
+
+        runConfetti(42);
+        showToast("ขอบคุณสำหรับรีวิว ⭐", "success", 4500);
+
+        await loadReviews($("#reviewGameFilter").value || "");
+        await loadGames();
+
+        setTimeout(() => {
+          closeReviewForm();
+        }, 1800);
+      } catch (err) {
+        message.className = "message error";
+        message.textContent = reviewReasonText(err.message);
+        message.hidden = false;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "ส่งรีวิว";
+      }
+    }
+
+    async function copyReviewToken() {
+      const token = $("#reviewTokenText").textContent.trim();
+      if (!token || token === "-") return;
+
+      try {
+        await navigator.clipboard.writeText(token);
+        showToast("คัดลอกรหัสรีวิวแล้ว", "success");
+      } catch (_) {
+        showToast("คัดลอกไม่สำเร็จ กรุณากดค้างเพื่อคัดลอก", "error");
+      }
     }
 
 
