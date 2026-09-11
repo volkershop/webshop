@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#090a12">
-  <title>0xVoLKER Shop Service • V6.7 Performance Safe</title>
+  <title>0xVoLKER Shop Service • V7.0 Available Features</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2729,6 +2729,132 @@
       }
     }
 
+
+
+    /* =========================================================
+       V7.0 AVAILABLE FEATURES / สิ่งที่ทำได้
+       ========================================================= */
+    .game-feature-preview{
+      min-height:47px;
+      margin-top:6px;
+      overflow:hidden;
+    }
+    .game-feature-preview-title{
+      color:#b7bdcc;
+      font-size:8px;
+      font-weight:800;
+      line-height:1.2;
+      margin-bottom:5px;
+    }
+    .feature-chip-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:5px;
+      align-items:center;
+    }
+    .feature-chip{
+      display:inline-flex;
+      align-items:center;
+      min-height:22px;
+      max-width:100%;
+      padding:0 7px;
+      border-radius:999px;
+      border:1px solid rgba(104,120,168,.34);
+      background:rgba(37,43,66,.82);
+      color:#dce3f5;
+      font-size:8px;
+      font-weight:750;
+      line-height:1;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .feature-chip.resource{
+      color:#9ff0d2;
+      border-color:rgba(24,189,134,.32);
+      background:rgba(24,189,134,.11);
+    }
+    .feature-chip.zygisk{
+      color:#ffd29e;
+      border-color:rgba(255,141,66,.36);
+      background:rgba(255,141,66,.12);
+    }
+    .feature-chip.more{
+      color:#c7b9ff;
+      border-color:rgba(126,89,255,.32);
+      background:rgba(126,89,255,.12);
+    }
+    .feature-empty-inline{
+      display:inline-flex;
+      align-items:center;
+      min-height:24px;
+      color:#777e91;
+      font-size:8px;
+    }
+    .feature-showcase-block{
+      border:1px solid rgba(255,151,66,.16);
+      border-radius:18px;
+      padding:14px;
+      background:
+        radial-gradient(circle at 8% 0%,rgba(255,141,66,.08),transparent 42%),
+        #141725;
+    }
+    .feature-block-title{margin-bottom:11px}
+    .feature-group-list{display:grid;gap:9px}
+    .feature-service-group{
+      border:1px solid #30364b;
+      border-radius:14px;
+      background:#111522;
+      padding:11px;
+    }
+    .feature-service-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:8px;
+    }
+    .feature-service-head strong{
+      min-width:0;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      color:#f2f4fb;
+      font-size:10px;
+    }
+    .feature-type-pill{
+      flex:0 0 auto;
+      min-height:21px;
+      display:inline-flex;
+      align-items:center;
+      padding:0 7px;
+      border-radius:999px;
+      color:#aeb5c7;
+      border:1px solid #343a50;
+      background:#1b1f2f;
+      font-size:7px;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:.05em;
+    }
+    .feature-type-pill.resource{color:#8ce9c8;border-color:rgba(24,189,134,.30);background:rgba(24,189,134,.10)}
+    .feature-type-pill.zygisk{color:#ffc68f;border-color:rgba(255,141,66,.32);background:rgba(255,141,66,.10)}
+    .service-feature-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:4px;
+      margin-top:7px;
+    }
+    .service-feature-row .feature-chip{min-height:20px;font-size:7px;padding:0 6px}
+
+    @media(max-width:470px){
+      .game-feature-preview{min-height:44px}
+      .game-feature-preview-title{font-size:7px}
+      .feature-chip{min-height:20px;font-size:7px;padding:0 6px}
+      .feature-showcase-block{padding:12px}
+      .feature-service-head{align-items:flex-start}
+    }
+
   </style>
 </head>
 <body>
@@ -2828,7 +2954,7 @@
     <div class="section-head">
       <div>
         <h1>รายการเกม</h1>
-        <p>กดการ์ดเพื่อดูบริการและระบบบัญชีที่รองรับ</p>
+        <p>กดการ์ดเพื่อดูสิ่งที่ทำได้ บริการ และระบบที่รองรับ</p>
       </div>
       <div id="countText"></div>
     </div>
@@ -3316,6 +3442,14 @@
         </div>
       </div>
 
+      <div class="block feature-showcase-block">
+        <div class="block-title feature-block-title">
+          <span class="lang-th">✨ สิ่งที่ทำได้</span>
+          <span class="lang-en">✨ Available Features</span>
+        </div>
+        <div id="featureGroupList" class="feature-group-list"></div>
+      </div>
+
       <div class="block">
         <div class="block-title"><span class="lang-th">ระบบบัญชี / การซิงก์</span><span class="lang-en">Login / Sync method</span></div>
         <div id="loginList" class="login-list"></div>
@@ -3778,8 +3912,8 @@
       if (catalogHead) catalogHead.textContent = tr("รายการเกม","Games");
       if (catalogSub) {
         catalogSub.textContent = tr(
-          "กดการ์ดเพื่อดูบริการและระบบบัญชีที่รองรับ",
-          "Open a game card to see services, login methods and compatibility."
+          "กดการ์ดเพื่อดูสิ่งที่ทำได้ บริการ และระบบที่รองรับ",
+          "Open a game card to see available features, services and compatibility."
         );
       }
 
@@ -3865,6 +3999,25 @@
       if (!$("#claimsView").hidden) {
         renderClaimEligibility();
         renderClaimHistory();
+      }
+
+      if (selectedGame && !$("#detailModal").hidden) {
+        const displayName = localField(selectedGame, "name") || selectedGame.name || "";
+        const displayCategory = currentLang === "en"
+          ? (selectedGame.categoryEn || selectedGame.category || "GAME")
+          : (selectedGame.category || selectedGame.categoryEn || "GAME");
+        const features = getGameFeatures(selectedGame);
+
+        $("#detailName").textContent = displayName;
+        $("#detailCategory").textContent = displayCategory;
+        $("#detailDescription").textContent = features.length
+          ? tr(`สิ่งที่ทำได้ ${features.length} รายการ`, `${features.length} available features`)
+          : tr("ยังไม่ได้ระบุสิ่งที่ทำได้", "Available features not specified yet");
+
+        renderAvailableFeatures(selectedGame);
+        renderLoginMethods(selectedGame.loginMethods || []);
+        renderCompatibility(selectedGame.compatibility || []);
+        renderServices(selectedGame.services || [], String(selectedGame.status || "active").toLowerCase() === "active");
       }
     }
     function applyTheme(theme) {
@@ -4397,6 +4550,123 @@
       });
     }
 
+    function getGameFeatures(game) {
+      if (Array.isArray(game?.features)) {
+        return game.features.filter(Boolean);
+      }
+
+      const seen = new Set();
+      const result = [];
+
+      (game?.services || []).forEach(service => {
+        (service.features || []).forEach(feature => {
+          const key = String(feature.key || feature.id || feature.label || "").toLowerCase();
+          if (!key || seen.has(key)) return;
+          seen.add(key);
+          result.push(feature);
+        });
+      });
+
+      return result;
+    }
+
+    function featureClass(feature) {
+      const type = String(feature?.groupType || "other").toLowerCase();
+      return type === "resource" || type === "zygisk" ? type : "other";
+    }
+
+    function featureChipHtml(feature, extraClass="") {
+      const label = localField(feature, "label") || feature?.label || feature?.key || "";
+      if (!label) return "";
+
+      return `
+        <span class="feature-chip ${featureClass(feature)} ${escapeAttr(extraClass)}">
+          ${escapeHtml(label)}
+        </span>
+      `;
+    }
+
+    function cardFeaturePreviewHtml(game) {
+      const features = getGameFeatures(game);
+      const visible = features.slice(0, 3);
+      const remaining = Math.max(0, features.length - visible.length);
+
+      return `
+        <div class="game-feature-preview">
+          <div class="game-feature-preview-title">
+            ${tr("สิ่งที่ทำได้", "Available Features")}
+          </div>
+          <div class="feature-chip-row">
+            ${visible.map(item => featureChipHtml(item)).join("")}
+            ${remaining > 0
+              ? `<span class="feature-chip more">+${remaining}</span>`
+              : ""}
+            ${features.length === 0
+              ? `<span class="feature-empty-inline">${tr("ยังไม่ได้ระบุ", "Not specified yet")}</span>`
+              : ""}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderAvailableFeatures(game) {
+      const box = $("#featureGroupList");
+      if (!box) return;
+
+      const groups = (game?.services || [])
+        .filter(service => service.active !== false)
+        .map(service => ({
+          service,
+          features:Array.isArray(service.features) ? service.features : []
+        }))
+        .filter(group => group.features.length > 0);
+
+      if (!groups.length) {
+        box.innerHTML = `
+          <div class="state" style="padding:16px">
+            ${tr(
+              "ยังไม่ได้ระบุสิ่งที่ทำได้สำหรับเกมนี้",
+              "Available features have not been specified for this game yet"
+            )}
+          </div>
+        `;
+        return;
+      }
+
+      box.innerHTML = groups.map(group => {
+        const serviceName = localField(group.service, "name") || group.service.name || "";
+        const type = String(group.service.serviceType || "other").toLowerCase();
+        const typeText = type === "resource"
+          ? tr("บริการทรัพยากร", "Resource Service")
+          : type === "zygisk"
+          ? "Zygisk Mod Menu"
+          : tr("บริการอื่น", "Other Service");
+
+        return `
+          <div class="feature-service-group">
+            <div class="feature-service-head">
+              <strong>${escapeHtml(serviceName)}</strong>
+              <span class="feature-type-pill ${escapeAttr(type)}">${escapeHtml(typeText)}</span>
+            </div>
+            <div class="feature-chip-row">
+              ${group.features.map(feature => featureChipHtml(feature)).join("")}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function serviceFeaturesHtml(service) {
+      const features = Array.isArray(service?.features) ? service.features : [];
+      if (!features.length) return "";
+
+      return `
+        <div class="service-feature-row">
+          ${features.map(feature => featureChipHtml(feature)).join("")}
+        </div>
+      `;
+    }
+
     function applyFilters() {
       const q = ($("#searchInput").value || "").trim().toLowerCase();
       const sort = $("#sortSelect").value;
@@ -4415,8 +4685,10 @@
           g.descriptionEn,
           g.packageName,
           ...(g.services || []).flatMap(s => [
-            s.name,s.nameEn,s.description,s.descriptionEn
+            s.name,s.nameEn,s.description,s.descriptionEn,
+            ...(s.features || []).flatMap(f => [f.label,f.labelEn,f.key])
           ]),
+          ...getGameFeatures(g).flatMap(f => [f.label,f.labelEn,f.key]),
           ...(g.loginMethods || []).flatMap(m => [
             m.label,m.labelEn,m.description,m.descriptionEn
           ]),
@@ -4476,7 +4748,6 @@
         card.dataset.sold = String(num(game.soldCount));
 
         const displayName = localField(game, "name") || "Unnamed Game";
-        const displayDesc = localField(game, "description") || "";
         const displayCategory = currentLang === "en"
           ? (game.categoryEn || game.category || "GAME")
           : (game.category || game.categoryEn || "GAME");
@@ -4550,7 +4821,7 @@
 
             <div class="card-body">
               <div class="game-title">${escapeHtml(displayName)}</div>
-              <div class="game-desc">${escapeHtml(displayDesc)}</div>
+              ${cardFeaturePreviewHtml(game)}
 
               <div class="sold-count">
                 🛒 ${tr("มีคนซื้อแล้ว","Purchased")}
@@ -4616,7 +4887,7 @@
       setPresenceState("shopping");
 
       const displayName = localField(game, "name") || game.name || "";
-      const displayDesc = localField(game, "description") || "";
+      const gameFeatures = getGameFeatures(game);
       const displayCategory = currentLang === "en"
         ? (game.categoryEn || game.category || "GAME")
         : (game.category || game.categoryEn || "GAME");
@@ -4627,7 +4898,12 @@
 
       $("#detailName").textContent = displayName;
       $("#detailCategory").textContent = displayCategory;
-      $("#detailDescription").textContent = displayDesc;
+      $("#detailDescription").textContent = gameFeatures.length
+        ? tr(
+            `สิ่งที่ทำได้ ${gameFeatures.length} รายการ`,
+            `${gameFeatures.length} available features`
+          )
+        : tr("ยังไม่ได้ระบุสิ่งที่ทำได้", "Available features not specified yet");
 
       const badges = $("#detailBadges");
       badges.innerHTML = "";
@@ -4657,6 +4933,7 @@
       const canOrder =
         String(game.status || "active").toLowerCase() === "active";
 
+      renderAvailableFeatures(game);
       renderLoginMethods(game.loginMethods || []);
       renderCompatibility(game.compatibility || []);
       renderServices(game.services || [], canOrder);
@@ -4749,7 +5026,7 @@
 
       active.forEach(s => {
         const el = document.createElement("div");
-        el.className = "service-item";
+        el.className = "service-item" + (selectedServices.has(s.id) ? " selected" : "");
 
         const name = localField(s, "name") || s.name || "";
         const desc = localField(s, "description") || "";
@@ -4760,6 +5037,7 @@
             <div>
               <div class="item-title">${escapeHtml(name)}</div>
               <div class="item-desc">${escapeHtml(desc)}</div>
+              ${serviceFeaturesHtml(s)}
             </div>
           </div>
           <div class="service-price">${money(s.price)}</div>

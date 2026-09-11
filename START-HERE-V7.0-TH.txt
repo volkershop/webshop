@@ -1,0 +1,279 @@
+0xVoLKER Shop Service — V7.0 AVAILABLE FEATURES
+ระบบ “สิ่งที่ทำได้ / Available Features”
+
+============================================================
+เป้าหมาย
+============================================================
+
+เปลี่ยนพื้นที่คำอธิบายยาวบนการ์ดเกมให้เป็นข้อมูลที่ลูกค้าดูแล้วเข้าใจทันทีว่า
+บริการของเกมนั้นทำอะไรได้บ้าง
+
+หน้า CARD:
+- แสดงหัวข้อ “สิ่งที่ทำได้” / “Available Features”
+- แสดง 3 รายการแรก
+- ถ้ามีมากกว่า 3 รายการ แสดง +N
+
+หน้า DETAIL:
+- แสดงรายการทั้งหมดแบบ Chip
+- แยกกลุ่มตามบริการ เช่น บริการทรัพยากร / Zygisk Mod Menu
+- ในแต่ละแถวบริการจะแสดง Feature ของบริการนั้นด้วย
+
+รองรับการสลับภาษา TH / EN จากระบบเดิมของเว็บ
+
+============================================================
+รายการตั้งต้น
+============================================================
+
+RESOURCE / การปั้ม
+1. แพ็ก / Pack
+2. ทรัพยากร / Resources
+3. ตัวละคร / Characters
+4. คอสตูม / Costumes
+5. เงิน/เพชร / Coins & Gems
+6. เพชร / Gems
+7. เงิน / Coins
+8. ปลดบางส่วน / Partial Unlocks
+
+ZYGISK MOD MENU
+1. FreeShop / Free Shop
+2. Status / Status
+3. All Status / All Status
+4. Disable Enemy / Disable Enemy
+5. Cheat Mode / Cheat Mode
+6. Debug Mode / Debug Mode
+7. Disable Anti-Cheat / Disable Anti-Cheat
+
+============================================================
+แท็บใหม่ 2 แท็บ
+============================================================
+
+1) รายการสิ่งที่ทำได้
+Logical name: FeatureCatalog
+
+ใช้เป็นคลังรายการกลางของทั้งร้าน
+
+คอลัมน์:
+id          ระบบสร้าง F001, F002...
+groupType   resource / zygisk / other
+key         คีย์ภายในระบบ
+label       ชื่อภาษาไทย
+labelEn     ชื่อภาษาอังกฤษ
+enabled     เปิด/ปิดรายการนี้ทั้งร้าน
+sortOrder   ลำดับการแสดงผล
+note        หมายเหตุ
+
+2) สิ่งที่ทำได้ต่อบริการ
+Logical name: ServiceFeatures
+
+ใช้เลือกว่าบริการแต่ละรายการทำอะไรได้บ้าง
+
+คอลัมน์:
+id           ระบบสร้าง SF001, SF002...
+gameId       ระบบเติมจากบริการ
+gameName     ระบบเติมจากบริการ
+serviceId    เลือก Service ID จาก Dropdown
+serviceName  ระบบเติม
+serviceType  ระบบเติม resource / zygisk / other
+featureId    ระบบเติม
+label        เลือก Feature จาก Dropdown หรือพิมพ์เพิ่มเอง
+labelEn      ระบบเติม
+ enabled     ติ๊กเพื่อแสดงบนเว็บ
+sortOrder    ลำดับการแสดง
+
+============================================================
+วิธีอัปเดตแบบปลอดภัย
+============================================================
+
+ก่อนเริ่ม:
+- อย่าลบ Code.gs เดิมจนกว่าจะดาวน์โหลด/เก็บสำรองไว้
+- อย่าใช้ New deployment
+- อย่ารัน setupV6System
+
+STEP 1 — Backend
+
+1. Apps Script > Code.gs
+2. Ctrl+A
+3. วางไฟล์:
+   Code-WebShop-Backend-V7.0-Available-Features.gs
+4. Save
+
+STEP 2 — สร้างระบบใหม่
+
+Run:
+setupAvailableFeatures100
+
+ผลที่ถูกต้องต้องมีทั้ง:
+AVAILABLE FEATURES SETUP OK
+AVAILABLE FEATURES DIAG PASS
+
+และท้ายผลควรเป็น:
+missing=0
+duplicates=0
+dangling=0
+mismatched=0
+
+ถ้ามีคำว่า FAIL:
+- ห้าม Deploy
+- อย่า Run ซ้ำหลายครั้ง
+- เก็บภาพผล Error/Diagnostic ไว้ตรวจ
+
+STEP 3 — ตรวจโครงสร้าง
+
+Run:
+testV6Setup
+
+ต้องขึ้น:
+V7.0 TEST OK
+
+Run:
+diagnoseAvailableFeatures
+
+ต้องขึ้นต้นว่า:
+AVAILABLE FEATURES DIAG PASS
+
+STEP 4 — เลือกสิ่งที่ทำได้
+
+ไปแท็บ:
+สิ่งที่ทำได้ต่อบริการ
+
+วิธีใช้:
+1. หา serviceName / serviceId ที่ต้องการ
+2. ติ๊ก enabled เฉพาะ Feature ที่บริการนั้นทำได้จริง
+3. ใช้ sortOrder จัดลำดับ
+
+ตัวอย่างบริการ Resource:
+- ติ๊ก แพ็ก
+- ติ๊ก ทรัพยากร
+- ติ๊ก ตัวละคร
+- ติ๊ก คอสตูม
+
+ตัวอย่าง Zygisk:
+- ติ๊ก FreeShop
+- ติ๊ก Status
+- ติ๊ก Cheat Mode
+- ติ๊ก Disable Anti-Cheat
+
+ระบบจะไม่เปิด Zygisk Feature ทั้งหมดให้เอง เพื่อป้องกันหน้าเว็บประกาศความสามารถที่บริการจริงยังไม่รองรับ
+
+STEP 5 — Deploy Backend เดิม
+
+Deploy
+> Manage deployments
+> เลือก Web App ตัวเดิม
+> Edit / ดินสอ
+> New version
+> Deploy
+
+Health Check ต้องเป็น:
+version = 7.0
+
+STEP 6 — GitHub
+
+Upload/Replace:
+index.html
+
+ไฟล์รูปเดิมใช้ต่อได้ ไม่จำเป็นต้องอัปโหลดซ้ำถ้ามีอยู่แล้ว:
+- banner-0xvolker.webp
+- volker-avatar-256.webp
+- volker-avatar-768.webp
+- banner-0xvolker.png
+- volker-avatar-circle.png
+
+Commit changes
+รอ GitHub Pages อัปเดต
+กด Ctrl+Shift+R
+
+============================================================
+วิธีเพิ่ม Feature ใหม่
+============================================================
+
+แบบที่ 1 — เพิ่มจาก Catalog
+
+1. เปิด “รายการสิ่งที่ทำได้”
+2. ไปแถวว่าง
+3. เลือก groupType
+4. ใส่ label
+5. ใส่ labelEn
+6. ติ๊ก enabled
+7. ใส่ sortOrder
+
+ระบบสร้าง id/key และสร้าง Draft ให้บริการประเภทเดียวกัน
+
+แบบที่ 2 — เพิ่มจากบริการโดยตรง
+
+1. เปิด “สิ่งที่ทำได้ต่อบริการ”
+2. ไปแถวว่าง
+3. เลือก serviceId
+4. ที่ label พิมพ์รายการใหม่ เช่น No Cooldown
+5. กด Enter
+
+ระบบจะ:
+- เพิ่มรายการเข้า Catalog
+- สร้าง featureId
+- เติม game/service/type
+- เตรียม Checkbox enabled
+
+ถ้าพิมพ์ภาษาอังกฤษ ระบบใช้ข้อความเดียวกันเป็น labelEn
+ถ้าพิมพ์ภาษาไทย ให้กลับไปใส่ labelEn ที่ “รายการสิ่งที่ทำได้” หนึ่งครั้ง
+
+============================================================
+การแก้ไขภายหลัง
+============================================================
+
+เปลี่ยนชื่อทุกจุด:
+- แก้ label / labelEn ใน “รายการสิ่งที่ทำได้”
+- ระบบ Sync ชื่อไป Relation ให้
+
+ปิดทั้งร้าน:
+- เอาติ๊ก enabled ออกจาก “รายการสิ่งที่ทำได้”
+
+ปิดเฉพาะบริการเดียว:
+- เอาติ๊ก enabled ออกจาก “สิ่งที่ทำได้ต่อบริการ”
+
+เปลี่ยนประเภทบริการ:
+- ระบบจะปิด Feature ที่อยู่คนละกลุ่มให้โดยไม่ลบข้อมูล
+
+============================================================
+คำอธิบายเกมเดิม
+============================================================
+
+คอลัมน์ description / descriptionEn ในแท็บเกม:
+- ไม่ถูกลบ
+- ไม่ถูกเขียนทับ
+- V7.0 ไม่แสดงบน Card
+- หน้า Detail ใช้รายการ “สิ่งที่ทำได้” แทน
+
+จึงสามารถปล่อยคำอธิบายเดิมไว้เป็นข้อมูลสำรอง หรือปล่อยว่างได้
+
+============================================================
+ระบบเดิมที่ไม่ได้เปลี่ยน
+============================================================
+
+- Play Store Auto Sync
+- Order หลายบริการ
+- Payment / PromptPay / PayPal / USDT
+- Customer ID
+- Request
+- Review / Review images
+- Claim / Warranty
+- Telegram notifications
+- Maintenance Mode
+- Theme Auto / Manual
+- FX
+- LoginMethods
+- Compatibility
+- Admin easy controls
+
+============================================================
+Rollback
+============================================================
+
+Backend:
+- Manage deployments
+- เลือก Version ก่อน V7.0
+
+Frontend:
+- GitHub > Restore index.html จาก Commit ก่อน V7.0
+
+แท็บ FeatureCatalog และ ServiceFeatures สามารถเก็บไว้ได้
+Backend รุ่นเก่าจะไม่อ่านสองแท็บนี้

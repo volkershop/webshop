@@ -1,0 +1,1069 @@
+--- /mnt/data/webshop-v6.9.2.1-correct-sheet-id/Code-WebShop-Backend-V6.9.2.1-Correct-Sheet-ID.gs	2026-09-11 09:01:55.512707244 +0000
++++ /mnt/data/webshop-v7.0-available-features/Code-WebShop-Backend-V7.0-Available-Features.gs	2026-09-11 09:31:41.099062735 +0000
+@@ -1,5 +1,5 @@
+ /**
+- * 0xVoLKER Shop Service — Backend V6.9.2.1 Correct Sheet ID
++ * 0xVoLKER Shop Service — Backend V7.0 Available Features
+  * Google Apps Script + Google Sheets
+  *
+  * เป้าหมาย:
+@@ -35,6 +35,8 @@
+   ADMIN_SECRETS: 'AdminSecrets',
+   THEME_SCHEDULE: 'ThemeSchedule',
+   GAME_TEMPLATES: 'GameTemplates',
++  FEATURE_CATALOG: 'FeatureCatalog',
++  SERVICE_FEATURES: 'ServiceFeatures',
+ };
+ 
+ const ORDER_STATUS = {
+@@ -55,6 +57,8 @@
+   'Games': 'เกม',
+   'GameTemplates': 'แม่แบบเกม',
+   'Services': 'บริการ',
++  'FeatureCatalog': 'รายการสิ่งที่ทำได้',
++  'ServiceFeatures': 'สิ่งที่ทำได้ต่อบริการ',
+   'Compatibility': 'ระบบที่รองรับ',
+   'LoginMethods': 'วิธีเข้าสู่ระบบ',
+   'UsageGuides': 'คู่มือใช้งาน',
+@@ -78,6 +82,8 @@
+   'Games',
+   'GameTemplates',
+   'Services',
++  'FeatureCatalog',
++  'ServiceFeatures',
+   'Compatibility',
+   'LoginMethods',
+   'UsageGuides',
+@@ -218,8 +224,8 @@
+       case 'health':
+         return jsonResponse_({
+           ok: true,
+-          service: '0xVoLKER Shop Service Backend V6.9.2.1',
+-          version: '6.9.2.1',
++          service: '0xVoLKER Shop Service Backend V7.0',
++          version: '7.0',
+           time: new Date().toISOString(),
+         });
+ 
+@@ -1249,6 +1255,790 @@
+   };
+ }
+ 
++
++// ============================================================
++// V7.0 AVAILABLE FEATURES / สิ่งที่ทำได้
++// ============================================================
++
++function setupAvailableFeatures100() {
++  const ss = openDb_();
++
++  const catalog = ensureSheetWithHeaders_(
++    ss,
++    SHEETS.FEATURE_CATALOG,
++    ['id','groupType','key','label','labelEn','enabled','sortOrder','note']
++  );
++
++  const relations = ensureSheetWithHeaders_(
++    ss,
++    SHEETS.SERVICE_FEATURES,
++    [
++      'id','gameId','gameName','serviceId','serviceName','serviceType',
++      'featureId','label','labelEn','enabled','sortOrder'
++    ]
++  );
++
++  ensureFeatureCatalogSeeds_(catalog);
++  configureAvailableFeaturesAdmin_(ss);
++  const syncResult = syncAllServiceFeatureDraftsNow();
++  moveAvailableFeatureTabs_();
++  ensureAdminEditTrigger_();
++  invalidatePublicCache_();
++  SpreadsheetApp.flush();
++
++  const diagnosis = diagnoseAvailableFeatures();
++  const message =
++    'AVAILABLE FEATURES SETUP OK | ' +
++    syncResult + ' | ' + diagnosis;
++
++  Logger.log(message);
++  return message;
++}
++
++function ensureFeatureCatalogSeeds_(sheet) {
++  const seeds = [
++    ['F001','resource','pack','แพ็ก','Pack',true,10,'บริการทรัพยากร'],
++    ['F002','resource','resources','ทรัพยากร','Resources',true,20,'บริการทรัพยากร'],
++    ['F003','resource','characters','ตัวละคร','Characters',true,30,'บริการทรัพยากร'],
++    ['F004','resource','costumes','คอสตูม','Costumes',true,40,'บริการทรัพยากร'],
++    ['F005','resource','coins_gems','เงิน/เพชร','Coins & Gems',true,50,'บริการทรัพยากร'],
++    ['F006','resource','gems','เพชร','Gems',true,60,'บริการทรัพยากร'],
++    ['F007','resource','coins','เงิน','Coins',true,70,'บริการทรัพยากร'],
++    ['F008','resource','partial_unlocks','ปลดบางส่วน','Partial Unlocks',true,80,'บริการทรัพยากร'],
++    ['F009','zygisk','free_shop','FreeShop','Free Shop',true,10,'Zygisk Mod Menu'],
++    ['F010','zygisk','status','Status','Status',true,20,'Zygisk Mod Menu'],
++    ['F011','zygisk','all_status','All Status','All Status',true,30,'Zygisk Mod Menu'],
++    ['F012','zygisk','disable_enemy','Disable Enemy','Disable Enemy',true,40,'Zygisk Mod Menu'],
++    ['F013','zygisk','cheat_mode','Cheat Mode','Cheat Mode',true,50,'Zygisk Mod Menu'],
++    ['F014','zygisk','debug_mode','Debug Mode','Debug Mode',true,60,'Zygisk Mod Menu'],
++    ['F015','zygisk','disable_anti_cheat','Disable Anti-Cheat','Disable Anti-Cheat',true,70,'Zygisk Mod Menu'],
++  ];
++
++  const existing = {};
++  sheetObjects_(sheet).forEach(row => {
++    existing[clean_(row.id)] = true;
++    existing['key:' + clean_(row.key).toLowerCase()] = true;
++  });
++
++  seeds.forEach(row => {
++    if (existing[row[0]] || existing['key:' + row[2]]) return;
++
++    appendByHeader_(sheet, {
++      id:row[0],
++      groupType:row[1],
++      key:row[2],
++      label:row[3],
++      labelEn:row[4],
++      enabled:row[5],
++      sortOrder:row[6],
++      note:row[7],
++    });
++  });
++}
++
++function configureAvailableFeaturesAdmin_(ss) {
++  ss = ss || openDb_();
++
++  const catalog = findSheetByLogicalName_(ss, SHEETS.FEATURE_CATALOG);
++  const relations = findSheetByLogicalName_(ss, SHEETS.SERVICE_FEATURES);
++  if (!catalog || !relations) return false;
++
++  const games = mustSheet_(ss, SHEETS.GAMES);
++  const services = mustSheet_(ss, SHEETS.SERVICES);
++
++  const gameIds = uniqueClean_(sheetObjects_(games).map(x => x.id));
++  const serviceIds = uniqueClean_(sheetObjects_(services).map(x => x.id));
++  const featureLabels = uniqueClean_(
++    sheetObjects_(catalog)
++      .filter(x => toBool_(x.enabled))
++      .map(x => x.label)
++  );
++
++  setDropdownByHeaderEasy_(
++    catalog,
++    'groupType',
++    ['resource','zygisk','other'],
++    false,
++    'เลือกกลุ่ม: resource / zygisk / other'
++  );
++  setCheckboxColumnFast_(catalog, 'enabled', adminRowsFor_(catalog, 200));
++  setOrderDropdownByHeader_(catalog, 'sortOrder', 200, 'เลือกลำดับ หรือพิมพ์เลขเองได้');
++
++  setDropdownByHeaderEasy_(relations, 'gameId', gameIds, false, 'ระบบเติมให้จากบริการ หรือเลือกเกมเอง');
++  setDropdownByHeaderEasy_(relations, 'serviceId', serviceIds, false, 'เลือก Service ID จากแท็บบริการ');
++  setDropdownByHeaderEasy_(relations, 'serviceType', ['resource','zygisk','other'], false, 'ระบบเติมตามบริการ');
++  setDropdownByHeaderEasy_(relations, 'label', featureLabels, true, 'เลือกสิ่งที่ทำได้ หรือพิมพ์รายการใหม่ได้');
++  setCheckboxColumnFast_(relations, 'enabled', adminRowsFor_(relations, 400));
++  setOrderDropdownByHeader_(relations, 'sortOrder', 200, 'เลือกลำดับการแสดงผล');
++  clearValidationByHeaders_(
++    relations,
++    ['id','gameName','serviceName','featureId','labelEn']
++  );
++
++  sheetObjectsWithRows_(relations).forEach(item => {
++    setServiceFeatureDropdownForRow_(relations, item.row);
++  });
++
++  applyAvailableFeatureHeaderGuides_(ss);
++  return true;
++}
++
++function applyAvailableFeatureHeaderGuides_(ss) {
++  ss = ss || openDb_();
++
++  const catalog = findSheetByLogicalName_(ss, SHEETS.FEATURE_CATALOG);
++  const relations = findSheetByLogicalName_(ss, SHEETS.SERVICE_FEATURES);
++
++  const apply = function(sheet, config) {
++    if (!sheet) return;
++    const headers = getHeaders_(sheet);
++
++    Object.keys(config).forEach(kind => {
++      const color = kind === 'select'
++        ? '#166534'
++        : kind === 'manual'
++        ? '#b45309'
++        : '#475569';
++
++      config[kind].forEach(header => {
++        const col = headers.indexOf(header) + 1;
++        if (!col) return;
++
++        const notes = {
++          select:'แตะเพื่อเลือก หรือ Checkbox',
++          manual:'แก้ไขเองได้',
++          auto:'ระบบเติมอัตโนมัติ ปกติไม่ต้องแก้'
++        };
++
++        sheet.getRange(1, col)
++          .setBackground(color)
++          .setFontColor('#ffffff')
++          .setFontWeight('bold')
++          .setNote(notes[kind]);
++      });
++    });
++  };
++
++  apply(catalog, {
++    manual:['key','label','labelEn','note'],
++    select:['groupType','enabled','sortOrder'],
++    auto:['id']
++  });
++
++  apply(relations, {
++    manual:[],
++    select:['serviceId','label','enabled','sortOrder'],
++    auto:['id','gameId','gameName','serviceName','serviceType','featureId','labelEn']
++  });
++
++  // description เดิมไม่ถูกลบ แต่หน้าเว็บจะใช้ Available Features แทน
++  const games = mustSheet_(ss, SHEETS.GAMES);
++  ['description','descriptionEn'].forEach(header => {
++    const col = getHeaders_(games).indexOf(header) + 1;
++    if (!col) return;
++    games.getRange(1, col)
++      .setBackground('#475569')
++      .setFontColor('#ffffff')
++      .setNote('ข้อมูลเดิมยังเก็บไว้ แต่ V7.0 ไม่แสดงบนการ์ดเกมแล้ว');
++  });
++}
++
++function moveAvailableFeatureTabs_() {
++  const ss = openDb_();
++  const services = findSheetByLogicalName_(ss, SHEETS.SERVICES);
++  const catalog = findSheetByLogicalName_(ss, SHEETS.FEATURE_CATALOG);
++  const relations = findSheetByLogicalName_(ss, SHEETS.SERVICE_FEATURES);
++
++  if (!services || !catalog || !relations) return;
++
++  const serviceIndex = services.getIndex();
++  ss.setActiveSheet(catalog);
++  ss.moveActiveSheet(serviceIndex + 1);
++  ss.setActiveSheet(relations);
++  ss.moveActiveSheet(serviceIndex + 2);
++}
++
++function syncAllServiceFeatureDraftsNow() {
++  const ss = openDb_();
++  const servicesSheet = mustSheet_(ss, SHEETS.SERVICES);
++  const relationSheet = findSheetByLogicalName_(ss, SHEETS.SERVICE_FEATURES);
++  const catalogSheet = findSheetByLogicalName_(ss, SHEETS.FEATURE_CATALOG);
++
++  if (!relationSheet || !catalogSheet) {
++    return 'feature sheets not ready';
++  }
++
++  let servicesProcessed = 0;
++  let created = 0;
++  let updated = 0;
++
++  sheetObjects_(servicesSheet).forEach(service => {
++    const serviceId = clean_(service.id);
++    if (!serviceId) return;
++
++    const result = syncFeatureDraftsForService_(serviceId);
++    servicesProcessed++;
++    created += toNumber_(result.created);
++    updated += toNumber_(result.updated);
++  });
++
++  configureAvailableFeaturesAdmin_(ss);
++  invalidatePublicCache_();
++  SpreadsheetApp.flush();
++
++  const message =
++    'SERVICE FEATURES SYNC OK | services=' + servicesProcessed +
++    ' created=' + created + ' updated=' + updated;
++
++  Logger.log(message);
++  return message;
++}
++
++function syncFeatureDraftsForGame_(gameId) {
++  const ss = openDb_();
++  const relations = findSheetByLogicalName_(ss, SHEETS.SERVICE_FEATURES);
++  const catalog = findSheetByLogicalName_(ss, SHEETS.FEATURE_CATALOG);
++  if (!relations || !catalog) return {created:0,updated:0};
++
++  const services = sheetObjects_(mustSheet_(ss, SHEETS.SERVICES))
++    .filter(service => clean_(service.gameId) === clean_(gameId));
++
++  let created = 0;
++  let updated = 0;
++
++  services.forEach(service => {
++    if (!clean_(service.id)) return;
++    const result = syncFeatureDraftsForService_(clean_(service.id));
++    created += toNumber_(result.created);
++    updated += toNumber_(result.updated);
++  });
++
++  return {created:created,updated:updated};
++}
++
++function syncFeatureDraftsForService_(serviceId) {
++  serviceId = clean_(serviceId);
++  if (!serviceId) return {created:0,updated:0};
++
++  const ss = openDb_();
++  const catalogSheet = findSheetByLogicalName_(ss, SHEETS.FEATURE_CATALOG);
++  const relationSheet = findSheetByLogicalName_(ss, SHEETS.SERVICE_FEATURES);
++  if (!catalogSheet || !relationSheet) return {created:0,updated:0};
++
++  const service = findObjectById_(mustSheet_(ss, SHEETS.SERVICES), serviceId);
++  if (!service) return {created:0,updated:0};
++
++  const game = findObjectById_(mustSheet_(ss, SHEETS.GAMES), clean_(service.gameId));
++  const serviceType = clean_(service.serviceType || inferServiceType_(service.name)).toLowerCase() || 'other';
++  const gameId = clean_(service.gameId);
++  const gameName = game ? clean_(game.name) : clean_(service.gameName);
++  const serviceName = clean_(service.name);
++
++  const catalog = sheetObjects_(catalogSheet)
++    .filter(feature =>
++      toBool_(feature.enabled) &&
++      clean_(feature.groupType).toLowerCase() === serviceType &&
++      clean_(feature.id)
++    )
++    .sort((a,b) => toNumber_(a.sortOrder) - toNumber_(b.sortOrder));
++
++  const existing = sheetObjectsWithRows_(relationSheet)
++    .filter(item => clean_(item.object.serviceId) === serviceId);
++
++  let created = 0;
++  let updated = 0;
++
++  // ถ้า Service Type เปลี่ยน ให้ปิด Feature คนละกลุ่ม แต่ไม่ลบข้อมูล
++  existing.forEach(item => {
++    const feature = findObjectById_(catalogSheet, clean_(item.object.featureId));
++    const featureType = feature ? clean_(feature.groupType).toLowerCase() : clean_(item.object.serviceType).toLowerCase();
++
++    let changed = false;
++    const syncField = function(header, value) {
++      if (clean_(item.object[header]) === clean_(value)) return;
++      setCellByHeader_(relationSheet, item.row, header, value);
++      item.object[header] = value;
++      changed = true;
++    };
++
++    syncField('gameId', gameId);
++    syncField('gameName', gameName);
++    syncField('serviceName', serviceName);
++    syncField('serviceType', serviceType);
++
++    if (feature) {
++      syncField('label', clean_(feature.label));
++      syncField('labelEn', clean_(feature.labelEn));
++      if (!toNumber_(item.object.sortOrder)) {
++        setCellByHeader_(relationSheet, item.row, 'sortOrder', toNumber_(feature.sortOrder));
++        changed = true;
++      }
++    }
++
++    if (featureType && featureType !== serviceType && toBool_(item.object.enabled)) {
++      setCellByHeader_(relationSheet, item.row, 'enabled', false);
++      item.object.enabled = false;
++      changed = true;
++    }
++
++    if (changed) updated++;
++  });
++
++  catalog.forEach(feature => {
++    const featureId = clean_(feature.id);
++    const found = existing.find(item => clean_(item.object.featureId) === featureId);
++    if (found) return;
++
++    appendByHeader_(relationSheet, {
++      id:nextUniqueRelationId_(relationSheet, 'SF'),
++      gameId:gameId,
++      gameName:gameName,
++      serviceId:serviceId,
++      serviceName:serviceName,
++      serviceType:serviceType,
++      featureId:featureId,
++      label:clean_(feature.label),
++      labelEn:clean_(feature.labelEn),
++      enabled:inferFeatureEnabledFromServiceName_(service, feature),
++      sortOrder:toNumber_(feature.sortOrder),
++    });
++
++    created++;
++  });
++
++  return {created:created,updated:updated};
++}
++
++function inferFeatureEnabledFromServiceName_(service, feature) {
++  const name = clean_(service.name).toLowerCase();
++  const key = clean_(feature.key).toLowerCase();
++
++  // เปิดอัตโนมัติเฉพาะกรณีชื่อบริการบอกตรงตัวจริง ๆ
++  if (key === 'pack' && /ปลดแพ็ก|unlock\s*pack/.test(name)) return true;
++  if (key === 'resources' && /ปลดทรัพยากร|resource/.test(name)) return true;
++  if (key === 'characters' && /ตัวละคร|character/.test(name)) return true;
++  if (key === 'costumes' && /คอสตูม|costume|skin/.test(name)) return true;
++  if (key === 'coins_gems' && /เงิน\s*[/+]\s*เพชร|coins?\s*[&+]\s*gems?/.test(name)) return true;
++  if (key === 'gems' && /(^|\s)เพชร($|\s)|(^|\s)gems?($|\s)/.test(name)) return true;
++  if (key === 'coins' && /(^|\s)เงิน($|\s)|(^|\s)coins?($|\s)/.test(name)) return true;
++  if (key === 'partial_unlocks' && /ปลดบางส่วน|partial\s*unlock/.test(name)) return true;
++
++  return false;
++}
++
++function normalizeFeatureCatalogRow_(sheet, row, colName) {
++  const item = rowObject_(sheet, row);
++  const label = clean_(item.label);
++  if (!label && !clean_(item.key)) return;
++
++  let groupType = clean_(item.groupType).toLowerCase() || 'other';
++  if (!['resource','zygisk','other'].includes(groupType)) groupType = 'other';
++  setCellByHeader_(sheet, row, 'groupType', groupType);
++
++  if (!clean_(item.id)) {
++    setCellByHeader_(sheet, row, 'id', nextFeatureCatalogId_(sheet));
++  }
++
++  if (!clean_(item.key) && label) {
++    setCellByHeader_(sheet, row, 'key', featureKeyFromLabel_(label));
++  }
++
++  if (!clean_(item.labelEn) && label && /^[\x00-\x7F]+$/.test(label)) {
++    setCellByHeader_(sheet, row, 'labelEn', label);
++  }
++
++  if (!toNumber_(item.sortOrder)) {
++    setCellByHeader_(sheet, row, 'sortOrder', nextFeatureSortOrder_(sheet, groupType, row));
++  }
++
++  if (item.enabled === '' || item.enabled == null) {
++    setCellByHeader_(sheet, row, 'enabled', true);
++  }
++
++  const refreshed = rowObject_(sheet, row);
++  if (clean_(refreshed.id)) {
++    syncFeatureCatalogItemToRelations_(clean_(refreshed.id));
++  }
++}
++
++function normalizeServiceFeatureRow_(sheet, row, colName) {
++  const ss = openDb_();
++  const item = rowObject_(sheet, row);
++  const serviceId = clean_(item.serviceId);
++
++  let service = serviceId
++    ? findObjectById_(mustSheet_(ss, SHEETS.SERVICES), serviceId)
++    : null;
++
++  if (service) {
++    const game = findObjectById_(mustSheet_(ss, SHEETS.GAMES), clean_(service.gameId));
++    setCellByHeader_(sheet, row, 'gameId', clean_(service.gameId));
++    setCellByHeader_(sheet, row, 'gameName', game ? clean_(game.name) : clean_(service.gameName));
++    setCellByHeader_(sheet, row, 'serviceName', clean_(service.name));
++    setCellByHeader_(sheet, row, 'serviceType', clean_(service.serviceType || inferServiceType_(service.name)) || 'other');
++  }
++
++  setServiceFeatureDropdownForRow_(sheet, row);
++
++  const current = rowObject_(sheet, row);
++  let feature = null;
++
++  if (clean_(current.featureId)) {
++    feature = findObjectById_(mustSheet_(ss, SHEETS.FEATURE_CATALOG), clean_(current.featureId));
++  }
++
++  if (!feature && clean_(current.label)) {
++    const labelKey = clean_(current.label).toLowerCase();
++    feature = sheetObjects_(mustSheet_(ss, SHEETS.FEATURE_CATALOG)).find(x =>
++      clean_(x.label).toLowerCase() === labelKey ||
++      clean_(x.labelEn).toLowerCase() === labelKey
++    ) || null;
++  }
++
++  if (!feature && clean_(current.label) && colName === 'label') {
++    feature = createCustomFeatureFromLabel_(
++      clean_(current.label),
++      clean_(current.serviceType) || 'other'
++    );
++  }
++
++  if (feature) {
++    setCellByHeader_(sheet, row, 'featureId', clean_(feature.id));
++    setCellByHeader_(sheet, row, 'label', clean_(feature.label));
++    setCellByHeader_(sheet, row, 'labelEn', clean_(feature.labelEn));
++    if (!toNumber_(current.sortOrder)) {
++      setCellByHeader_(sheet, row, 'sortOrder', toNumber_(feature.sortOrder));
++    }
++  }
++
++  const refreshed = rowObject_(sheet, row);
++  if (!clean_(refreshed.id) && clean_(refreshed.serviceId) && clean_(refreshed.featureId)) {
++    setCellByHeader_(sheet, row, 'id', nextUniqueRelationId_(sheet, 'SF'));
++  }
++
++  if (
++    clean_(refreshed.serviceId) &&
++    clean_(refreshed.featureId) &&
++    (refreshed.enabled === '' || refreshed.enabled == null)
++  ) {
++    setCellByHeader_(sheet, row, 'enabled', false);
++  }
++}
++
++function setServiceFeatureDropdownForRow_(sheet, row) {
++  const ss = openDb_();
++  const item = rowObject_(sheet, row);
++  const serviceType = clean_(item.serviceType).toLowerCase();
++  const labels = uniqueClean_(
++    sheetObjects_(mustSheet_(ss, SHEETS.FEATURE_CATALOG))
++      .filter(feature =>
++        toBool_(feature.enabled) &&
++        (!serviceType || clean_(feature.groupType).toLowerCase() === serviceType)
++      )
++      .sort((a,b) => toNumber_(a.sortOrder) - toNumber_(b.sortOrder))
++      .map(feature => feature.label)
++  );
++
++  const col = getHeaders_(sheet).indexOf('label') + 1;
++  if (!col || !labels.length) return;
++
++  const rule = SpreadsheetApp.newDataValidation()
++    .requireValueInList(labels, true)
++    .setAllowInvalid(true)
++    .setHelpText('เลือกจากรายการ หรือพิมพ์รายการใหม่เพื่อเพิ่มเข้า Catalog')
++    .build();
++
++  sheet.getRange(row, col).setDataValidation(rule);
++}
++
++function createCustomFeatureFromLabel_(label, groupType) {
++  const sheet = mustSheet_(openDb_(), SHEETS.FEATURE_CATALOG);
++  const normalized = clean_(label);
++  const existing = sheetObjects_(sheet).find(x =>
++    clean_(x.label).toLowerCase() === normalized.toLowerCase() ||
++    clean_(x.labelEn).toLowerCase() === normalized.toLowerCase()
++  );
++  if (existing) return existing;
++
++  const ascii = /^[\x00-\x7F]+$/.test(normalized);
++  const object = {
++    id:nextFeatureCatalogId_(sheet),
++    groupType:['resource','zygisk','other'].includes(clean_(groupType).toLowerCase())
++      ? clean_(groupType).toLowerCase()
++      : 'other',
++    key:featureKeyFromLabel_(normalized),
++    label:normalized,
++    labelEn:ascii ? normalized : '',
++    enabled:true,
++    sortOrder:nextFeatureSortOrder_(sheet, clean_(groupType).toLowerCase() || 'other', 0),
++    note:'เพิ่มจากแท็บสิ่งที่ทำได้ต่อบริการ'
++  };
++
++  appendByHeader_(sheet, object);
++  configureAvailableFeaturesAdmin_(openDb_());
++  return object;
++}
++
++function syncFeatureCatalogItemToRelations_(featureId) {
++  const ss = openDb_();
++  const catalogSheet = findSheetByLogicalName_(ss, SHEETS.FEATURE_CATALOG);
++  const relationSheet = findSheetByLogicalName_(ss, SHEETS.SERVICE_FEATURES);
++  if (!catalogSheet || !relationSheet) return;
++
++  const feature = findObjectById_(catalogSheet, featureId);
++  if (!feature) return;
++
++  const services = sheetObjects_(mustSheet_(ss, SHEETS.SERVICES));
++  const serviceById = {};
++  services.forEach(service => {
++    const id = clean_(service.id);
++    if (id) serviceById[id] = service;
++  });
++
++  const featureType = clean_(feature.groupType).toLowerCase() || 'other';
++
++  sheetObjectsWithRows_(relationSheet).forEach(item => {
++    if (clean_(item.object.featureId) !== clean_(featureId)) return;
++
++    setCellByHeader_(relationSheet, item.row, 'label', clean_(feature.label));
++    setCellByHeader_(relationSheet, item.row, 'labelEn', clean_(feature.labelEn));
++
++    if (!toNumber_(item.object.sortOrder)) {
++      setCellByHeader_(relationSheet, item.row, 'sortOrder', toNumber_(feature.sortOrder));
++    }
++
++    const service = serviceById[clean_(item.object.serviceId)] || null;
++    const serviceType = service
++      ? clean_(service.serviceType || inferServiceType_(service.name)).toLowerCase()
++      : clean_(item.object.serviceType).toLowerCase();
++
++    // ถ้าแอดมินย้าย Feature ไปอีกกลุ่ม ให้ปิด Relation ที่ไม่ตรงประเภท
++    // เพื่อไม่ให้ Resource feature หลุดไปแสดงใน Zygisk หรือกลับกัน
++    if (
++      serviceType &&
++      featureType !== serviceType &&
++      toBool_(item.object.enabled)
++    ) {
++      setCellByHeader_(relationSheet, item.row, 'enabled', false);
++    }
++  });
++
++  // Feature ใหม่จะถูกเตรียมเป็น Draft ให้บริการประเภทเดียวกันทันที
++  services.forEach(service => {
++    const type = clean_(service.serviceType || inferServiceType_(service.name)).toLowerCase();
++    if (type === featureType && clean_(service.id)) {
++      syncFeatureDraftsForService_(clean_(service.id));
++    }
++  });
++}
++function nextFeatureCatalogId_(sheet) {
++  let max = 0;
++  sheetObjects_(sheet).forEach(row => {
++    const match = clean_(row.id).match(/^F(\d+)$/i);
++    if (match) max = Math.max(max, Number(match[1]) || 0);
++  });
++  return 'F' + String(max + 1).padStart(3, '0');
++}
++
++function nextFeatureSortOrder_(sheet, groupType, excludeRow) {
++  let max = 0;
++  sheetObjectsWithRows_(sheet).forEach(item => {
++    if (excludeRow && item.row === excludeRow) return;
++    if (clean_(item.object.groupType).toLowerCase() !== clean_(groupType).toLowerCase()) return;
++    max = Math.max(max, toNumber_(item.object.sortOrder));
++  });
++  return max + 10;
++}
++
++function featureKeyFromLabel_(label) {
++  const text = clean_(label).toLowerCase();
++  const ascii = text
++    .replace(/[^a-z0-9]+/g, '_')
++    .replace(/^_+|_+$/g, '');
++  return ascii || ('custom_' + Utilities.getUuid().slice(0, 8));
++}
++
++function groupServiceFeatures_(catalogRows, relationRows) {
++  const catalogById = {};
++
++  (catalogRows || []).forEach(feature => {
++    const id = clean_(feature.id);
++    if (!id) return;
++    catalogById[id] = feature;
++  });
++
++  const map = {};
++  const seen = {};
++
++  (relationRows || []).forEach(relation => {
++    if (!toBool_(relation.enabled)) return;
++
++    const serviceId = clean_(relation.serviceId);
++    if (!serviceId) return;
++
++    const catalog = catalogById[clean_(relation.featureId)] || null;
++    if (catalog && !toBool_(catalog.enabled)) return;
++
++    const feature = {
++      id:catalog ? clean_(catalog.id) : clean_(relation.featureId || relation.id),
++      key:catalog ? clean_(catalog.key) : clean_(relation.featureId || relation.label),
++      groupType:catalog
++        ? clean_(catalog.groupType)
++        : clean_(relation.serviceType || 'other'),
++      label:catalog ? clean_(catalog.label) : clean_(relation.label),
++      labelEn:catalog ? clean_(catalog.labelEn) : clean_(relation.labelEn),
++      sortOrder:toNumber_(relation.sortOrder) || (catalog ? toNumber_(catalog.sortOrder) : 0),
++    };
++
++    if (!feature.label && !feature.labelEn) return;
++
++    const dedupeKey = serviceId + '|' + (feature.key || feature.id || feature.label);
++    if (seen[dedupeKey]) return;
++    seen[dedupeKey] = true;
++
++    if (!map[serviceId]) map[serviceId] = [];
++    map[serviceId].push(feature);
++  });
++
++  Object.keys(map).forEach(serviceId => {
++    map[serviceId].sort((a,b) =>
++      (a.sortOrder || 9999) - (b.sortOrder || 9999) ||
++      clean_(a.label).localeCompare(clean_(b.label))
++    );
++  });
++
++  return map;
++}
++
++function aggregateGameFeatures_(services) {
++  const seen = {};
++  const result = [];
++
++  (services || []).forEach(service => {
++    (service.features || []).forEach(feature => {
++      const key = clean_(feature.key || feature.id || feature.label).toLowerCase();
++      if (!key || seen[key]) return;
++      seen[key] = true;
++      result.push(feature);
++    });
++  });
++
++  const groupRank = {
++    resource: 0,
++    zygisk: 1,
++    other: 2,
++  };
++
++  return result.sort((a,b) =>
++    (groupRank[clean_(a.groupType).toLowerCase()] ?? 9) -
++      (groupRank[clean_(b.groupType).toLowerCase()] ?? 9) ||
++    (a.sortOrder || 9999) - (b.sortOrder || 9999) ||
++    clean_(a.label).localeCompare(clean_(b.label))
++  );
++}
++
++function diagnoseAvailableFeatures() {
++  const ss = openDb_();
++  const catalogSheet = findSheetByLogicalName_(ss, SHEETS.FEATURE_CATALOG);
++  const relationSheet = findSheetByLogicalName_(ss, SHEETS.SERVICE_FEATURES);
++
++  if (!catalogSheet || !relationSheet) {
++    return 'AVAILABLE FEATURES DIAG FAIL | missing sheets';
++  }
++
++  const catalog = sheetObjects_(catalogSheet);
++  const relations = sheetObjects_(relationSheet);
++  const services = sheetObjects_(mustSheet_(ss, SHEETS.SERVICES));
++
++  const catalogById = {};
++  catalog.forEach(feature => {
++    const id = clean_(feature.id);
++    if (id) catalogById[id] = feature;
++  });
++
++  const serviceById = {};
++  services.forEach(service => {
++    const id = clean_(service.id);
++    if (id) serviceById[id] = service;
++  });
++
++  const resource = catalog.filter(x =>
++    clean_(x.groupType).toLowerCase() === 'resource' && toBool_(x.enabled)
++  ).length;
++  const zygisk = catalog.filter(x =>
++    clean_(x.groupType).toLowerCase() === 'zygisk' && toBool_(x.enabled)
++  ).length;
++
++  const missing = [];
++  services.forEach(service => {
++    const serviceId = clean_(service.id);
++    const type = clean_(service.serviceType || inferServiceType_(service.name)).toLowerCase();
++    if (!serviceId || !['resource','zygisk','other'].includes(type)) return;
++
++    const expected = catalog.filter(x =>
++      toBool_(x.enabled) && clean_(x.groupType).toLowerCase() === type
++    ).length;
++    const actualIds = {};
++    relations.forEach(relation => {
++      if (clean_(relation.serviceId) !== serviceId) return;
++      const featureId = clean_(relation.featureId);
++      if (featureId) actualIds[featureId] = true;
++    });
++    const actual = Object.keys(actualIds).length;
++    if (actual < expected) missing.push(serviceId + ':' + actual + '/' + expected);
++  });
++
++  const pairCounts = {};
++  const dangling = [];
++  const mismatched = [];
++
++  relations.forEach(relation => {
++    const relationId = clean_(relation.id) || '(no-id)';
++    const serviceId = clean_(relation.serviceId);
++    const featureId = clean_(relation.featureId);
++
++    if (!serviceById[serviceId] || !catalogById[featureId]) {
++      dangling.push(relationId);
++      return;
++    }
++
++    const pairKey = serviceId + '|' + featureId;
++    pairCounts[pairKey] = (pairCounts[pairKey] || 0) + 1;
++
++    if (toBool_(relation.enabled)) {
++      const service = serviceById[serviceId];
++      const serviceType = clean_(service.serviceType || inferServiceType_(service.name)).toLowerCase();
++      const featureType = clean_(catalogById[featureId].groupType).toLowerCase();
++      if (serviceType && featureType && serviceType !== featureType) {
++        mismatched.push(relationId);
++      }
++    }
++  });
++
++  const duplicates = Object.keys(pairCounts)
++    .filter(key => pairCounts[key] > 1);
++
++  const failed =
++    missing.length ||
++    duplicates.length ||
++    dangling.length ||
++    mismatched.length;
++
++  const message =
++    (failed ? 'AVAILABLE FEATURES DIAG FAIL' : 'AVAILABLE FEATURES DIAG PASS') +
++    ' | catalog=' + catalog.length +
++    ' resource=' + resource +
++    ' zygisk=' + zygisk +
++    ' relations=' + relations.length +
++    ' missing=' + (missing.length ? missing.join(',') : '0') +
++    ' duplicates=' + (duplicates.length ? duplicates.join(',') : '0') +
++    ' dangling=' + (dangling.length ? dangling.join(',') : '0') +
++    ' mismatched=' + (mismatched.length ? mismatched.join(',') : '0');
++
++  Logger.log(message);
++  return message;
++}
++
+ // ============================================================
+ // GAMES / SERVICES / COMPATIBILITY / GUIDES
+ // ============================================================
+@@ -1260,11 +2050,16 @@
+   const services = sheetObjects_(mustSheet_(ss, SHEETS.SERVICES));
+   const loginMethods = sheetObjects_(mustSheet_(ss, SHEETS.LOGIN_METHODS));
+   const compatibility = sheetObjects_(mustSheet_(ss, SHEETS.COMPATIBILITY));
++  const featureCatalogSheet = findSheetByLogicalName_(ss, SHEETS.FEATURE_CATALOG);
++  const serviceFeaturesSheet = findSheetByLogicalName_(ss, SHEETS.SERVICE_FEATURES);
++  const featureCatalog = featureCatalogSheet ? sheetObjects_(featureCatalogSheet) : [];
++  const serviceFeatures = serviceFeaturesSheet ? sheetObjects_(serviceFeaturesSheet) : [];
+   const orders = sheetObjects_(mustSheet_(ss, SHEETS.ORDERS));
+   const reviews = sheetObjects_(mustSheet_(ss, SHEETS.REVIEWS));
+   const siteMap = settingsMap_(mustSheet_(ss, SHEETS.SITE_SETTINGS));
+ 
+-  const serviceMap = groupServices_(services);
++  const serviceFeatureMap = groupServiceFeatures_(featureCatalog, serviceFeatures);
++  const serviceMap = groupServices_(services, serviceFeatureMap);
+   const loginMap = groupLoginMethods_(loginMethods);
+   const compatibilityMap = groupCompatibility_(compatibility);
+   const soldMap = {};
+@@ -1347,6 +2142,7 @@
+           : 0,
+         ratingCount: rating.count,
+         services: gameServices,
++        features: aggregateGameFeatures_(gameServices),
+         loginMethods: loginMap[gameId] || [],
+         compatibility: compatibilityMap[gameId] || [],
+       };
+@@ -1359,7 +2155,7 @@
+     });
+ }
+ 
+-function groupServices_(rows) {
++function groupServices_(rows, serviceFeatureMap) {
+   const map = {};
+ 
+   rows.forEach(s => {
+@@ -1379,6 +2175,7 @@
+       price: toNumber_(s.price),
+       serviceType: clean_(s.serviceType || inferServiceType_(s.name)),
+       sortOrder: toNumber_(s.sortOrder),
++      features: (serviceFeatureMap && serviceFeatureMap[clean_(s.id)]) || [],
+       active: true,
+     });
+   });
+@@ -4361,6 +5158,7 @@
+       gameId
+     );
+ 
++  syncFeatureDraftsForGame_(gameId);
+   syncGameCommercialFields_(gameId);
+ 
+   return {
+@@ -5219,6 +6017,7 @@
+     const login =
+       syncLoginMethodDraftsForGame_(gameId);
+ 
++    syncFeatureDraftsForGame_(gameId);
+     syncGameCommercialFields_(gameId);
+ 
+     refreshAllRelationGameIdDropdowns_();
+@@ -6681,8 +7480,8 @@
+     .atHour(3)
+     .create();
+ 
+-  Logger.log('V6.9.2.1 TRIGGERS INSTALLED');
+-  return 'V6.9.2.1 TRIGGERS INSTALLED';
++  Logger.log('V7.0 TRIGGERS INSTALLED');
++  return 'V7.0 TRIGGERS INSTALLED';
+ }
+ 
+ function v6SpreadsheetEdit(e) {
+@@ -6730,6 +7529,8 @@
+         SHEETS.ORDERS,
+         SHEETS.PAYMENT_METHODS,
+         SHEETS.THEME_SCHEDULE,
++        SHEETS.FEATURE_CATALOG,
++        SHEETS.SERVICE_FEATURES,
+       ].includes(sheetName)
+     ) {
+       invalidatePublicCache_();
+@@ -6858,10 +7659,31 @@
+         ensureServiceRowDefaults_(sheet, row);
+ 
+       if (gameId) {
++        const service = rowObject_(sheet, row);
++        if (clean_(service.id)) {
++          syncFeatureDraftsForService_(clean_(service.id));
++
++          // อัปเดตรายการ Service ID / Feature dropdown เฉพาะเมื่อข้อมูลหลัก
++          // ของบริการเปลี่ยน ไม่ทำงานหนักทุกครั้งที่แก้ราคา/เปิดปิดบริการ
++          if (
++            ['id','gameId','name','serviceType'].includes(colName)
++          ) {
++            configureAvailableFeaturesAdmin_(openDb_());
++          }
++        }
+         syncGameCommercialFields_(gameId);
+       }
+     }
+ 
++    if (sheetName === SHEETS.FEATURE_CATALOG) {
++      normalizeFeatureCatalogRow_(sheet, row, colName);
++      configureAvailableFeaturesAdmin_(openDb_());
++    }
++
++    if (sheetName === SHEETS.SERVICE_FEATURES) {
++      normalizeServiceFeatureRow_(sheet, row, colName);
++    }
++
+     if (sheetName === SHEETS.COMPATIBILITY) {
+       try {
+         ensureCompatibilityGameNameColumn_(sheet);
+@@ -7300,6 +8122,15 @@
+     ]
+   );
+ 
++  [
++    [SHEETS.FEATURE_CATALOG, 'enabled', 'id'],
++    [SHEETS.SERVICE_FEATURES, 'enabled', 'id'],
++  ].forEach(item => {
++    const optionalSheet = findSheetByLogicalName_(ss, item[0]);
++    if (!optionalSheet) return;
++    applyCheckboxColumnSafe_(optionalSheet, item[1], item[2]);
++  });
++
+   restoreSettingCheckboxes_(
+     mustSheet_(ss, SHEETS.REVIEW_SETTINGS),
+     [
+@@ -7473,6 +8304,8 @@
+     PaymentMethods:['enabled'],
+     Orders:['requestCreated','reviewSubmitted'],
+     ThemeSchedule:['enabled'],
++    FeatureCatalog:['enabled'],
++    ServiceFeatures:['enabled'],
+   };
+ 
+   const fields = matrix[sheetName] || [];
+@@ -7904,6 +8737,8 @@
+   const reviewSettings = mustSheet_(ss, SHEETS.REVIEW_SETTINGS);
+   const paymentLogs = mustSheet_(ss, SHEETS.PAYMENT_LOGS);
+   const themes = mustSheet_(ss, SHEETS.THEME_SCHEDULE);
++  const featureCatalog = findSheetByLogicalName_(ss, SHEETS.FEATURE_CATALOG);
++  const serviceFeatures = findSheetByLogicalName_(ss, SHEETS.SERVICE_FEATURES);
+ 
+   const gameIds = uniqueClean_(
+     sheetObjects_(games).map(x => x.id)
+@@ -8095,6 +8930,10 @@
+   setHexColorValidationByHeader_(themes, 'accent2');
+   setHexColorValidationByHeader_(themes, 'accent3');
+ 
++  if (featureCatalog && serviceFeatures) {
++    configureAvailableFeaturesAdmin_(ss);
++  }
++
+   refreshDynamicAdminDropdowns_(ss);
+ }
+ 
+@@ -8344,6 +9183,14 @@
+     }
+   }
+ 
++  if (sheetName === SHEETS.FEATURE_CATALOG) {
++    normalizeFeatureCatalogRow_(sheet, row, colName);
++  }
++
++  if (sheetName === SHEETS.SERVICE_FEATURES) {
++    normalizeServiceFeatureRow_(sheet, row, colName);
++  }
++
+   if (sheetName === SHEETS.COMPATIBILITY) {
+     normalizeCompatibilityAdminRow_(sheet, row, colName);
+   }
+@@ -8985,6 +9832,15 @@
+     'price','active','serviceType','sortOrder'
+   ]);
+ 
++  const featureCatalog = ensureSheetWithHeaders_(ss, SHEETS.FEATURE_CATALOG, [
++    'id','groupType','key','label','labelEn','enabled','sortOrder','note'
++  ]);
++
++  const serviceFeatures = ensureSheetWithHeaders_(ss, SHEETS.SERVICE_FEATURES, [
++    'id','gameId','gameName','serviceId','serviceName','serviceType',
++    'featureId','label','labelEn','enabled','sortOrder'
++  ]);
++
+   ensureSheetWithHeaders_(ss, SHEETS.ORDERS, [
+     'createdAt','orderId','customerNo','gameId','gameName',
+     'serviceId','serviceName','serviceIds','serviceNames',
+@@ -9122,12 +9978,14 @@
+   ensureAdminSecretRows_(adminSecrets);
+   ensureThemeScheduleSeeds_(themeSchedule);
+   ensureGameTemplateSeeds_(gameTemplates);
++  ensureFeatureCatalogSeeds_(featureCatalog);
++  configureAvailableFeaturesAdmin_(ss);
+ 
+   SpreadsheetApp.flush();
+   invalidatePublicCache_();
+ 
+-  Logger.log('V6.9.2.1 SETUP OK');
+-  return 'V6.9.2.1 SETUP OK';
++  Logger.log('V7.0 SETUP OK');
++  return 'V7.0 SETUP OK';
+ }
+ 
+ function setupV6DataRepair() {
+@@ -11907,6 +12765,15 @@
+     'enabledByDefault','sortOrder','note'
+   ];
+ 
++  expected[SHEETS.FEATURE_CATALOG] = [
++    'id','groupType','key','label','labelEn','enabled','sortOrder','note'
++  ];
++
++  expected[SHEETS.SERVICE_FEATURES] = [
++    'id','gameId','gameName','serviceId','serviceName','serviceType',
++    'featureId','label','labelEn','enabled','sortOrder'
++  ];
++
+   Object.keys(expected).forEach(sheetName => {
+     const sheet = mustSheet_(ss, sheetName);
+     const headers = getHeaders_(sheet);
+@@ -11921,8 +12788,8 @@
+     });
+   });
+ 
+-  Logger.log('V6.9.2.1 TEST OK');
+-  return 'V6.9.2.1 TEST OK';
++  Logger.log('V7.0 TEST OK');
++  return 'V7.0 TEST OK';
+ }
+ 
+ // ============================================================

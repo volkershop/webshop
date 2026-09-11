@@ -1,0 +1,101 @@
+0xVoLKER Shop Service — V7.0 TEST REPORT
+Feature: Available Features / สิ่งที่ทำได้
+Date: 2026-09-11
+
+============================================================
+Static / Syntax
+============================================================
+
+Backend JavaScript syntax                         PASS
+Frontend JavaScript syntax                        PASS
+Backend duplicate function names                  PASS — 0 duplicates
+Frontend duplicate function names                 PASS — 0 duplicates
+Correct Spreadsheet ID retained                   PASS
+Thai/English logical sheet mapping                PASS
+
+============================================================
+Backend Mock Integration
+============================================================
+
+FeatureCatalog seed count                         PASS — 15
+Resource feature count                            PASS — 8
+Zygisk feature count                              PASS — 7
+Resource service drafts                           PASS — 8/service
+Zygisk service drafts                             PASS — 7/service
+Exact service-name inference                      PASS
+Zygisk remains admin opt-in                       PASS
+Public service.features                           PASS
+Public game.features aggregate                    PASS
+Disabled catalog feature hidden                   PASS
+Custom feature creation                           PASS
+Custom feature relation linking                   PASS
+Setup idempotency                                 PASS
+Diagnostic                                        PASS
+
+Final mock diagnostic:
+AVAILABLE FEATURES DIAG PASS
+missing=0
+duplicates=0
+dangling=0
+mismatched=0
+
+============================================================
+Frontend Browser Integration — Playwright/Chromium
+============================================================
+
+Game cards render                                 PASS — 3 cards
+Card heading TH “สิ่งที่ทำได้”                    PASS
+Card first 3 chips +N                             PASS
+Old description removed from card display         PASS
+Detail grouped feature blocks                     PASS — Resource/Zygisk
+Full feature chips in Detail                       PASS
+Features shown inside service rows                PASS
+Language switch English                           PASS
+Heading EN “Available Features”                   PASS
+English labels                                    PASS
+Mobile layout                                     PASS
+Desktop layout                                    PASS
+
+Browser summary:
+{"cards":3,"desktop":"PASS","modal_th":"PASS","language_en":"PASS","mobile":"PASS"}
+
+============================================================
+Regression Markers Retained
+============================================================
+
+Order creation                                    PASS
+Request creation                                  PASS
+Payment system                                    PASS
+Review submission                                 PASS
+Claim submission                                  PASS
+Telegram notification functions                   PASS
+Theme functions                                   PASS
+Maintenance functions                             PASS
+Play Store sync functions                         PASS
+Admin checkbox recovery                           PASS
+Thai admin tab support                            PASS
+Public cache                                      PASS
+
+============================================================
+Scope / Live Gate
+============================================================
+
+การทดสอบข้างต้นเป็น:
+- Static syntax test
+- In-memory Apps Script mock integration
+- Headless browser integration
+
+ยังไม่ได้รันบน Google Apps Script Deployment และ Google Sheet สดของผู้ใช้โดยตรง
+เพราะไม่มีสิทธิ์เขียนลงบัญชี Google ของผู้ใช้จากสภาพแวดล้อมทดสอบนี้
+
+ก่อน Deploy หน้าเว็บจริง ต้องรันบน Apps Script:
+1. setupAvailableFeatures100
+2. testV6Setup
+3. diagnoseAvailableFeatures
+
+อนุญาตให้ Deploy เฉพาะเมื่อ:
+AVAILABLE FEATURES DIAG PASS
+missing=0
+duplicates=0
+dangling=0
+mismatched=0
