@@ -1,0 +1,44 @@
+0xVoLKER Shop Service — V7.1 LIVE ADMIN + FX
+
+สาเหตุ FX ดูเหมือนไม่ซิงค์:
+- หน้าเว็บแสดง rate.toFixed(2) เช่น 33.003871 -> 33.00
+- Dashboard เดิมเขียน raw 33.003871 ตรง ๆ
+- Trigger FX เดิมทุก 1 ชั่วโมง แต่ Dashboard เดิม refresh ทุก 6 ชั่วโมง
+- refreshFxRate เดิมไม่ได้สั่ง Dashboard refresh ทันที
+
+V7.1 แก้:
+- Dashboard FX แสดง 2 ตำแหน่งให้เหมือนเว็บ
+- FX trigger ทุก 30 นาที
+- หลัง refresh FX -> Live Dashboard update ทันที
+- หน้าเว็บเรียก action=pricing ทุก 5 นาที ไม่ต้อง reload ทั้งหน้า
+- Dashboard summary refresh ทุก 15 นาที
+- Dashboard Live block refresh ทุก 1 นาที
+
+Live Dashboard แสดง:
+- คนออนไลน์ตอนนี้
+- คนกำลังเลือกซื้อ
+- Customer ID ของ session ที่ออนไลน์ (สูงสุด 10 ราย)
+- VIEWING / SHOPPING
+- เห็นล่าสุด / อายุ heartbeat
+- สถานะเว็บ ONLINE/MAINTENANCE
+- FX / Source / AsOf / LIVE-STALE
+- ลูกค้าทั้งหมด / ลูกค้าใหม่วันนี้
+- Order waiting/paid/expired
+- Jobs pending/processing/completed today
+- Reviews / Claims
+- Revenue วันนี้ / 7 วัน / 30 วัน / ทั้งหมด
+- สถิติรายเกม
+
+วิธีติดตั้ง:
+1) แทน Code.gs ด้วย Backend V7.1
+2) Save
+3) Run setupLiveAdminDashboard100
+4) Run diagnoseLiveAdminDashboard
+   ต้องเห็น fxTrigger=1 dashboardTrigger=1 liveTrigger=1
+5) Deploy Web App เดิม > New version
+6) อัปโหลด index.html V7.1 เข้า GitHub main
+7) Cloudflare จะ deploy อัตโนมัติ
+
+ไม่ต้องรัน setupV6System
+ไม่ล้างข้อมูล
+ไม่เปลี่ยน Order/Payment/Review/Claim/Telegram logic

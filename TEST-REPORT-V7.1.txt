@@ -1,0 +1,9 @@
+V7.1 TEST REPORT
+Backend syntax: PASS
+Frontend syntax: PASS
+Order marker: PASS
+Telegram marker: PASS
+Available Features marker: PASS
+Live dashboard marker: PASS
+FX browser refresh marker: PASS
+No database schema migration
